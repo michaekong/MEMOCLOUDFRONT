@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification - MemoCloud</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800|Roboto:400,500,700');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fb;
+            color: #3a3a3a;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: #FFFFFF;
+            box-shadow: 0px 20px 49px rgba(0,0,0,0.17);
+            width: 100%;
+            max-width: 500px;
+            padding: 50px 40px;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .auth-logo h1 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: #3a3a3a;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .auth-logo p {
+            font-size: 14px;
+            color: #a5a5a5;
+            font-weight: 500;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 2px solid #eaebec;
+            margin-bottom: 30px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #a5a5a5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .auth-tab.active {
+            color: #ffb606;
+            border-bottom-color: #ffb606;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #3a3a3a;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            height: 48px;
+            border: 2px solid #eaebec;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #3a3a3a;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #ffb606;
+        }
+
+        .form-group input::placeholder {
+            color: #a5a5a5;
+        }
+
+        .btn-submit {
+            width: 100%;
+            height: 48px;
+            background: #ffb606;
+            border: none;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0px 10px 20px rgba(255, 182, 6, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            background: #a5a5a5;
+            cursor: not-allowed;
+        }
+
+        .form-links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .form-links a {
+            color: #ffb606;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-links a:hover {
+            color: #3a3a3a;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .profile-section {
+            display: none;
+        }
+
+        .profile-section.active {
+            display: block;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding: 30px;
+            background: #1a1a1a;
+            color: #FFFFFF;
+            margin: -50px -40px 30px -40px;
+        }
+
+        .profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #ffb606;
+            margin: 0 auto 15px;
+            overflow: hidden;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-photo.placeholder {
+            background: #ffb606;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .profile-info {
+            margin-bottom: 30px;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #eaebec;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #3a3a3a;
+            width: 150px;
+        }
+
+        .info-value {
+            color: #a5a5a5;
+            flex: 1;
+        }
+
+        .btn-logout {
+            width: 100%;
+            height: 48px;
+            background: #1a1a1a;
+            border: none;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #ffb606;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .auth-box {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <h1>MemoCloud</h1>
+                <p>Portail de gestion des mémoires universitaires</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <!-- Onglets de navigation -->
+            <div class="auth-tabs" id="authTabs">
+                <div class="auth-tab active" data-tab="login">Connexion</div>
+                <div class="auth-tab" data-tab="register">Inscription</div>
+            </div>
+
+            <!-- Formulaire de connexion -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <span class="btn-text">Se connecter</span>
+                </button>
+                <div class="form-links">
+                    <a href="#" id="showResetPassword">Mot de passe oublié ?</a>
+                </div>
+            </form>
+
+            <!-- Formulaire d'inscription -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regNom">Nom</label>
+                        <input type="text" id="regNom" placeholder="Nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPrenom">Prénom</label>
+                        <input type="text" id="regPrenom" placeholder="Prénom" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regSexe">Sexe</label>
+                    <select id="regSexe" required>
+                        <option value="">Sélectionner</option>
+                        <option value="M">Masculin</option>
+                        <option value="F">Féminin</option>
+                        <option value="A">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword1">Mot de passe</label>
+                    <input type="password" id="regPassword1" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword2">Confirmer le mot de passe</label>
+                    <input type="password" id="regPassword2" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <span class="btn-text">S'inscrire</span>
+                </button>
+            </form>
+
+            <!-- Formulaire de réinitialisation de mot de passe -->
+            <form id="resetPasswordForm" class="auth-form">
+                <div class="form-group">
+                    <label for="resetEmail">Email</label>
+                    <input type="email" id="resetEmail" placeholder="votre@email.com" required>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <span class="btn-text">Réinitialiser</span>
+                </button>
+                <div class="form-links">
+                    <a href="#" id="backToLogin">Retour à la connexion</a>
+                </div>
+            </form>
+
+            <!-- Section profil (après connexion) -->
+            <div id="profileSection" class="profile-section">
+                <div class="profile-header">
+                    <div class="profile-photo placeholder" id="profilePhoto">
+                        <span id="profileInitials"></span>
+                    </div>
+                    <h2 id="profileName"></h2>
+                    <p id="profileEmail"></p>
+                </div>
+
+                <div class="profile-info" id="profileInfo"></div>
+
+                <button class="btn-submit" id="showChangePassword">Changer le mot de passe</button>
+                <button class="btn-logout" id="logoutBtn">Se déconnecter</button>
+            </div>
+
+            <!-- Formulaire de changement de mot de passe -->
+            <form id="changePasswordForm" class="auth-form">
+                <div class="form-group">
+                    <label for="oldPassword">Ancien mot de passe</label>
+                    <input type="password" id="oldPassword" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nouveau mot de passe</label>
+                    <input type="password" id="newPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <span class="btn-text">Modifier</span>
+                </button>
+                <div class="form-links">
+                    <a href="#" id="backToProfile">Retour au profil</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api/auth';
+        let authToken = localStorage.getItem('authToken');
+
+        // Éléments DOM
+        const authTabs = document.getElementById('authTabs');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const resetPasswordForm = document.getElementById('resetPasswordForm');
+        const changePasswordForm = document.getElementById('changePasswordForm');
+        const profileSection = document.getElementById('profileSection');
+        const alertContainer = document.getElementById('alertContainer');
+
+        // Gestion des onglets
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`${tabName}Form`).classList.add('active');
+            });
+        });
+
+        // Navigation
+        document.getElementById('showResetPassword').addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllForms();
+            resetPasswordForm.classList.add('active');
+            authTabs.style.display = 'none';
+        });
+
+        document.getElementById('backToLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllForms();
+            loginForm.classList.add('active');
+            authTabs.style.display = 'flex';
+        });
+
+        document.getElementById('showChangePassword').addEventListener('click', () => {
+            hideAllForms();
+            changePasswordForm.classList.add('active');
+        });
+
+        document.getElementById('backToProfile').addEventListener('click', (e) => {
+            e.preventDefault();
+            hideAllForms();
+            profileSection.classList.add('active');
+        });
+
+        // Fonctions utilitaires
+        function hideAllForms() {
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            profileSection.classList.remove('active');
+        }
+
+        function showAlert(message, type = 'info') {
+            alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => alertContainer.innerHTML = '', 5000);
+        }
+
+        function setLoading(button, isLoading) {
+            const btnText = button.querySelector('.btn-text');
+            if (isLoading) {
+                button.disabled = true;
+                btnText.innerHTML = '<span class="loading"></span>';
+            } else {
+                button.disabled = false;
+                btnText.textContent = button.dataset.originalText || 'Valider';
+            }
+        }
+
+        // API Calls
+        async function apiCall(endpoint, method = 'GET', data = null, useAuth = false) {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            if (useAuth && authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            const config = {
+                method,
+                headers,
+            };
+
+            if (data && method !== 'GET') {
+                config.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, config);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.detail || result.error || 'Une erreur est survenue');
+                }
+
+                return result;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        // Connexion
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.btn-submit');
+            submitBtn.dataset.originalText = 'Se connecter';
+            setLoading(submitBtn, true);
+
+            try {
+                const data = {
+                    email: document.getElementById('loginEmail').value,
+                    password: document.getElementById('loginPassword').value,
+                };
+
+                const response = await apiCall('/login/', 'POST', data);
+                
+                if (response.access) {
+                    authToken = response.access;
+                    localStorage.setItem('authToken', authToken);
+                    showAlert('Connexion réussie !', 'success');
+                    await loadProfile();
+                }
+            } catch (error) {
+                showAlert(error.message, 'error');
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // Inscription
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.btn-submit');
+            submitBtn.dataset.originalText = 'S\'inscrire';
+            setLoading(submitBtn, true);
+
+            try {
+                const password1 = document.getElementById('regPassword1').value;
+                const password2 = document.getElementById('regPassword2').value;
+
+                if (password1 !== password2) {
+                    throw new Error('Les mots de passe ne correspondent pas');
+                }
+
+                const data = {
+                    email: document.getElementById('regEmail').value,
+                    nom: document.getElementById('regNom').value,
+                    prenom: document.getElementById('regPrenom').value,
+                    sexe: document.getElementById('regSexe').value,
+                    password1,
+                    password2,
+                };
+
+                await apiCall('/register/', 'POST', data);
+                showAlert('Inscription réussie ! Vérifiez votre email pour activer votre compte.', 'success');
+                registerForm.reset();
+                
+                // Basculer vers connexion
+                setTimeout(() => {
+                    document.querySelector('[data-tab="login"]').click();
+                }, 2000);
+            } catch (error) {
+                showAlert(error.message, 'error');
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // Réinitialisation mot de passe
+        resetPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.btn-submit');
+            submitBtn.dataset.originalText = 'Réinitialiser';
+            setLoading(submitBtn, true);
+
+            try {
+                const data = {
+                    email: document.getElementById('resetEmail').value,
+                };
+
+                await apiCall('/reset-password/', 'POST', data);
+                showAlert('Un email de réinitialisation a été envoyé !', 'success');
+                resetPasswordForm.reset();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // Changement de mot de passe
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('.btn-submit');
+            submitBtn.dataset.originalText = 'Modifier';
+            setLoading(submitBtn, true);
+
+            try {
+                const data = {
+                    old_password: document.getElementById('oldPassword').value,
+                    new_password: document.getElementById('newPassword').value,
+                };
+
+                await apiCall('/change-password/', 'POST', data, true);
+                showAlert('Mot de passe modifié avec succès !', 'success');
+                changePasswordForm.reset();
+                
+                setTimeout(() => {
+                    document.getElementById('backToProfile').click();
+                }, 1500);
+            } catch (error) {
+                showAlert(error.message, 'error');
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // Charger le profil
+        async function loadProfile() {
+            try {
+                const profile = await apiCall('/profile/', 'GET', null, true);
+                
+                // Afficher la section profil
+                hideAllForms();
+                authTabs.style.display = 'none';
+                profileSection.classList.add('active');
+
+                // Remplir les informations
+                document.getElementById('profileName').textContent = profile.full_name;
+                document.getElementById('profileEmail').textContent = profile.email;
+                
+                // Initiales
+                const initials = `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase();
+                document.getElementById('profileInitials').textContent = initials;
+
+                // Photo de profil
+                if (profile.photo_profil) {
+                    const photoDiv = document.getElementById('profilePhoto');
+                    photoDiv.classList.remove('placeholder');
+                    photoDiv.innerHTML = `<img src="${profile.photo_profil}" alt="Photo de profil">`;
+                }
+
+                // Informations détaillées
+                const infoHTML = `
+                    <div class="info-row">
+                        <div class="info-label">Nom complet</div>
+                        <div class="info-value">${profile.full_name}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">${profile.email}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Sexe</div>
+                        <div class="info-value">${profile.sexe === 'M' ? 'Masculin' : profile.sexe === 'F' ? 'Féminin' : 'Autre'}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Type de compte</div>
+                        <div class="info-value">${profile.role_display}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Statut</div>
+                        <div class="info-value">${profile.is_active ? '✓ Actif' : '✗ Inactif'}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Membre depuis</div>
+                        <div class="info-value">${new Date(profile.date_joined).toLocaleDateString('fr-FR')}</div>
+                    </div>
+                `;
+                document.getElementById('profileInfo').innerHTML = infoHTML;
+
+            } catch (error) {
+                showAlert('Erreur lors du chargement du profil', 'error');
+                logout();
+            }
+        }
+
+        // Déconnexion
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        function logout() {
+            authToken = null;
+            localStorage.removeItem('authToken');
+            hideAllForms();
+            authTabs.style.display = 'flex';
+            loginForm.classList.add('active');
+            loginForm.reset();
+            showAlert('Déconnexion réussie', 'info');
+        }
+
+        // Vérifier si l'utilisateur est connecté au chargement
+        if (authToken) {
+            loadProfile();
+        }
+    </script>
+</body>
+</html>
