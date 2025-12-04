@@ -1,435 +1,1289 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-<title>Course - Courses</title>
+<title>Domaines - ENSTP</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="Course Project">
+<meta name="description" content="Domaines de formation ENSTP">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
-<link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="styles/courses_styles.css">
-<link rel="stylesheet" type="text/css" href="styles/courses_responsive.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800|Roboto:400,500,700&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    background: #FFFFFF;
+    color: #a5a5a5;
+    overflow-x: hidden;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1318px;
+    height: 104px;
+    background: #FFFFFF;
+    z-index: 1000;
+    display: flex;
+    transition: all 0.3s ease;
+}
+
+.header.scrolled {
+    top: 15px;
+    box-shadow: 0px 20px 49px rgba(0,0,0,0.17);
+}
+
+.header_content {
+    width: calc(100% - 279px);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 20px 49px rgba(0,0,0,0.67);
+}
+
+.logo_container {
+    padding-left: 76px;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.main_nav_container {
+    margin-left: auto;
+    padding-right: 93px;
+}
+
+.main_nav_list {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    margin: 0;
+    padding: 0;
+}
+
+.main_nav_item a {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #3a3a3a;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.main_nav_item a:hover {
+    color: #ffb606;
+}
+
+.header_side {
+    width: 279px;
+    height: 100%;
+    background: #ffb606;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.header_side img {
+    width: 29px;
+    height: 29px;
+}
+
+.header_side span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #FFFFFF;
+}
+
+.hamburger_container {
+    display: none;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.hamburger_container i {
+    font-size: 24px;
+    color: #3a3a3a;
+    transition: color 0.3s ease;
+}
+
+.hamburger_container:hover i {
+    color: #ffb606;
+}
+
+/* Home Banner */
+.home {
+    width: 100%;
+    height: 447px;
+    position: relative;
+    margin-top: 149px;
+}
+
+.home_background_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.home_background {
+    width: 100%;
+    height: 130%;
+    background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+    background-size: cover;
+    background-position: center;
+}
+
+.home_content {
+    position: absolute;
+    left: 50%;
+    bottom: 109px;
+    transform: translateX(-50%);
+    background: #ffb606;
+    padding: 24px 42px 18px 39px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: fadeInUp 0.8s ease;
+}
+
+.home_content h1 {
+    font-size: 72px;
+    font-weight: 400;
+    color: #FFFFFF;
+    line-height: 0.5;
+    margin: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Main Content */
+.popular {
+    padding: 117px 0;
+}
+
+.section_title {
+    text-align: center;
+    position: relative;
+    margin-bottom: 80px;
+    animation: fadeIn 1s ease;
+}
+
+.section_title h1 {
+    color: #1a1a1a;
+    font-weight: 500;
+    font-size: 42px;
+    padding-top: 24px;
+    margin: 0;
+}
+
+.section_title h1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55px;
+    height: 4px;
+    background: #ffb606;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Domain Cards - Compact Design */
+.domain-card {
+    background: #FFFFFF;
+    border-radius: 0;
+    border: none;
+    border-left: 8px solid #ffb606;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+    margin-bottom: 40px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    opacity: 0;
+    animation: slideInUp 0.8s ease forwards;
+}
+
+.domain-card:nth-child(1) { animation-delay: 0.2s; }
+.domain-card:nth-child(2) { animation-delay: 0.4s; }
+.domain-card:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.domain-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    border-left-color: #14bdee;
+}
+
+.domain-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.domain-card:hover .domain-image {
+    transform: scale(1.05);
+}
+
+.domain-card-body {
+    padding: 40px;
+}
+
+.domain-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.domain-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 10px 30px rgba(255, 182, 6, 0.3);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.domain-card:hover .domain-icon {
+    transform: rotate(360deg) scale(1.1);
+    background: linear-gradient(135deg, #14bdee 0%, #0da9d6 100%);
+    box-shadow: 0 10px 30px rgba(20, 189, 238, 0.3);
+}
+
+.domain-icon i {
+    font-size: 40px;
+    color: white;
+}
+
+.domain-header-text {
+    flex: 1;
+}
+
+.domain-title {
+    color: #1a1a1a;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.domain-subtitle {
+    color: #ffb606;
+    font-size: 16px;
+    font-weight: 500;
+    font-style: italic;
+    margin: 0;
+}
+
+.domain-description {
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+
+.domain-stats {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-item i {
+    color: #ffb606;
+    font-size: 18px;
+}
+
+.stat-item span {
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.domain-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+
+.domain-details.active {
+    max-height: 2000px;
+    opacity: 1;
+}
+
+.section-heading {
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 30px;
+    margin-bottom: 18px;
+    padding-left: 18px;
+    border-left: 4px solid #ffb606;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.list-custom {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-custom li {
+    padding: 10px 0 10px 40px;
+    position: relative;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.7;
+    transition: all 0.3s ease;
+}
+
+.list-custom li:hover {
+    color: #1a1a1a;
+    padding-left: 45px;
+}
+
+.list-custom li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ideal-for {
+    background: linear-gradient(135deg, #fff8e6 0%, #fffbf0 100%);
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 5px solid #ffb606;
+    margin: 30px 0;
+    box-shadow: 0 5px 15px rgba(255, 182, 6, 0.1);
+}
+
+.ideal-for .section-heading {
+    margin-top: 0;
+}
+
+.careers-list {
+    background: linear-gradient(135deg, #f8f9fb 0%, #ffffff 100%);
+    padding: 25px;
+    border-radius: 10px;
+    margin-top: 20px;
+    border: 2px solid #eaebec;
+}
+
+.careers-list li {
+    padding: 12px 0 12px 40px;
+    border-bottom: 1px solid #eaebec;
+}
+
+.careers-list li:last-child {
+    border-bottom: none;
+}
+
+.careers-list li::before {
+    background: linear-gradient(135deg, #14bdee 0%, #0da9d6 100%);
+    box-shadow: 0 3px 10px rgba(20, 189, 238, 0.2);
+}
+
+.btn-toggle {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 182, 6, 0.3);
+    margin-top: 20px;
+}
+
+.btn-toggle:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 182, 6, 0.4);
+}
+
+.btn-toggle i {
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.btn-toggle.active i {
+    transform: rotate(180deg);
+}
+
+/* Color variations */
+.domain-card:nth-child(1) .domain-icon {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+}
+
+.domain-card:nth-child(2) .domain-icon {
+    background: linear-gradient(135deg, #14bdee 0%, #0da9d6 100%);
+}
+
+.domain-card:nth-child(2):hover .domain-icon {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+}
+
+.domain-card:nth-child(3) .domain-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.domain-card:nth-child(3):hover .domain-icon {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+}
+
+/* Footer */
+.footer {
+    width: 100%;
+    padding-top: 86px;
+    background: #1a1a1a;
+}
+
+.newsletter {
+    padding-bottom: 85px;
+    border-bottom: solid 2px #4d4e4e;
+}
+
+.newsletter .section_title h1 {
+    color: #FFFFFF;
+}
+
+.newsletter_form_container {
+    width: 60%;
+    margin: 48px auto 0;
+}
+
+.newsletter_form {
+    display: flex;
+    gap: 0;
+}
+
+.newsletter_email {
+    flex: 1;
+    height: 52px;
+    border: none;
+    padding: 0 27px;
+    font-weight: 500;
+    color: #1a1a1a;
+    font-size: 15px;
+}
+
+.newsletter_submit_btn {
+    width: 164px;
+    height: 52px;
+    border: none;
+    background: #ffb606;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.newsletter_submit_btn:hover {
+    background: #ffa500;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 182, 6, 0.4);
+}
+
+.footer_content {
+    padding-top: 80px;
+    padding-bottom: 83px;
+    border-bottom: solid 2px #4d4e4e;
+}
+
+.footer_about_text {
+    margin-top: 24px;
+    line-height: 1.8;
+}
+
+.footer_column_title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    padding-top: 15px;
+    margin-bottom: 32px;
+}
+
+.footer_list_item {
+    margin-bottom: 11px;
+    list-style: none;
+}
+
+.footer_list_item a {
+    font-size: 14px;
+    color: #a5a5a5;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer_list_item a:hover {
+    color: #ffb606;
+    padding-left: 5px;
+}
+
+.footer_contact_item {
+    font-size: 14px;
+    color: #a5a5a5;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.footer_contact_icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.footer_contact_icon img {
+    width: 100%;
+    filter: brightness(0.7);
+}
+
+.footer_bar {
+    padding: 30px 0;
+}
+
+.footer_copyright {
+    color: #a5a5a5;
+    font-size: 14px;
+}
+
+.footer_social {
+    display: flex;
+    gap: 20px;
+}
+
+.menu_social {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.menu_social_item a {
+    width: 40px;
+    height: 40px;
+    background: #3a3a3a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.menu_social_item a:hover {
+    background: #ffb606;
+    transform: translateY(-3px);
+}
+
+.menu_social_item i {
+    color: #FFFFFF;
+    font-size: 16px;
+}
+
+/* Responsive */
+@media only screen and (max-width: 1380px) {
+    .header {
+        width: 95%;
+    }
+    .header_content {
+        width: calc(100% - 219px);
+    }
+    .header_side {
+        width: 219px;
+    }
+    .logo_container {
+        padding-left: 40px;
+    }
+    .main_nav_container {
+        padding-right: 40px;
+    }
+}
+
+@media only screen and (max-width: 991px) {
+    .main_nav_container {
+        display: none;
+    }
+    .hamburger_container {
+        display: block;
+    }
+    .header_side {
+        display: none;
+    }
+    .header_content {
+        width: 100%;
+    }
+    .domain-card-body {
+        padding: 30px;
+    }
+    .domain-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .domain-title {
+        font-size: 24px;
+    }
+    .newsletter_form_container {
+        width: 90%;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .newsletter_form {
+        flex-direction: column;
+    }
+    .newsletter_submit_btn {
+        width: 100%;
+        margin-top: 15px;
+    }
+    .domain-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    .header {
+        height: 74px;
+        top: 15px;
+    }
+    .logo_container {
+        padding-left: 15px;
+    }
+    .home {
+        height: 300px;
+        margin-top: 89px;
+    }
+    .home_content {
+        bottom: 50px;
+        padding: 17px 24px 11px 22px;
+    }
+    .home_content h1 {
+        font-size: 28px;
+    }
+    .section_title h1 {
+        font-size: 28px;
+    }
+    .domain-card-body {
+        padding: 20px;
+    }
+    .domain-icon {
+        width: 70px;
+        height: 70px;
+    }
+    .domain-icon i {
+        font-size: 30px;
+    }
+    .domain-title {
+        font-size: 22px;
+    }
+    .domain-subtitle {
+        font-size: 14px;
+    }
+    .popular {
+        padding: 60px 0;
+    }
+    .domain-image {
+        height: 200px;
+    }
+}
+</style>
 </head>
 <body>
 
 <div class="super_container">
 
-	<!-- Header -->
+    <!-- Header -->
+    <header class="header">
+        <div class="header_content">
+            <div class="logo_container">
+                <div class="logo">
+                    <img src="images/logo.png" alt="ENSTP">
+                </div>
+            </div>
 
-	<header class="header d-flex flex-row">
-		<div class="header_content d-flex flex-row align-items-center">
-			<!-- Logo -->
-			<div class="logo_container">
-				<div class="logo">
-					<img src="images/logo.png" alt="">
-					
-				</div>
-			</div>
+            <nav class="main_nav_container">
+                <ul class="main_nav_list">
+                    <li class="main_nav_item"><a href="index.html">accueil</a></li>
+                    <li class="main_nav_item"><a href="#">à propos</a></li>
+                    <li class="main_nav_item"><a href="#">domaines</a></li>
+                    <li class="main_nav_item"><a href="elements.html">elements</a></li>
+                    <li class="main_nav_item"><a href="news.html">actualités</a></li>
+                    <li class="main_nav_item"><a href="contact.html">contact</a></li>
+                    <li class="main_nav_item"><a href="register.html">inscription</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="header_side">
+            <img src="images/phone-call.svg" alt="">
+            <span>(237) 222 23 09 44</span>
+        </div>
 
-			<!-- Main Navigation -->
-			<nav class="main_nav_container">
-				<div class="main_nav">
-					<ul class="main_nav_list">
-						<li class="main_nav_item"><a href="index.html">home</a></li>
-						<li class="main_nav_item"><a href="#">about us</a></li>
-						<li class="main_nav_item"><a href="#">courses</a></li>
-						<li class="main_nav_item"><a href="elements.html">elements</a></li>
-						<li class="main_nav_item"><a href="news.html">news</a></li>
-						<li class="main_nav_item"><a href="contact.html">contact</a></li>
-						<li class="main_nav_item"><a href="register.html">register</a></li>
-					</ul>
-				</div>
-			</nav>
-		</div>
-		<div class="header_side d-flex flex-row justify-content-center align-items-center">
-			<img src="images/phone-call.svg" alt="">
-			<span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
-		</div>
+        <div class="hamburger_container">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
 
-		<!-- Hamburger -->
-		<div class="hamburger_container">
-			<i class="fas fa-bars trans_200"></i>
-		</div>
+    <!-- Home Banner -->
+    <div class="home">
+        <div class="home_background_container">
+            <div class="home_background"></div>
+        </div>
+        <div class="home_content">
+            <h1>Nos Domaines</h1>
+        </div>
+    </div>
 
-	</header>
-	
-	<!-- Menu -->
-	<div class="menu_container menu_mm">
+    <!-- Main Content -->
+    <div class="popular">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="section_title">
+                        <h1>Trois Domaines d'Excellence</h1>
+                    </div>
+                </div>
+            </div>
 
-		<!-- Menu Close Button -->
-		<div class="menu_close_container">
-			<div class="menu_close"></div>
-		</div>
+            <!-- GÉNIE CIVIL -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="domain-card">
+                       <img data-domain="civil"  alt="Génie Civil"   class="domain-image">
+                        <div class="domain-card-body">
+                            <div class="domain-header">
+                                <div class="domain-icon">
+                                    <i class="fas fa-hard-hat"></i>
+                                </div>
+                                <div class="domain-header-text">
+                                    <h2 class="domain-title">A. GÉNIE CIVIL</h2>
+                                    <p class="domain-subtitle">Le domaine qui construit le monde</p>
+                                </div>
+                            </div>
+                            
+                            <p class="domain-description">
+                                Le génie civil est la filière de ceux qui veulent construire, créer, transformer les infrastructures qui rendent la vie possible : routes, ponts, bâtiments, barrages, tunnels, écoles, stades, réseaux d'eau et d'électricité.
+                            </p>
 
-		<!-- Menu Items -->
-		<div class="menu_inner menu_mm">
-			<div class="menu menu_mm">
-				<ul class="menu_list menu_mm">
-					<li class="menu_item menu_mm"><a href="index.html">Home</a></li>
-					<li class="menu_item menu_mm"><a href="#">About us</a></li>
-					<li class="menu_item menu_mm"><a href="#">Courses</a></li>
-					<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
-					<li class="menu_item menu_mm"><a href="news.html">News</a></li>
-					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
-				</ul>
+                            <div class="domain-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>Formation Complète</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>6+ Carrières</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>3 Ans</span>
+                                </div>
+                            </div>
 
-				<!-- Menu Social -->
-				
-				<div class="menu_social_container menu_mm">
-					<ul class="menu_social menu_mm">
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-twitter"></i></a></li>
-					</ul>
-				</div>
+                            <button class="btn-toggle" onclick="toggleDetails(this)">
+                                Voir plus <i class="fas fa-chevron-down"></i>
+                            </button>
 
-				<div class="menu_copyright menu_mm">Colorlib All rights reserved</div>
-			</div>
+                            <div class="domain-details">
+                                <h3 class="section-heading">Tu vas apprendre à :</h3>
+                                <ul class="list-custom">
+                                    <li>Analyser et concevoir des bâtiments et des ouvrages</li>
+                                    <li>Calculer la capacité des structures (béton, acier)</li>
+                                    <li>Comprendre les sols, les fondations, les matériaux</li>
+                                    <li>Organiser un chantier, gérer une équipe, coordonner les travaux</li>
+                                    <li>Résoudre des problèmes réels : fissures, stabilité, drainage, sécurité…</li>
+                                </ul>
 
-		</div>
+                                <div class="ideal-for">
+                                    <h3 class="section-heading">Ce domaine est fait pour toi si :</h3>
+                                    <ul class="list-custom">
+                                        <li>Tu aimes la science appliquée, construire, comprendre comment les choses tiennent debout</li>
+                                        <li>Tu veux un métier concret avec un impact direct sur la société</li>
+                                        <li>Le travail sur le terrain ne te dérange pas</li>
+                                        <li>Tu veux un domaine où l'emploi est presque toujours disponible</li>
+                                    </ul>
+                                </div>
 
-	</div>
-	
-	<!-- Home -->
+                                <h3 class="section-heading">Carrières possibles :</h3>
+                                <div class="careers-list">
+                                    <ul class="list-custom">
+                                        <li>Ingénieur en bâtiments / routes / ponts</li>
+                                        <li>Ingénieur géotechnicien</li>
+                                        <li>Chef de chantier</li>
+                                        <li>Contrôleur de travaux publics</li>
+                                        <li>Consultant en bureau d'études</li>
+                                        <li>Entrepreneur (BTP, construction, rénovation…)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-	<div class="home">
-		<div class="home_background_container prlx_parent">
-			<div class="home_background prlx" style="background-image:url(images/courses_background.jpg)"></div>
-		</div>
-		<div class="home_content">
-			<h1>Courses</h1>
-		</div>
-	</div>
+            <!-- TOPOGRAPHIE -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="domain-card">
+                       <img data-domain="topo"   alt="Topographie"   class="domain-image">
+                        <div class="domain-card-body">
+                            <div class="domain-header">
+                                <div class="domain-icon">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <div class="domain-header-text">
+                                    <h2 class="domain-title">B. TOPOGRAPHIE</h2>
+                                    <p class="domain-subtitle">Le domaine qui mesure, cartographie et organise l'espace</p>
+                                </div>
+                            </div>
+                            
+                            <p class="domain-description">
+                                La topographie est la science qui permet de mesurer la terre, de représenter le terrain, de tracer les limites des propriétés, et de fournir les données nécessaires à toutes les constructions.
+                            </p>
 
-	<!-- Popular -->
+                            <div class="domain-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-satellite"></i>
+                                    <span>Technologies Modernes</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>6+ Carrières</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>3 Ans</span>
+                                </div>
+                            </div>
 
-	<div class="popular page_section">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="section_title text-center">
-						<h1>Popular Courses</h1>
-					</div>
-				</div>
-			</div>
+                            <button class="btn-toggle" onclick="toggleDetails(this)">
+                                Voir plus <i class="fas fa-chevron-down"></i>
+                            </button>
 
-			<div class="row course_boxes">
-				
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_1.jpg" alt="https://unsplash.com/@kellybrito">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">A complete guide to design</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                            <div class="domain-details">
+                                <h3 class="section-heading">Tu vas apprendre à :</h3>
+                                <ul class="list-custom">
+                                    <li>Utiliser des instruments modernes : GPS différentiel, station totale, niveau automatique, drones…</li>
+                                    <li>Réaliser des relevés topographiques et produire des plans</li>
+                                    <li>Délimiter les terrains, identifier les limites foncières (cadastre)</li>
+                                    <li>Produire des cartes numériques et utiliser des SIG</li>
+                                    <li>Interpréter les données pour guider les ingénieurs</li>
+                                </ul>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_2.jpg" alt="https://unsplash.com/@cikstefan">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">Beginners guide to HTML</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                                <div class="ideal-for">
+                                    <h3 class="section-heading">Ce domaine est fait pour toi si :</h3>
+                                    <ul class="list-custom">
+                                        <li>Tu aimes les mesures précises, la rigueur, les technologies modernes</li>
+                                        <li>Tu préfères le terrain aux bureaux</li>
+                                        <li>Tu veux un métier très demandé mais moins "bondé"</li>
+                                        <li>Tu veux travailler dans un domaine mêlant sciences + informatique + cartographie</li>
+                                    </ul>
+                                </div>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_3.jpg" alt="https://unsplash.com/@dsmacinnes">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">Advanced Photoshop</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                                <h3 class="section-heading">Carrières possibles :</h3>
+                                <div class="careers-list">
+                                    <ul class="list-custom">
+                                        <li>Topographe / géomètre</li>
+                                        <li>Expert foncier</li>
+                                        <li>Technicien SIG</li>
+                                        <li>Spécialiste en cartographie numérique</li>
+                                        <li>Cadastre & domaine (services publics)</li>
+                                        <li>Consultant pour chantiers BTP, mines, routes…</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_4.jpg" alt="https://unsplash.com/@kellitungay">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">A complete guide to design</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+            <!-- ENVIRONNEMENT -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="domain-card">
+                        <img data-domain="env"    alt="Environnement" class="domain-image">
+                        <div class="domain-card-body">
+                            <div class="domain-header">
+                                <div class="domain-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <div class="domain-header-text">
+                                    <h2 class="domain-title">C. ENVIRONNEMENT</h2>
+                                    <p class="domain-subtitle">Le domaine qui protège la planète et améliore la qualité de vie</p>
+                                </div>
+                            </div>
+                            
+                            <p class="domain-description">
+                                Le génie de l'environnement forme des spécialistes capables de prévenir les pollutions, d'optimiser la gestion des ressources, de concevoir des systèmes d'assainissement et de travailler pour un développement durable.
+                            </p>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_5.jpg" alt="https://unsplash.com/@claybanks1989">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">Beginners guide to HTML</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                            <div class="domain-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-recycle"></i>
+                                    <span>Développement Durable</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>6+ Carrières</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>3 Ans</span>
+                                </div>
+                            </div>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_6.jpg" alt="https://unsplash.com/@element5digital">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">Advanced Photoshop</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                            <button class="btn-toggle" onclick="toggleDetails(this)">
+                                Voir plus <i class="fas fa-chevron-down"></i>
+                            </button>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_7.jpg" alt="https://unsplash.com/@gaellemm">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">A complete guide to design</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                            <div class="domain-details">
+                                <h3 class="section-heading">Tu vas apprendre à :</h3>
+                                <ul class="list-custom">
+                                    <li>Gérer l'eau, l'air, les sols et les déchets</li>
+                                    <li>Concevoir des systèmes d'assainissement</li>
+                                    <li>Faire des études d'impact environnemental</li>
+                                    <li>Évaluer et réduire les risques environnementaux</li>
+                                    <li>Développer des solutions pour un urbanisme durable</li>
+                                </ul>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_8.jpg" alt="https://unsplash.com/@juanmramosjr">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">Beginners guide to HTML</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                                <div class="ideal-for">
+                                    <h3 class="section-heading">Ce domaine est fait pour toi si :</h3>
+                                    <ul class="list-custom">
+                                        <li>Tu es sensible aux problématiques environnementales et sociales</li>
+                                        <li>Tu veux un métier d'impact, qui protège la santé et la planète</li>
+                                        <li>Tu aimes les sciences, les analyses et les solutions durables</li>
+                                        <li>Tu veux un domaine en plein essor</li>
+                                    </ul>
+                                </div>
 
-				<!-- Popular Course Item -->
-				<div class="col-lg-4 course_box">
-					<div class="card">
-						<img class="card-img-top" src="images/course_9.jpg" alt="https://unsplash.com/@kimberlyfarmer">
-						<div class="card-body text-center">
-							<div class="card-title"><a href="courses.html">Advanced Photoshop</a></div>
-							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
-						</div>
-						<div class="price_box d-flex flex-row align-items-center">
-							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
-							</div>
-							<div class="course_author_name">Michael Smith, <span>Author</span></div>
-							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
-						</div>
-					</div>
-				</div>
+                                <h3 class="section-heading">Carrières possibles :</h3>
+                                <div class="careers-list">
+                                    <ul class="list-custom">
+                                        <li>Ingénieur hygiène-sécurité-environnement (HSE)</li>
+                                        <li>Consultant en études d'impact environnemental</li>
+                                        <li>Spécialiste en assainissement / gestion des déchets</li>
+                                        <li>Responsable environnement dans une entreprise</li>
+                                        <li>Chef de projet en urbanisme durable</li>
+                                        <li>Chargé de pollution, climat, traitement des eaux…</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			</div>
-		</div>		
-	</div>
+        </div>
+    </div>
 
-	<!-- Footer -->
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            
+            <!-- Newsletter -->
+            <div class="newsletter">
+                <div class="row">
+                    <div class="col">
+                        <div class="section_title">
+                            <h1>Abonnez-vous à notre newsletter</h1>
+                        </div>
+                    </div>
+                </div>
 
-	<footer class="footer">
-		<div class="container">
-			
-			<!-- Newsletter -->
+                <div class="row">
+                    <div class="col">
+                        <div class="newsletter_form_container">
+                            <form>
+                                <div class="newsletter_form">
+                                    <input class="newsletter_email" type="email" placeholder="Adresse Email" required>
+                                    <button class="newsletter_submit_btn" type="submit">S'abonner</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			<div class="newsletter">
-				<div class="row">
-					<div class="col">
-						<div class="section_title text-center">
-							<h1>Subscribe to newsletter</h1>
-						</div>
-					</div>
-				</div>
+            <!-- Footer Content -->
+            <div class="footer_content">
+                <div class="row">
 
-				<div class="row">
-					<div class="col text-center">
-						<div class="newsletter_form_container mx-auto">
-							<form action="post">
-								<div class="newsletter_form d-flex flex-md-row flex-column flex-xs-column align-items-center justify-content-center">
-									<input id="newsletter_email" class="newsletter_email" type="email" placeholder="Email Address" required="required" data-error="Valid email is required.">
-									<button id="newsletter_submit" type="submit" class="newsletter_submit_btn trans_300" value="Submit">Subscribe</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
+                    <div class="col-lg-3 footer_col">
+                        <div class="logo_container">
+                            <div class="logo">
+                                <img src="images/logo.png" alt="ENSTP">
+                            </div>
+                        </div>
+                        <p class="footer_about_text">L'ENSTP forme les ingénieurs et techniciens de demain dans les domaines du génie civil, de la topographie et de l'environnement.</p>
+                    </div>
 
-			</div>
+                    <div class="col-lg-3 footer_col">
+                        <div class="footer_column_title">Menu</div>
+                        <ul>
+                            <li class="footer_list_item"><a href="index.html">Accueil</a></li>
+                            <li class="footer_list_item"><a href="#">À Propos</a></li>
+                            <li class="footer_list_item"><a href="#">Domaines</a></li>
+                            <li class="footer_list_item"><a href="news.html">Actualités</a></li>
+                            <li class="footer_list_item"><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </div>
 
-			<!-- Footer Content -->
+                    <div class="col-lg-3 footer_col">
+                        <div class="footer_column_title">Liens Utiles</div>
+                        <ul>
+                            <li class="footer_list_item"><a href="#">Témoignages</a></li>
+                            <li class="footer_list_item"><a href="#">FAQ</a></li>
+                            <li class="footer_list_item"><a href="#">Communauté</a></li>
+                            <li class="footer_list_item"><a href="#">Photos Campus</a></li>
+                            <li class="footer_list_item"><a href="#">Frais de scolarité</a></li>
+                        </ul>
+                    </div>
 
-			<div class="footer_content">
-				<div class="row">
+                    <div class="col-lg-3 footer_col">
+                        <div class="footer_column_title">Contact</div>
+                        <div class="footer_contact_item">
+                            <div class="footer_contact_icon">
+                                <img src="images/placeholder.svg" alt="">
+                            </div>
+                            <span>Rue Elig-Effa Yaoundé-Cameroun</span>
+                        </div>
+                        <div class="footer_contact_item">
+                            <div class="footer_contact_icon">
+                                <img src="images/smartphone.svg" alt="">
+                            </div>
+                            <span>(237) 222 23 09 44</span>
+                        </div>
+                        <div class="footer_contact_item">
+                            <div class="footer_contact_icon">
+                                <img src="images/envelope.svg" alt="">
+                            </div>
+                            <span>contact@enstp.cm</span>
+                        </div>
+                    </div>
 
-					<!-- Footer Column - About -->
-					<div class="col-lg-3 footer_col">
+                </div>
+            </div>
 
-						<!-- Logo -->
-						<div class="logo_container">
-							<div class="logo">
-								<img src="images/logo.png" alt="">
-										
-							</div>
-						</div>
+            <!-- Footer Copyright -->
+            <div class="footer_bar">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="footer_copyright">
+                                Copyright &copy;<script>document.write(new Date().getFullYear());</script> Tous droits réservés | ENSTP
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="footer_social ml-auto d-flex justify-content-end">
+                                <ul class="menu_social">
+                                    <li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                    <li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
+                                    <li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                                    <li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-						<p class="footer_about_text">In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum, tempor lacus.</p>
-
-					</div>
-
-					<!-- Footer Column - Menu -->
-
-					<div class="col-lg-3 footer_col">
-						<div class="footer_column_title">Menu</div>
-						<div class="footer_column_content">
-							<ul>
-								<li class="footer_list_item"><a href="index.html">Home</a></li>
-								<li class="footer_list_item"><a href="#">About Us</a></li>
-								<li class="footer_list_item"><a href="#">Courses</a></li>
-								<li class="footer_list_item"><a href="news.html">News</a></li>
-								<li class="footer_list_item"><a href="contact.html">Contact</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<!-- Footer Column - Usefull Links -->
-
-					<div class="col-lg-3 footer_col">
-						<div class="footer_column_title">Usefull Links</div>
-						<div class="footer_column_content">
-							<ul>
-								<li class="footer_list_item"><a href="#">Testimonials</a></li>
-								<li class="footer_list_item"><a href="#">FAQ</a></li>
-								<li class="footer_list_item"><a href="#">Community</a></li>
-								<li class="footer_list_item"><a href="#">Campus Pictures</a></li>
-								<li class="footer_list_item"><a href="#">Tuitions</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<!-- Footer Column - Contact -->
-
-					<div class="col-lg-3 footer_col">
-						<div class="footer_column_title">Contact</div>
-						<div class="footer_column_content">
-							<ul>
-								<li class="footer_contact_item">
-									<div class="footer_contact_icon">
-										<img src="images/placeholder.svg" alt="https://www.flaticon.com/authors/lucy-g">
-									</div>
-									Rue Elig-Effa Yaoundé-Cameroun
-								</li>
-								<li class="footer_contact_item">
-									<div class="footer_contact_icon">
-										<img src="images/smartphone.svg" alt="https://www.flaticon.com/authors/lucy-g">
-									</div>
-									(237) 222 23 09 44 / (237) 222 22 18 16
-								</li>
-								<li class="footer_contact_item">
-									<div class="footer_contact_icon">
-										<img src="images/envelope.svg" alt="https://www.flaticon.com/authors/lucy-g">
-									</div>contact@enstp.cm
-								</li>
-							</ul>
-						</div>
-					</div>
-
-				</div>
-			</div>
-
-			<!-- Footer Copyright -->
-
-			<div class="footer_bar d-flex flex-column flex-sm-row align-items-center">
-				<div class="footer_copyright">
-					<span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span>
-				</div>
-				<div class="footer_social ml-sm-auto">
-					<ul class="menu_social">
-						<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-					</ul>
-				</div>
-			</div>
-
-		</div>
-	</footer>
+        </div>
+    </footer>
 
 </div>
 
-<script src="js/jquery-3.2.1.min.js"></script>
-<script src="styles/bootstrap4/popper.js"></script>
-<script src="styles/bootstrap4/bootstrap.min.js"></script>
-<script src="plugins/greensock/TweenMax.min.js"></script>
-<script src="plugins/greensock/TimelineMax.min.js"></script>
-<script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
-<script src="plugins/greensock/animation.gsap.min.js"></script>
-<script src="plugins/greensock/ScrollToPlugin.min.js"></script>
-<script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
-<script src="plugins/easing/easing.js"></script>
-<script src="js/courses_custom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+<script>
+// Scroll effect for header
+window.addEventListener('scroll', function() {
+    const header = document.querySelector('.header');
+    if (window.scrollY > 100) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+
+// Toggle details function
+function toggleDetails(btn) {
+    const card = btn.closest('.domain-card-body');
+    const details = card.querySelector('.domain-details');
+    
+    if (details.classList.contains('active')) {
+        details.classList.remove('active');
+        btn.innerHTML = 'Voir plus <i class="fas fa-chevron-down"></i>';
+        btn.classList.remove('active');
+    } else {
+        details.classList.add('active');
+        btn.innerHTML = 'Voir moins <i class="fas fa-chevron-up"></i>';
+        btn.classList.add('active');
+        
+        // Smooth scroll to button
+        setTimeout(() => {
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+    }
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Animate elements on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.domain-card').forEach(card => {
+    observer.observe(card);
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery (obligatoire pour ton script) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Bootstrap JS bundle -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script images aléatoires -->
+<script>
+const domainImages = {
+    civil: [
+        'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070',
+        'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2070',
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070',
+        'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=2070',
+        'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2070'
+    ],
+    topo: [
+        'https://images.unsplash.com/photo-1569163139394-de4798aa62b6?q=80&w=2070',
+        'https://images.unsplash.com/photo-1589519160732-57fc498494f8?q=80&w=2070',
+        'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2070',
+        'https://images.unsplash.com/photo-1551501143-f3e4e15f7b9d?q=80&w=2070',
+        'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2070'
+    ],
+    env: [
+        'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2070',
+        'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2070',
+        'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070',
+        'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2070',
+        'https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=2070'
+    ]
+};
+
+function changeRandomImage(img) {
+    const domain = img.dataset.domain;
+    const pool   = domainImages[domain];
+    let   next;
+    do { next = pool[Math.floor(Math.random() * pool.length)]; }
+    while (next === img.src && pool.length > 1);
+
+    img.style.transition = 'opacity 0.5s ease';
+    img.style.opacity = 0;
+    setTimeout(() => { img.src = next; img.style.opacity = 1; }, 500);
+}
+
+// première image + rotation toutes les 8 s
+$(function () {
+    $('.domain-image').each(function () { changeRandomImage(this); });
+    setInterval(() => $('.domain-image').each(function () { changeRandomImage(this); }), 8000);
+});
+</script>
+
+<!-- Vos autres scripts éventuels -->
+<script src="js/custom.js"></script>  <!-- exemple -->
+</body>
 
 </body>
 </html>

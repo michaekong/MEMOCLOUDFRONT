@@ -1,733 +1,874 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentification - MemoCloud</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800|Roboto:400,500,700');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENSTP - Authentification</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: #f8f9fb;
-            color: #3a3a3a;
-        }
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: center/cover no-repeat fixed;
+    position: relative;
+    transition: background-image 1s ease-in-out;
+}
 
-        .auth-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 0;
+}
 
-        .auth-box {
-            background: #FFFFFF;
-            box-shadow: 0px 20px 49px rgba(0,0,0,0.17);
-            width: 100%;
-            max-width: 500px;
-            padding: 50px 40px;
-        }
+.page_container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
 
-        .auth-logo {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+/* Hero Section */
+.hero_section {
+    text-align: center;
+    color: #FFFFFF;
+    animation: fadeInDown 0.8s ease-out;
+}
 
-        .auth-logo h1 {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            color: #3a3a3a;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .auth-logo p {
-            font-size: 14px;
-            color: #a5a5a5;
-            font-weight: 500;
-        }
+.hero_title {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
 
-        .auth-tabs {
-            display: flex;
-            border-bottom: 2px solid #eaebec;
-            margin-bottom: 30px;
-        }
+.hero_title span {
+    background: linear-gradient(135deg, #ffb606 0%, #ffd454 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+}
 
-        .auth-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            font-family: 'Open Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #a5a5a5;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-        }
+.hero_subtitle {
+    font-size: 18px;
+    color: #e2e8f0;
+    font-weight: 500;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
 
-        .auth-tab.active {
-            color: #ffb606;
-            border-bottom-color: #ffb606;
-        }
+/* Auth Container */
+.auth_container {
+    width: 100%;
+    max-width: 480px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
 
-        .auth-form {
-            display: none;
-        }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .auth-form.active {
-            display: block;
-        }
+.auth_card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 45px 40px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-        .form-group {
-            margin-bottom: 24px;
-        }
+.auth_tabs {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 32px;
+    border-bottom: 2px solid rgba(0,0,0,0.08);
+}
 
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #3a3a3a;
-            margin-bottom: 8px;
-        }
+.auth_tab {
+    font-size: 18px;
+    font-weight: 700;
+    color: #94a3b8;
+    padding-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    flex: 1;
+    text-align: center;
+}
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            height: 48px;
-            border: 2px solid #eaebec;
-            padding: 0 20px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #3a3a3a;
-            transition: all 0.3s ease;
-        }
+.auth_tab.active {
+    color: #1e293b;
+    border-bottom-color: #ffb606;
+}
 
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #ffb606;
-        }
+.form_container {
+    display: none;
+}
 
-        .form-group input::placeholder {
-            color: #a5a5a5;
-        }
+.form_container.active {
+    display: block;
+    animation: fadeIn 0.4s ease-out;
+}
 
-        .btn-submit {
-            width: 100%;
-            height: 48px;
-            background: #ffb606;
-            border: none;
-            color: #FFFFFF;
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .btn-submit:hover {
-            box-shadow: 0px 10px 20px rgba(255, 182, 6, 0.3);
-            transform: translateY(-2px);
-        }
+.form_group {
+    margin-bottom: 20px;
+}
 
-        .btn-submit:disabled {
-            background: #a5a5a5;
-            cursor: not-allowed;
-        }
+.form_label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 7px;
+}
 
-        .form-links {
-            margin-top: 20px;
-            text-align: center;
-        }
+.form_input, .form_select {
+    width: 100%;
+    height: 48px;
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
+    padding: 0 16px;
+    font-size: 14px;
+    color: #1e293b;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.9);
+    font-family: 'Inter', sans-serif;
+}
 
-        .form-links a {
-            color: #ffb606;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
+.form_input:focus, .form_select:focus {
+    outline: none;
+    border-color: #ffb606;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(255,182,6,0.15);
+}
 
-        .form-links a:hover {
-            color: #3a3a3a;
-        }
+.form_row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
 
-        .alert {
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-        }
+.form_checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
+.form_checkbox input {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #ffb606;
+}
 
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+.form_checkbox label {
+    font-size: 13px;
+    color: #475569;
+    cursor: pointer;
+}
 
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
+.forgot_password {
+    text-align: right;
+    margin-bottom: 20px;
+}
 
-        .profile-section {
-            display: none;
-        }
+.forgot_password a {
+    font-size: 13px;
+    color: #ffb606;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
 
-        .profile-section.active {
-            display: block;
-        }
+.forgot_password a:hover {
+    color: #ff8f00;
+}
 
-        .profile-header {
-            text-align: center;
-            padding: 30px;
-            background: #1a1a1a;
-            color: #FFFFFF;
-            margin: -50px -40px 30px -40px;
-        }
+.submit_btn {
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(135deg, #ffb606 0%, #ff8f00 100%);
+    border: none;
+    border-radius: 10px;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+    box-shadow: 0 4px 15px rgba(255,182,6,0.35);
+}
 
-        .profile-photo {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 4px solid #ffb606;
-            margin: 0 auto 15px;
-            overflow: hidden;
-        }
+.submit_btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,182,6,0.45);
+}
 
-        .profile-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.submit_btn:active {
+    transform: translateY(0);
+}
 
-        .profile-photo.placeholder {
-            background: #ffb606;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: 700;
-        }
+.form_footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #64748b;
+}
 
-        .profile-info {
-            margin-bottom: 30px;
-        }
+.form_footer a {
+    color: #ffb606;
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.3s;
+}
 
-        .info-row {
-            display: flex;
-            padding: 15px 0;
-            border-bottom: 1px solid #eaebec;
-        }
+.form_footer a:hover {
+    color: #ff8f00;
+}
 
-        .info-label {
-            font-weight: 700;
-            color: #3a3a3a;
-            width: 150px;
-        }
+.error_message, .success_message {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    display: none;
+    font-weight: 500;
+}
 
-        .info-value {
-            color: #a5a5a5;
-            flex: 1;
-        }
+.error_message {
+    background: rgba(254, 226, 226, 0.95);
+    color: #dc2626;
+    border-left: 4px solid #dc2626;
+}
 
-        .btn-logout {
-            width: 100%;
-            height: 48px;
-            background: #1a1a1a;
-            border: none;
-            color: #FFFFFF;
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+.success_message {
+    background: rgba(209, 250, 229, 0.95);
+    color: #059669;
+    border-left: 4px solid #059669;
+}
 
-        .btn-logout:hover {
-            background: #ffb606;
-        }
+.back_link {
+    text-align: center;
+    margin-top: 20px;
+}
 
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #FFFFFF;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 0.8s linear infinite;
-        }
+.back_link a {
+    color: #e2e8f0;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+.back_link a:hover {
+    color: #ffb606;
+}
 
-        .hidden {
-            display: none;
-        }
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
 
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
+/* Features Grid - Below form on mobile */
+.features_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 40px;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
 
-        .form-row .form-group {
-            flex: 1;
-        }
+.feature_card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 28px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
 
-        @media (max-width: 768px) {
-            .auth-box {
-                padding: 30px 20px;
-            }
+.feature_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
 
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-        }
-    </style>
+.feature_card_icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffb606 0%, #ff8f00 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 20px rgba(255,182,6,0.3);
+}
+
+.feature_card_icon i {
+    font-size: 22px;
+    color: #FFFFFF;
+}
+
+.feature_card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.feature_card p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    .hero_title {
+        font-size: 32px;
+    }
+
+    .hero_subtitle {
+        font-size: 15px;
+    }
+
+    .auth_card {
+        padding: 35px 28px;
+    }
+
+    .form_row {
+        grid-template-columns: 1fr;
+    }
+
+    .features_grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .auth_tab {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .hero_title {
+        font-size: 26px;
+    }
+
+    .hero_subtitle {
+        font-size: 14px;
+    }
+
+    .auth_card {
+        padding: 28px 20px;
+        border-radius: 20px;
+    }
+
+    .form_group {
+        margin-bottom: 16px;
+    }
+
+    .submit_btn {
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .feature_card {
+        padding: 22px 18px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .features_grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+</style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-box">
-            <div class="auth-logo">
-                <h1>MemoCloud</h1>
-                <p>Portail de gestion des mémoires universitaires</p>
+
+<div class="page_container">
+    <!-- Hero Section -->
+    <div class="hero_section">
+        <h1 class="hero_title">Bienvenue sur <span>ENSTP</span></h1>
+        <p class="hero_subtitle">Portail de gestion des mémoires universitaires</p>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth_container">
+        <div class="auth_card">
+            <div class="auth_tabs">
+                <div class="auth_tab active" data-tab="login">Connexion</div>
+                <div class="auth_tab" data-tab="register">Inscription</div>
             </div>
 
-            <div id="alertContainer"></div>
+            <!-- Login Form -->
+            <div class="form_container active" id="login-form">
+                <div class="error_message" id="login-error"></div>
+                <div class="success_message" id="login-success"></div>
 
-            <!-- Onglets de navigation -->
-            <div class="auth-tabs" id="authTabs">
-                <div class="auth-tab active" data-tab="login">Connexion</div>
-                <div class="auth-tab" data-tab="register">Inscription</div>
+                <form id="loginForm">
+                    <div class="form_group">
+                        <label class="form_label">Adresse Email</label>
+                        <input type="email" class="form_input" name="email" placeholder="exemple@email.com" required>
+                    </div>
+
+                    <div class="form_group">
+                        <label class="form_label">Mot de Passe</label>
+                        <input type="password" class="form_input" name="password" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="form_checkbox">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Se souvenir de moi</label>
+                    </div>
+
+                    <div class="forgot_password">
+                        <a href="#" onclick="showResetPassword(); return false;">Mot de passe oublié ?</a>
+                    </div>
+
+                    <button type="submit" class="submit_btn">Se Connecter</button>
+                </form>
+
+                <div class="form_footer">
+                    Pas encore de compte ? <a href="#" onclick="switchTab('register'); return false;">Inscrivez-vous</a>
+                </div>
             </div>
 
-            <!-- Formulaire de connexion -->
-            <form id="loginForm" class="auth-form active">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" placeholder="votre@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Mot de passe</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-submit">
-                    <span class="btn-text">Se connecter</span>
-                </button>
-                <div class="form-links">
-                    <a href="#" id="showResetPassword">Mot de passe oublié ?</a>
-                </div>
-            </form>
+            <!-- Register Form -->
+            <div class="form_container" id="register-form">
+                <div class="error_message" id="register-error"></div>
+                <div class="success_message" id="register-success"></div>
 
-            <!-- Formulaire d'inscription -->
-            <form id="registerForm" class="auth-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="regNom">Nom</label>
-                        <input type="text" id="regNom" placeholder="Nom" required>
+                <form id="registerForm">
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Nom</label>
+                            <input type="text" class="form_input" name="nom" placeholder="Votre nom" required>
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Prénom</label>
+                            <input type="text" class="form_input" name="prenom" placeholder="Votre prénom" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="regPrenom">Prénom</label>
-                        <input type="text" id="regPrenom" placeholder="Prénom" required>
+
+                    <div class="form_group">
+                        <label class="form_label">Adresse Email</label>
+                        <input type="email" class="form_input" name="email" placeholder="exemple@email.com" required>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="regEmail">Email</label>
-                    <input type="email" id="regEmail" placeholder="votre@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="regSexe">Sexe</label>
-                    <select id="regSexe" required>
-                        <option value="">Sélectionner</option>
-                        <option value="M">Masculin</option>
-                        <option value="F">Féminin</option>
-                        <option value="A">Autre</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="regPassword1">Mot de passe</label>
-                    <input type="password" id="regPassword1" placeholder="••••••••" required>
-                </div>
-                <div class="form-group">
-                    <label for="regPassword2">Confirmer le mot de passe</label>
-                    <input type="password" id="regPassword2" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-submit">
-                    <span class="btn-text">S'inscrire</span>
-                </button>
-            </form>
 
-            <!-- Formulaire de réinitialisation de mot de passe -->
-            <form id="resetPasswordForm" class="auth-form">
-                <div class="form-group">
-                    <label for="resetEmail">Email</label>
-                    <input type="email" id="resetEmail" placeholder="votre@email.com" required>
-                </div>
-                <button type="submit" class="btn-submit">
-                    <span class="btn-text">Réinitialiser</span>
-                </button>
-                <div class="form-links">
-                    <a href="#" id="backToLogin">Retour à la connexion</a>
-                </div>
-            </form>
-
-            <!-- Section profil (après connexion) -->
-            <div id="profileSection" class="profile-section">
-                <div class="profile-header">
-                    <div class="profile-photo placeholder" id="profilePhoto">
-                        <span id="profileInitials"></span>
+                    <div class="form_row">
+                        <div class="form_group">
+                            <label class="form_label">Sexe</label>
+                            <select class="form_select" name="sexe" required>
+                                <option value="">Sélectionner</option>
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <label class="form_label">Rôle</label>
+                            <select class="form_select" name="role" required>
+                                <option value="standard">Étudiant</option>
+                                <option value="professeur">Professeur</option>
+                            </select>
+                        </div>
                     </div>
-                    <h2 id="profileName"></h2>
-                    <p id="profileEmail"></p>
+
+                    <div class="form_group">
+                        <label class="form_label">Mot de Passe</label>
+                        <input type="password" class="form_input" name="password1" placeholder="••••••••" required minlength="8">
+                    </div>
+
+                    <div class="form_group">
+                        <label class="form_label">Confirmer le Mot de Passe</label>
+                        <input type="password" class="form_input" name="password2" placeholder="••••••••" required minlength="8">
+                    </div>
+
+                    <div class="form_group">
+                        <label class="form_label">LinkedIn (optionnel)</label>
+                        <input type="url" class="form_input" name="realisation_linkedin" placeholder="https://linkedin.com/in/...">
+                    </div>
+
+                    <div class="form_group">
+                        <label class="form_label">Photo de profil (optionnel)</label>
+                        <input type="file" class="form_input" name="photo_profil" accept="image/*" style="padding: 12px;">
+                    </div>
+
+                    <div class="form_checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">J'accepte les conditions d'utilisation</label>
+                    </div>
+
+                    <button type="submit" class="submit_btn">Créer mon Compte</button>
+                </form>
+
+                <div class="form_footer">
+                    Déjà un compte ? <a href="#" onclick="switchTab('login'); return false;">Connectez-vous</a>
                 </div>
-
-                <div class="profile-info" id="profileInfo"></div>
-
-                <button class="btn-submit" id="showChangePassword">Changer le mot de passe</button>
-                <button class="btn-logout" id="logoutBtn">Se déconnecter</button>
             </div>
+        </div>
 
-            <!-- Formulaire de changement de mot de passe -->
-            <form id="changePasswordForm" class="auth-form">
-                <div class="form-group">
-                    <label for="oldPassword">Ancien mot de passe</label>
-                    <input type="password" id="oldPassword" placeholder="••••••••" required>
-                </div>
-                <div class="form-group">
-                    <label for="newPassword">Nouveau mot de passe</label>
-                    <input type="password" id="newPassword" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-submit">
-                    <span class="btn-text">Modifier</span>
-                </button>
-                <div class="form-links">
-                    <a href="#" id="backToProfile">Retour au profil</a>
-                </div>
-            </form>
+        <div class="back_link">
+            <a href="index.html">
+                <i class="fas fa-arrow-left"></i> Retour à l'accueil
+            </a>
         </div>
     </div>
 
-    <script>
-        const API_BASE = 'http://127.0.0.1:8000/api/auth';
-        let authToken = localStorage.getItem('authToken');
+    <!-- Features Grid -->
+    <div class="features_grid">
+        <div class="feature_card">
+            <div class="feature_card_icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <h3>Architecture & Génie Civil</h3>
+            <p>Bibliothèque complète de mémoires en architecture et construction.</p>
+        </div>
 
-        // Éléments DOM
-        const authTabs = document.getElementById('authTabs');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const resetPasswordForm = document.getElementById('resetPasswordForm');
-        const changePasswordForm = document.getElementById('changePasswordForm');
-        const profileSection = document.getElementById('profileSection');
-        const alertContainer = document.getElementById('alertContainer');
+        <div class="feature_card">
+            <div class="feature_card_icon">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h3>Topographie & Géomatique</h3>
+            <p>Travaux en topographie et sciences géospatiales.</p>
+        </div>
 
-        // Gestion des onglets
-        document.querySelectorAll('.auth-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.dataset.tab;
-                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(`${tabName}Form`).classList.add('active');
-            });
-        });
+        <div class="feature_card">
+            <div class="feature_card_icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <h3>Environnement & Développement</h3>
+            <p>Mémoires sur l'environnement et le développement durable.</p>
+        </div>
 
-        // Navigation
-        document.getElementById('showResetPassword').addEventListener('click', (e) => {
-            e.preventDefault();
-            hideAllForms();
-            resetPasswordForm.classList.add('active');
-            authTabs.style.display = 'none';
-        });
+        <div class="feature_card">
+            <div class="feature_card_icon">
+                <i class="fas fa-drafting-compass"></i>
+            </div>
+            <h3>Conception & Innovation</h3>
+            <p>Projets innovants en conception architecturale moderne.</p>
+        </div>
+    </div>
+</div>
 
-        document.getElementById('backToLogin').addEventListener('click', (e) => {
-            e.preventDefault();
-            hideAllForms();
-            loginForm.classList.add('active');
-            authTabs.style.display = 'flex';
-        });
+<script>
+const API_URL = 'http://127.0.0.1:8000';
+const UNIV_SLUG = 'ecole-des-travaux';
 
-        document.getElementById('showChangePassword').addEventListener('click', () => {
-            hideAllForms();
-            changePasswordForm.classList.add('active');
-        });
+// Background images for different domains
+const backgroundImages = [
+    // Architecture & Génie Civil
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070',
+    'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2070',
+    'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070',
+    
+    // Topographie & Géomatique
+    'https://images.unsplash.com/photo-1569163139394-de4798aa62b6?q=80&w=2070',
+    'https://images.unsplash.com/photo-1589519160732-57fc498494f8?q=80&w=2070',
+    
+    // Environnement & Développement
+    'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2070',
+    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2070',
+    'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070',
+    
+    // Conception & Innovation
+    'https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=2070',
+    'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2070'
+];
 
-        document.getElementById('backToProfile').addEventListener('click', (e) => {
-            e.preventDefault();
-            hideAllForms();
-            profileSection.classList.add('active');
-        });
+// Set random background on load
+function setRandomBackground() {
+    const randomImage = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+    document.body.style.backgroundImage = `url('${randomImage}')`;
+}
 
-        // Fonctions utilitaires
-        function hideAllForms() {
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            profileSection.classList.remove('active');
-        }
+// Change background every 10 seconds
+setRandomBackground();
+setInterval(setRandomBackground, 10000);
 
-        function showAlert(message, type = 'info') {
-            alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => alertContainer.innerHTML = '', 5000);
-        }
+const tabs = document.querySelectorAll('.auth_tab');
+const forms = document.querySelectorAll('.form_container');
 
-        function setLoading(button, isLoading) {
-            const btnText = button.querySelector('.btn-text');
-            if (isLoading) {
-                button.disabled = true;
-                btnText.innerHTML = '<span class="loading"></span>';
-            } else {
-                button.disabled = false;
-                btnText.textContent = button.dataset.originalText || 'Valider';
-            }
-        }
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        switchTab(tabName);
+    });
+});
 
-        // API Calls
-        async function apiCall(endpoint, method = 'GET', data = null, useAuth = false) {
-            const headers = {
+function switchTab(tabName) {
+    tabs.forEach(t => t.classList.remove('active'));
+    forms.forEach(f => f.classList.remove('active'));
+    
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(`${tabName}-form`).classList.add('active');
+}
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorDiv = document.getElementById('login-error');
+    const successDiv = document.getElementById('login-success');
+    const submitBtn = e.target.querySelector('.submit_btn');
+    
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    submitBtn.classList.add('loading');
+    submitBtn.textContent = 'Connexion...';
+
+    const formData = new FormData(e.target);
+    const data = {
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/api/auth/login/`, {
+            method: 'POST',
+            headers: {
                 'Content-Type': 'application/json',
-            };
-
-            if (useAuth && authToken) {
-                headers['Authorization'] = `Bearer ${authToken}`;
-            }
-
-            const config = {
-                method,
-                headers,
-            };
-
-            if (data && method !== 'GET') {
-                config.body = JSON.stringify(data);
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}${endpoint}`, config);
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.detail || result.error || 'Une erreur est survenue');
-                }
-
-                return result;
-            } catch (error) {
-                throw error;
-            }
-        }
-
-        // Connexion
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('.btn-submit');
-            submitBtn.dataset.originalText = 'Se connecter';
-            setLoading(submitBtn, true);
-
-            try {
-                const data = {
-                    email: document.getElementById('loginEmail').value,
-                    password: document.getElementById('loginPassword').value,
-                };
-
-                const response = await apiCall('/login/', 'POST', data);
-                
-                if (response.access) {
-                    authToken = response.access;
-                    localStorage.setItem('authToken', authToken);
-                    showAlert('Connexion réussie !', 'success');
-                    await loadProfile();
-                }
-            } catch (error) {
-                showAlert(error.message, 'error');
-            } finally {
-                setLoading(submitBtn, false);
-            }
+            },
+            body: JSON.stringify(data)
         });
 
-        // Inscription
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('.btn-submit');
-            submitBtn.dataset.originalText = 'S\'inscrire';
-            setLoading(submitBtn, true);
+        const result = await response.json();
 
-            try {
-                const password1 = document.getElementById('regPassword1').value;
-                const password2 = document.getElementById('regPassword2').value;
+        if (response.ok) {
+            successDiv.textContent = '✓ Connexion réussie ! Redirection...';
+            successDiv.style.display = 'block';
+            
+            if (result.access) {
+                localStorage.setItem('authToken', result.access);
+                localStorage.setItem('refreshToken', result.refresh);
+            } else if (result.token) {
+                localStorage.setItem('authToken', result.token);
+            }
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        } else {
+            errorDiv.textContent = result.detail || result.message || 'Email ou mot de passe incorrect';
+            errorDiv.style.display = 'block';
+        }
+    } catch (error) {
+        errorDiv.textContent = '⚠ Erreur de connexion. Vérifiez que le serveur API est démarré.';
+        errorDiv.style.display = 'block';
+        console.error('Erreur:', error);
+    } finally {
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Se Connecter';
+    }
+});
 
-                if (password1 !== password2) {
-                    throw new Error('Les mots de passe ne correspondent pas');
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorDiv = document.getElementById('register-error');
+    const successDiv = document.getElementById('register-success');
+    const submitBtn = e.target.querySelector('.submit_btn');
+    
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    submitBtn.classList.add('loading');
+    submitBtn.textContent = 'Création du compte...';
+
+    const formData = new FormData(e.target);
+    
+    // Préparer les données
+    const data = {
+        email: formData.get('email'),
+        nom: formData.get('nom'),
+        prenom: formData.get('prenom'),
+        sexe: formData.get('sexe'),
+        password1: formData.get('password1'),
+        password2: formData.get('password2'),
+        role: formData.get('role'),
+        universite_slug: UNIV_SLUG
+    };
+
+    // Champs optionnels
+    const linkedin = formData.get('realisation_linkedin');
+    if (linkedin && linkedin.trim()) {
+        data.realisation_linkedin = linkedin;
+    }
+
+    // Gestion de la photo de profil
+    const photoFile = formData.get('photo_profil');
+    if (photoFile && photoFile.size > 0) {
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+            data.photo_profil = event.target.result;
+            await sendRegisterRequest(data, errorDiv, successDiv, submitBtn, e.target);
+        };
+        reader.readAsDataURL(photoFile);
+        return;
+    }
+
+    await sendRegisterRequest(data, errorDiv, successDiv, submitBtn, e.target);
+});
+
+async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) {
+    // Validation côté client
+    if (data.password1 !== data.password2) {
+        errorDiv.textContent = '⚠ Les mots de passe ne correspondent pas';
+        errorDiv.style.display = 'block';
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Créer mon Compte';
+        return;
+    }
+
+    if (data.password1.length < 8) {
+        errorDiv.textContent = '⚠ Le mot de passe doit contenir au moins 8 caractères';
+        errorDiv.style.display = 'block';
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Créer mon Compte';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/auth/auth/${UNIV_SLUG}/register/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.status === 201 || response.ok) {
+            successDiv.textContent = '✓ Compte créé avec succès ! Redirection vers la connexion...';
+            successDiv.style.display = 'block';
+            form.reset();
+            
+            setTimeout(() => {
+                switchTab('login');
+                document.getElementById('loginForm').querySelector('[name="email"]').value = data.email;
+            }, 2000);
+        } else {
+            let errorMessage = 'Erreur lors de l\'inscription';
+            
+            if (typeof result === 'object') {
+                const errors = [];
+                for (const [key, value] of Object.entries(result)) {
+                    if (Array.isArray(value)) {
+                        errors.push(...value);
+                    } else if (typeof value === 'string') {
+                        errors.push(value);
+                    }
                 }
-
-                const data = {
-                    email: document.getElementById('regEmail').value,
-                    nom: document.getElementById('regNom').value,
-                    prenom: document.getElementById('regPrenom').value,
-                    sexe: document.getElementById('regSexe').value,
-                    password1,
-                    password2,
-                };
-
-                await apiCall('/register/', 'POST', data);
-                showAlert('Inscription réussie ! Vérifiez votre email pour activer votre compte.', 'success');
-                registerForm.reset();
-                
-                // Basculer vers connexion
-                setTimeout(() => {
-                    document.querySelector('[data-tab="login"]').click();
-                }, 2000);
-            } catch (error) {
-                showAlert(error.message, 'error');
-            } finally {
-                setLoading(submitBtn, false);
+                errorMessage = errors.join(', ') || errorMessage;
+            } else if (result.message) {
+                errorMessage = result.message;
+            } else if (result.detail) {
+                errorMessage = result.detail;
             }
-        });
-
-        // Réinitialisation mot de passe
-        resetPasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('.btn-submit');
-            submitBtn.dataset.originalText = 'Réinitialiser';
-            setLoading(submitBtn, true);
-
-            try {
-                const data = {
-                    email: document.getElementById('resetEmail').value,
-                };
-
-                await apiCall('/reset-password/', 'POST', data);
-                showAlert('Un email de réinitialisation a été envoyé !', 'success');
-                resetPasswordForm.reset();
-            } catch (error) {
-                showAlert(error.message, 'error');
-            } finally {
-                setLoading(submitBtn, false);
-            }
-        });
-
-        // Changement de mot de passe
-        changePasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = e.target.querySelector('.btn-submit');
-            submitBtn.dataset.originalText = 'Modifier';
-            setLoading(submitBtn, true);
-
-            try {
-                const data = {
-                    old_password: document.getElementById('oldPassword').value,
-                    new_password: document.getElementById('newPassword').value,
-                };
-
-                await apiCall('/change-password/', 'POST', data, true);
-                showAlert('Mot de passe modifié avec succès !', 'success');
-                changePasswordForm.reset();
-                
-                setTimeout(() => {
-                    document.getElementById('backToProfile').click();
-                }, 1500);
-            } catch (error) {
-                showAlert(error.message, 'error');
-            } finally {
-                setLoading(submitBtn, false);
-            }
-        });
-
-        // Charger le profil
-        async function loadProfile() {
-            try {
-                const profile = await apiCall('/profile/', 'GET', null, true);
-                
-                // Afficher la section profil
-                hideAllForms();
-                authTabs.style.display = 'none';
-                profileSection.classList.add('active');
-
-                // Remplir les informations
-                document.getElementById('profileName').textContent = profile.full_name;
-                document.getElementById('profileEmail').textContent = profile.email;
-                
-                // Initiales
-                const initials = `${profile.prenom[0]}${profile.nom[0]}`.toUpperCase();
-                document.getElementById('profileInitials').textContent = initials;
-
-                // Photo de profil
-                if (profile.photo_profil) {
-                    const photoDiv = document.getElementById('profilePhoto');
-                    photoDiv.classList.remove('placeholder');
-                    photoDiv.innerHTML = `<img src="${profile.photo_profil}" alt="Photo de profil">`;
-                }
-
-                // Informations détaillées
-                const infoHTML = `
-                    <div class="info-row">
-                        <div class="info-label">Nom complet</div>
-                        <div class="info-value">${profile.full_name}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Email</div>
-                        <div class="info-value">${profile.email}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Sexe</div>
-                        <div class="info-value">${profile.sexe === 'M' ? 'Masculin' : profile.sexe === 'F' ? 'Féminin' : 'Autre'}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Type de compte</div>
-                        <div class="info-value">${profile.role_display}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Statut</div>
-                        <div class="info-value">${profile.is_active ? '✓ Actif' : '✗ Inactif'}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Membre depuis</div>
-                        <div class="info-value">${new Date(profile.date_joined).toLocaleDateString('fr-FR')}</div>
-                    </div>
-                `;
-                document.getElementById('profileInfo').innerHTML = infoHTML;
-
-            } catch (error) {
-                showAlert('Erreur lors du chargement du profil', 'error');
-                logout();
-            }
+            
+            errorDiv.textContent = '⚠ ' + errorMessage;
+            errorDiv.style.display = 'block';
         }
+    } catch (error) {
+        errorDiv.textContent = '⚠ Erreur de connexion. Vérifiez que le serveur API est démarré.';
+        errorDiv.style.display = 'block';
+        console.error('Erreur:', error);
+    } finally {
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = 'Créer mon Compte';
+    }
+}
 
-        // Déconnexion
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-
-        function logout() {
-            authToken = null;
-            localStorage.removeItem('authToken');
-            hideAllForms();
-            authTabs.style.display = 'flex';
-            loginForm.classList.add('active');
-            loginForm.reset();
-            showAlert('Déconnexion réussie', 'info');
+function showResetPassword() {
+    const email = prompt('Entrez votre adresse email pour réinitialiser votre mot de passe :');
+    if (!email || !email.trim()) return;
+    
+    const newPassword1 = prompt('Entrez votre nouveau mot de passe :');
+    if (!newPassword1 || newPassword1.length < 8) {
+        alert('⚠ Le mot de passe doit contenir au moins 8 caractères');
+        return;
+    }
+    
+    const newPassword2 = prompt('Confirmez votre nouveau mot de passe :');
+    if (newPassword1 !== newPassword2) {
+        alert('⚠ Les mots de passe ne correspondent pas');
+        return;
+    }
+    
+    fetch(`${API_URL}/api/auth/reset-password/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            email: email.trim(),
+            new_password1: newPassword1,
+            new_password2: newPassword2
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.email) {
+            alert('✓ Votre mot de passe a été réinitialisé avec succès !');
+        } else {
+            alert('⚠ Erreur lors de la réinitialisation du mot de passe.');
         }
+    })
+    .catch(error => {
+        alert('⚠ Erreur lors de la réinitialisation du mot de passe.');
+        console.error('Erreur:', error);
+    });
+}
+</script>
 
-        // Vérifier si l'utilisateur est connecté au chargement
-        if (authToken) {
-            loadProfile();
-        }
-    </script>
 </body>
 </html>

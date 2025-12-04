@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENSTP - Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 30px 20px;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.sidebar_header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar_logo {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 5px;
+}
+
+.sidebar_logo span {
+    color: #ffb606;
+}
+
+.sidebar_subtitle {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.sidebar_menu {
+    list-style: none;
+}
+
+.menu_item {
+    margin-bottom: 8px;
+}
+
+.menu_link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.menu_link:hover, .menu_link.active {
+    background: rgba(255,182,6,0.15);
+    color: #ffb606;
+}
+
+.menu_link i {
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.sidebar_footer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+}
+
+.logout_btn {
+    width: 100%;
+    padding: 14px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.logout_btn:hover {
+    background: #ef4444;
+    color: #FFFFFF;
+}
+
+/* Main Content */
+.main_content {
+    margin-left: 280px;
+    padding: 30px;
+    min-height: 100vh;
+}
+
+/* Top Bar */
+.top_bar {
+    background: #FFFFFF;
+    padding: 20px 30px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.page_title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.user_profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 12px;
+    transition: background 0.3s;
+}
+
+.user_profile:hover {
+    background: #f8fafc;
+}
+
+.user_avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffb606 0%, #ff8f00 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.user_avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user_info {
+    text-align: right;
+}
+
+.user_name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #1e293b;
+}
+
+.user_role {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Stats Cards */
+.stats_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat_card {
+    background: #FFFFFF;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-left: 4px solid #ffb606;
+}
+
+.stat_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.stat_icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ffb606 0%, #ff8f00 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 22px;
+}
+
+.stat_label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.stat_value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+/* Profile Section */
+.profile_section {
+    background: #FFFFFF;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.section_title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section_title i {
+    color: #ffb606;
+}
+
+.profile_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.profile_item {
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 3px solid #ffb606;
+}
+
+.profile_label {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.profile_value {
+    font-size: 15px;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.profile_value a {
+    color: #ffb606;
+    text-decoration: none;
+}
+
+.profile_value a:hover {
+    text-decoration: underline;
+}
+
+/* Loading */
+.loading_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: #64748b;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #ffb606;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error Message */
+.error_box {
+    background: #fee2e2;
+    border-left: 4px solid #dc2626;
+    padding: 20px;
+    border-radius: 12px;
+    color: #dc2626;
+    margin: 20px 0;
+}
+
+/* Badge */
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge_success {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.badge_warning {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+/* Mobile Menu Toggle */
+.mobile_menu_toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    width: 45px;
+    height: 45px;
+    background: #1e293b;
+    border: none;
+    border-radius: 10px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main_content {
+        margin-left: 0;
+        padding: 80px 20px 20px;
+    }
+
+    .mobile_menu_toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .top_bar {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .stats_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile_grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .page_title {
+        font-size: 22px;
+    }
+
+    .profile_section {
+        padding: 25px 20px;
+    }
+
+    .stat_card {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile Menu Toggle -->
+<button class="mobile_menu_toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar_header">
+        <div class="sidebar_logo">Memo<span>Cloud</span></div>
+        <div class="sidebar_subtitle">Portail Universitaire</div>
+    </div>
+
+    <ul class="sidebar_menu">
+        <li class="menu_item">
+            <a href="#" class="menu_link active">
+                <i class="fas fa-th-large"></i>
+                <span>Tableau de bord</span>
+            </a>
+        </li>
+        <li class="menu_item">
+            <a href="#" class="menu_link">
+                <i class="fas fa-book"></i>
+                <span>Mes Mémoires</span>
+            </a>
+        </li>
+        <li class="menu_item">
+            <a href="#" class="menu_link">
+                <i class="fas fa-search"></i>
+                <span>Rechercher</span>
+            </a>
+        </li>
+        <li class="menu_item">
+            <a href="#" class="menu_link">
+                <i class="fas fa-upload"></i>
+                <span>Déposer un Mémoire</span>
+            </a>
+        </li>
+        <li class="menu_item">
+            <a href="#" class="menu_link">
+                <i class="fas fa-bookmark"></i>
+                <span>Favoris</span>
+            </a>
+        </li>
+        <li class="menu_item">
+            <a href="#" class="menu_link">
+                <i class="fas fa-user"></i>
+                <span>Mon Profil</span>
+            </a>
+        </li>
+        <li class="menu_item">
+            <a href="#" class="menu_link">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar_footer">
+        <button class="logout_btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            Déconnexion
+        </button>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main_content">
+    <!-- Top Bar -->
+    <div class="top_bar">
+        <h1 class="page_title">Tableau de bord</h1>
+        <div class="user_profile" id="userProfile">
+            <div class="user_avatar" id="userAvatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user_info">
+                <div class="user_name" id="userName">Chargement...</div>
+                <div class="user_role" id="userRole">-</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading_container">
+        <div class="spinner"></div>
+        <p>Chargement de votre profil...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="error_box" style="display: none;">
+        <strong>⚠ Erreur</strong>
+        <p id="errorMessage"></p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div id="statsGrid" class="stats_grid" style="display: none;">
+        <div class="stat_card">
+            <div class="stat_header">
+                <div class="stat_icon">
+                    <i class="fas fa-book"></i>
+                </div>
+            </div>
+            <div class="stat_label">Mémoires Consultés</div>
+            <div class="stat_value">24</div>
+        </div>
+
+        <div class="stat_card">
+            <div class="stat_header">
+                <div class="stat_icon">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+            </div>
+            <div class="stat_label">Favoris</div>
+            <div class="stat_value">12</div>
+        </div>
+
+        <div class="stat_card">
+            <div class="stat_header">
+                <div class="stat_icon">
+                    <i class="fas fa-download"></i>
+                </div>
+            </div>
+            <div class="stat_label">Téléchargements</div>
+            <div class="stat_value">8</div>
+        </div>
+
+        <div class="stat_card">
+            <div class="stat_header">
+                <div class="stat_icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+            </div>
+            <div class="stat_label">Mes Dépôts</div>
+            <div class="stat_value">3</div>
+        </div>
+    </div>
+
+    <!-- Profile Section -->
+    <div id="profileSection" class="profile_section" style="display: none;">
+        <h2 class="section_title">
+            <i class="fas fa-user-circle"></i>
+            Informations du Profil
+        </h2>
+        <div class="profile_grid" id="profileGrid">
+            <!-- Profile items will be dynamically inserted here -->
+        </div>
+    </div>
+</main>
+
+<script>
+const API_URL = 'http://127.0.0.1:8000';
+const UNIV_SLUG = 'ecole-des-travaux';
+
+let currentUser = null;
+
+// Check authentication
+function checkAuth() {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        window.location.href = 'auth.html';
+        return false;
+    }
+    return token;
+}
+
+// Get user ID from token (basic JWT decode)
+function getUserIdFromToken(token) {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.user_id || payload.id || null;
+    } catch (e) {
+        console.error('Error decoding token:', e);
+        return null;
+    }
+}
+
+// Load user profile
+async function loadUserProfile() {
+    const token = checkAuth();
+    if (!token) return;
+
+    const userId = getUserIdFromToken(token);
+    if (!userId) {
+        showError('Impossible de récupérer l\'ID utilisateur');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/users/profile/${userId}/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            currentUser = await response.json();
+            displayUserProfile(currentUser);
+            hideLoading();
+        } else if (response.status === 401) {
+            localStorage.removeItem('authToken');
+            window.location.href = 'auth.html';
+        } else {
+            showError('Erreur lors du chargement du profil');
+        }
+    } catch (error) {
+        console.error('Error loading profile:', error);
+        showError('Erreur de connexion au serveur. Vérifiez que l\'API est démarrée.');
+    }
+}
+
+// Display user profile
+function displayUserProfile(user) {
+    // Update top bar
+    document.getElementById('userName').textContent = user.full_name || `${user.prenom} ${user.nom}`;
+    document.getElementById('userRole').textContent = user.role_display || user.type;
+
+    // Update avatar
+    const avatarEl = document.getElementById('userAvatar');
+    if (user.photo_profil) {
+        avatarEl.innerHTML = `<img src="${user.photo_profil}" alt="${user.full_name}">`;
+    } else {
+        const initials = `${user.prenom[0]}${user.nom[0]}`.toUpperCase();
+        avatarEl.textContent = initials;
+    }
+
+    // Show stats
+    document.getElementById('statsGrid').style.display = 'grid';
+
+    // Display profile details
+    const profileGrid = document.getElementById('profileGrid');
+    profileGrid.innerHTML = `
+        <div class="profile_item">
+            <div class="profile_label">Nom Complet</div>
+            <div class="profile_value">${user.full_name || `${user.prenom} ${user.nom}`}</div>
+        </div>
+        <div class="profile_item">
+            <div class="profile_label">Email</div>
+            <div class="profile_value">${user.email}</div>
+        </div>
+        <div class="profile_item">
+            <div class="profile_label">Sexe</div>
+            <div class="profile_value">${user.sexe === 'M' ? 'Masculin' : user.sexe === 'F' ? 'Féminin' : 'Autre'}</div>
+        </div>
+        <div class="profile_item">
+            <div class="profile_label">Rôle</div>
+            <div class="profile_value">
+                <span class="badge ${user.type === 'admin' || user.type === 'superadmin' ? 'badge_warning' : 'badge_success'}">
+                    ${user.role_display || user.type}
+                </span>
+            </div>
+        </div>
+        <div class="profile_item">
+            <div class="profile_label">Statut du Compte</div>
+            <div class="profile_value">
+                <span class="badge ${user.is_active ? 'badge_success' : 'badge_warning'}">
+                    ${user.is_active ? 'Actif' : 'Inactif'}
+                </span>
+            </div>
+        </div>
+        <div class="profile_item">
+            <div class="profile_label">Date d'inscription</div>
+            <div class="profile_value">${new Date(user.date_joined).toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })}</div>
+        </div>
+        ${user.realisation_linkedin ? `
+        <div class="profile_item">
+            <div class="profile_label">LinkedIn</div>
+            <div class="profile_value">
+                <a href="${user.realisation_linkedin}" target="_blank">
+                    <i class="fab fa-linkedin"></i> Voir le profil
+                </a>
+            </div>
+        </div>
+        ` : ''}
+    `;
+
+    document.getElementById('profileSection').style.display = 'block';
+}
+
+// Hide loading
+function hideLoading() {
+    document.getElementById('loadingState').style.display = 'none';
+}
+
+// Show error
+function showError(message) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+    document.getElementById('errorMessage').textContent = message;
+}
+
+// Toggle sidebar
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
+
+// Logout
+function logout() {
+    if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = 'auth.html';
+    }
+}
+
+// Close sidebar on mobile when clicking outside
+document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.querySelector('.mobile_menu_toggle');
+    
+    if (window.innerWidth <= 992 && 
+        sidebar.classList.contains('active') && 
+        !sidebar.contains(e.target) && 
+        !toggle.contains(e.target)) {
+        sidebar.classList.remove('active');
+    }
+});
+
+// Load profile on page load
+document.addEventListener('DOMContentLoaded', loadUserProfile);
+</script>
+
+</body>
+</html>
