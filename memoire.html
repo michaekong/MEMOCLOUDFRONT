@@ -1561,32 +1561,962 @@ body {
 .star.selected,
 .star.user-rated{            /* couleur persistante */
     color:#ffb606 !important;
-}</style>
+}
+/* ===== MINI STATS HERO ===== */
+.hero_stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+  margin-top:2rem;
+  max-width:600px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.hero_stat_card{
+  background:rgba(26,26,26,.75);
+  border:1px solid rgba(255,182,6,.35);
+  border-radius:12px;
+  padding:.9rem .5rem;
+  text-align:center;
+  color:#ffb606;
+  backdrop-filter:blur(4px);
+  transition:transform .3s,background .3s;
+}
+.hero_stat_card:hover{
+  transform:translateY(-3px);
+  background:rgba(26,26,26,.9);
+}
+.hero_stat_icon{
+  font-size:1.4rem;
+  margin-bottom:.25rem;
+}
+.hero_stat_number{
+  font-size:1.3rem;
+  font-weight:700;
+  line-height:1;
+}
+.hero_stat_label{
+  font-size:.65rem;
+  opacity:.85;
+  margin-top:.15rem;
+}
+
+/* mobile first : on masque 2 stats, puis 3, puis tout */
+@media (max-width:768px){
+  .hero_stats{grid-template-columns:repeat(2,1fr);}
+  .hero_stat_card:nth-child(3),
+  .hero_stat_card:nth-child(4){display:none;}
+}
+@media (max-width:576px){
+  .hero_stats{grid-template-columns:1fr;}
+  .hero_stat_card:nth-child(2){display:none;}
+}
+@media (max-width:400px){
+  .hero_stats{display:none;}   /* très petit écran : hero ultra-clean */
+}
+/* ===== HERO COUNTER ===== */
+.hero_counter_wrapper{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.2rem;
+  margin-top:2.5rem;
+  perspective:1000px;        /* 3-D tilt */
+}
+.hero_counter_card{
+  position:relative;
+  background:linear-gradient(145deg,#1f1f1f 0%,#141414 100%);
+  border:1px solid rgba(255,182,6,.25);
+  border-radius:16px;
+  padding:1.2rem .6rem;
+  text-align:center;
+  color:#ffb606;
+  overflow:hidden;
+  transform-style:preserve-3d;
+  transition:transform .3s,box-shadow .3s;
+  will-change:transform;
+}
+.hero_counter_card::before{   /* reflet doré */
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(255,182,6,.15),transparent 70%);
+  opacity:0;
+  transition:opacity .3s;
+}
+.hero_counter_card:hover{
+  transform:rotateX(5deg) rotateY(-3deg) scale(1.03);
+  box-shadow:0 15px 30px rgba(255,182,6,.25);
+}
+.hero_counter_card:hover::before{opacity:1;}
+
+.hero_counter_icon{
+  font-size:2rem;
+  margin-bottom:.4rem;
+  display:inline-block;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+}
+
+.hero_counter_number{
+  font-size:2.2rem;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-1px;
+  font-variant-numeric:tabular-nums;
+  min-height:2.2rem;          /* évite saut quand chiffre change */
+}
+.hero_counter_label{
+  font-size:.75rem;
+  opacity:.85;
+  margin-top:.2rem;
+}
+
+/* message 0 mémoire */
+.hero_zero_msg{
+  grid-column:1/-1;
+  font-size:1.1rem;
+  opacity:.8;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:992px){
+  .hero_counter_wrapper{grid-template-columns:repeat(2,1fr);}
+  .hero_counter_card:nth-child(3),
+  .hero_counter_card:nth-child(4){display:none;}
+}
+@media (max-width:576px){
+  .hero_counter_wrapper{grid-template-columns:1fr;}
+  .hero_counter_card:nth-child(2){display:none;}
+}
+@media (max-width:400px){
+  .hero_counter_wrapper{display:none;}
+}
+/* ===== HERO BADGES ===== */
+.hero_badges{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:.5rem;
+  margin-top:1.2rem;
+  max-width:340px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.hero_badge{
+  background:rgba(0,0,0,.45);
+  border:1px solid rgba(255,182,6,.35);
+  border-radius:8px;
+  padding:.4rem .3rem;
+  text-align:center;
+  color:#ffb606;
+  font-size:.7rem;
+  line-height:1;
+  backdrop-filter:blur(3px);
+  transition:background .2s;
+}
+.hero_badge_icon{
+  font-size:1rem;
+  margin-bottom:.15rem;
+}
+.hero_badge_number{
+  font-size:1.05rem;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+  min-height:1.05rem;
+}
+.hero_badge_label{
+  font-size:.55rem;
+  opacity:.8;
+  margin-top:.1rem;
+}
+
+/* MOBILE FIRST : on n'affiche que 2 badges */
+@media (max-width:768px){
+  .hero_badges{grid-template-columns:1fr 1fr;}
+  .hero_badge:nth-child(3),
+  .hero_badge:nth-child(4){display:none;}
+}
+/* très petit : 1 seul badge */
+@media (max-width:400px){
+  .hero_badges{grid-template-columns:1fr;}
+  .hero_badge:nth-child(2){display:none;}
+}
+/* grand écran : on remet 4 */
+@media (min-width:769px){
+  .hero_badges{grid-template-columns:repeat(4,1fr);gap:.6rem;}
+  .hero_badge{
+    padding:.5rem .4rem;
+    font-size:.75rem;
+  }
+  .hero_badge_number{font-size:1.2rem;}
+}
+.hero_badge_number.final{
+  animation:flashGold .4s;
+}
+@keyframes flashGold{
+  0%,100%{color:#ffb606;}
+  50%{color:#fff600;text-shadow:0 0 8px #ffb606;}
+}
+/* ANNULATION de la règle cachante */
+@media (max-width:768px){
+  .hero_badges{grid-template-columns:repeat(4,1fr);}
+  .hero_badge:nth-child(3),
+  .hero_badge:nth-child(4){display:block !important;}
+}
+/* très petit écran : on met 2 colonnes au lieu de 4 */
+@media (max-width:400px){
+  .hero_badges{grid-template-columns:1fr 1fr;}
+}
+/* compact mobile */
+@media (max-width:576px){
+  .hero_badge{
+    padding:.35rem .25rem;
+    font-size:.6rem;
+  }
+  .hero_badge_icon{font-size:.9rem;}
+  .hero_badge_number{font-size:.95rem;}
+  .hero_badge_label{font-size:.5rem;}
+}
+/* ===== MEMO HEADER ===== */
+.memo_header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#1a1a1a;
+  border-bottom:1px solid rgba(255,182,6,.25);
+}
+.memo_header_inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.75rem 1.25rem;
+  max-width:1240px;
+  margin:auto;
+}
+.memo_logo{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  color:#fff;
+  font-weight:600;
+  font-size:1.1rem;
+  text-decoration:none;
+}
+.memo_logo img{height:28px;}
+.memo_logo .gold{color:#ffb606;}
+
+.memo_nav{
+  display:flex;
+  gap:1.5rem;
+}
+.memo_nav a{
+  color:#ccc;
+  text-decoration:none;
+  font-size:.9rem;
+  transition:color .2s;
+  position:relative;
+}
+.memo_nav a::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;left:0;
+  width:0;height:2px;
+  background:#ffb606;
+  transition:width .3s;
+}
+.memo_nav a:hover,
+.memo_nav a.active{color:#ffb606;}
+.memo_nav a:hover::after,
+.memo_nav a.active::after{width:100%;}
+
+.memo_actions{display:flex;gap:.75rem;}
+.memo_btn{
+  background:#ffb606;
+  color:#000;
+  border:none;
+  border-radius:20px;
+  padding:.4rem 1.1rem;
+  font-size:.85rem;
+  cursor:pointer;
+  transition:background .2s;
+}
+.memo_btn:hover{background:#ffca30;}
+.memo_btn--outline{
+  background:transparent;
+  color:#ffb606;
+  border:1px solid #ffb606;
+}
+.memo_btn--outline:hover{background:rgba(255,182,6,.1);}
+
+.memo_burger{
+  display:none;
+  flex-direction:column;
+  gap:4px;
+  background:none;border:none;
+  cursor:pointer;
+}
+.memo_burger span{
+  width:22px;height:3px;
+  background:#ffb606;
+  border-radius:2px;
+  transition:transform .3s;
+}
+
+/* ===== SIDEBAR MOBILE ===== */
+.memo_sidebar{
+  position:fixed;
+  top:0;right:-260px;
+  width:260px;height:100vh;
+  background:#141414;
+  border-left:1px solid rgba(255,182,6,.2);
+  transition:right .35s ease;
+  z-index:1100;
+}
+.memo_sidebar.open{right:0;}
+.memo_sidebar_head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:1rem;
+  color:#ffb606;
+  font-weight:600;
+}
+.memo_close{
+  background:none;border:none;
+  color:#ffb606;
+  font-size:1.4rem;
+  cursor:pointer;
+}
+.memo_sidebar_nav{
+  display:flex;
+  flex-direction:column;
+  padding:0 1rem 1rem;
+}
+.memo_sidebar_nav a{
+  color:#ccc;
+  text-decoration:none;
+  padding:.7rem 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  transition:color .2s;
+}
+.memo_sidebar_nav a:hover{color:#ffb606;}
+.memo_sidebar_nav .memo_btn--full{
+  margin-top:.5rem;
+  text-align:center;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:768px){
+  .memo_nav,.memo_actions{display:none;}
+  .memo_burger{display:flex;}
+}
+/* ===== HEADER PLUS HAUT ===== */
+.memo_header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#1a1a1a;
+  border-bottom:1px solid rgba(255,182,6,.25);
+  /* on ajoute un peu de hauteur */
+  padding-block:1rem;          /* ← 16 px de plus */
+}
+.memo_header_inner{
+  padding:1rem 1.25rem;        /* ← un poil plus respirant */
+  max-width:1240px;
+  margin:auto;
+}
+.memo_logo{font-size:1.25rem;}/* logo un peu plus gros */
+.memo_logo img{height:32px;}  /* ← +4 px */
+.memo_nav a{font-size:.95rem;}
+.memo_btn{padding:.5rem 1.2rem;font-size:.9rem;}
+.memo_header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#1a1a1a;
+  border-bottom:1px solid rgba(255,182,6,.25);
+  /* on augmente la hauteur */
+  padding-block:1.5rem;          /* ← 24 px de plus */
+}
+.memo_header_inner{
+  padding:1.25rem 1.5rem;
+  max-width:1240px;
+  margin:auto;
+}
+/* on grossit un peu le logo et la nav */
+.memo_logo{font-size:1.35rem;}
+.memo_logo img{height:36px;}   /* +4 px */
+.memo_nav a{font-size:1rem;}
+.memo_btn{padding:.6rem 1.3rem;font-size:.95rem;}
+.memo_header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#1a1a1a;
+  border-bottom:1px solid rgba(255,182,6,.25);
+  /* on augmente la hauteur */
+  padding-block:1.5rem;          /* ← 24 px de plus */
+}
+.memo_header_inner{
+  padding:1.25rem 1.5rem;
+  max-width:1240px;
+  margin:auto;
+}
+/* on grossit un peu le logo et la nav */
+.memo_logo{font-size:1.35rem;}
+.memo_logo img{height:36px;}   /* +4 px */
+.memo_nav a{font-size:1rem;}
+.memo_btn{padding:.6rem 1.3rem;font-size:.95rem;}
+
+/* on remonte légèrement le bloc pour équilibrer visuellement */
+.hero_content{
+  transform:translateY(-10px); /* petit offset esthétique */
+}.memo_header{
+  height:104px;        /* 104 px total */
+  display:flex;
+  align-items:center;
+}
+.hero_action_btn i{margin-right:.35rem;}
+#btn_toggle_view i{margin-right:.35rem;}
+/* ===== HERO ACTIONS BAR ===== */
+.hero_actions_bar{
+  display:flex;
+  gap:.75rem;
+  margin-top:1.5rem;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.hero_action_btn{
+  background:rgba(0,0,0,.45);
+  border:1px solid rgba(255,182,6,.35);
+  color:#ffb606;
+  border-radius:20px;
+  padding:.45rem .9rem;
+  font-size:.75rem;
+  cursor:pointer;
+  transition:background .2s,transform .2s;
+  backdrop-filter:blur(3px);
+}
+.hero_action_btn:hover{
+  background:rgba(255,182,6,.15);
+  transform:translateY(-2px);
+}
+.hero_action_btn i{margin-right:.35rem;}
+
+/* mobile : 2 boutons par ligne */
+@media (max-width:576px){
+  .hero_actions_bar{gap:.5rem;}
+  .hero_action_btn{font-size:.7rem;padding:.4rem .7rem;}
+}
+/* très petit : 1 bouton par ligne */
+@media (max-width:400px){
+  .hero_action_btn{width:100%;max-width:200px;margin:auto;}
+}
+/* RESET TOTAL */
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+html,body{
+  margin:0;
+  padding:0;
+  background:#1a1a1a;   /* même couleur que header → pas de blanc */
+}
+
+/* HEADER : ZÉRO MARGE */
+.memo_header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#1a1a1a;
+  border-bottom:1px solid rgba(255,182,6,.25);
+  padding-block:1.5rem;
+  margin-bottom:0;          /* ← supprime TOUT espace externe */
+}
+
+/* HERO : ZÉRO MARGE + collé dessous */
+.hero_fixed{
+  padding-top:104px;        /* ← hauteur mesurée + 4 px marge visuelle */
+  margin-top:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:50vh;
+  background:#1a1a1a;
+}
+/* ===== SIDEBAR NOIRE & OR ===== */
+.memo_sidebar{
+  position:fixed;
+  top:0;right:-280px;
+  width:280px;height:100vh;
+  background:#faf8f8;
+  border-left:1px solid rgba(255,182,6,.25);
+  transition:right .35s ease;
+  z-index:1100;
+  display:flex;
+  flex-direction:column;
+}
+.memo_sidebar.open{right:0;}
+
+.memo_sidebar_head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:1rem 1.25rem;
+  color:#ffb606;
+  font-weight:600;
+  font-size:1.1rem;
+}
+.memo_close{
+  background:none;border:none;
+  color:#ffb606;
+  font-size:1.6rem;
+  cursor:pointer;
+  transition:transform .2s;
+}
+.memo_close:hover{transform:rotate(90deg);}
+
+/* liste existante */
+.menu_list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  flex:1;
+  overflow-y:auto;
+}
+.menu_item{
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.menu_item a{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  color:#ccc;
+  text-decoration:none;
+  padding:.9rem 1.25rem;
+  font-size:.9rem;
+  transition:color .2s, background .2s;
+  position:relative;
+}
+.menu_item a::before{   /* icône automatique */
+  font-family:"Font Awesome 5 Free";
+  font-weight:900;
+  width:20px;
+  text-align:center;
+  color:#ffb606;
+}
+/* icônes par lien */
+.menu_item:nth-child(1) a::before{content:"\f015";}   /* home */
+.menu_item:nth-child(2) a::before{content:"\f129";} /* about */
+.menu_item:nth-child(3) a::before{content:"\f19d";} /* courses */
+.menu_item:nth-child(4) a::before{content:"\f12e";} /* elements */
+.menu_item:nth-child(5) a::before{content:"\f1ea";} /* news */
+.menu_item:nth-child(6) a::before{content:"\f2bb";} /* contact */
+.menu_item:nth-child(7) a::before{content:"\f234";} /* register */
+.menu_item:nth-child(8) a::before{content:"\f15c";} /* mémoire */
+
+.menu_item a:hover{
+  color:#ffb606;
+  background:rgba(255,182,6,.08);
+}
+
+/* boutons en bas */
+.memo_sidebar_nav .memo_btn--full{
+  margin:1rem 1.25rem;
+  text-align:center;
+}
+
+.btn_reset{
+  background:transparent;
+  color:#ffb606;
+  border:1px solid rgba(255,182,6,.4);
+}
+.btn_reset:hover{background:rgba(255,182,6,.08);}
+
+/* ===== GRILLE À CÔTÉ ===== */
+.memoires_container{
+  margin-left:260px;          /* espace = largeur du panneau */
+  padding:1.5rem;
+  min-height:100vh;
+
+
+
+  /* grille prend toute la largeur */
+  .memoires_container{
+    margin-left:0;
+    padding:1rem;
+  }
+}
+
+
+:root{
+  --bg-dark:#1E1E1E;        /* presque noir, plus doux */
+  --bg-card:#252525;        /* cards / inputs */
+  --gold-mat:#ffb606;       /* doré mat */
+  --gold-light:#ffb606;    /* doré plus clair (hover) */
+  --text:#E0E0E0;           /* blanc cassé */
+  --text-dim:#B0B0B0;       /* gris clair */
+}
+/* ===== FONDS BLANCS / GRIS CLAIRS ===== */
+.memo_header{
+  background:#fefefe;
+  border-bottom:1px solid #e5e5e5;
+  color:#333;
+}
+.hero_fixed{
+  background:#fefefe;
+  color:#333;
+}
+
+.memo_sidebar{
+  background:#f5f5f5;
+  border-left:1px solid #e5e5e5;
+}
+html,body{
+  background:#ffffff;
+  color:#333;
+}
+.hero_action_btn,
+
+.hero_action_btn:hover,
+.btn_filter:hover{
+  background:#a7956d;
+  color:#fff;
+  border-color:#ffb606;
+}
+.memo_nav a{color:#555;}
+.memo_nav a:hover,
+.memo_nav a.active{color:#ffb606;}
+
+.menu_item a{color:#666;}
+.menu_item a:hover{color:#ffb606;}
+
+
+/* ===== HEADER CLAIR & AÉRÉ ===== */
+.memo_header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#fefefe;        /* blanc cassé */
+  border-bottom:1px solid #e5e5e5;
+  padding:.75rem 0;          /* un peu d’air */
+}
+.memo_header_inner{
+  display:flex;
+  align-items:center;
+  gap:2rem;                  /* ESPACE entre blocs */
+  max-width:1240px;
+  margin:auto;
+  padding:0 1.5rem;
+}
+
+/* Logo */
+.memo_logo{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  color:#333;               /* NOIR, pas blanc */
+  font-weight:600;
+  font-size:1.2rem;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.memo_logo img{height:34px;}
+.memo_logo .gold{color:#ffb606;}  /* doré mat */
+
+/* Navigation */
+.memo_nav{
+  display:flex;
+  gap:1.75rem;
+  margin-left:auto;         /* pousse tout à droite */
+}
+.memo_nav a{
+  color:#555;               /* gris foncé, pas blanc */
+  text-decoration:none;
+  font-size:.9rem;
+  position:relative;
+  transition:color .2s;
+}
+.memo_nav a::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;left:0;
+  width:0;height:2px;
+  background:#ffb606;
+  transition:width .3s;
+}
+.memo_nav a:hover,
+.memo_nav a.active{color:#ffb606;}
+.memo_nav a:hover::after,
+.memo_nav a.active::after{width:100%;}
+
+/* Boutons */
+.memo_actions{display:flex;gap:1rem;}
+.memo_btn{
+  background:#ffb606;
+  color:#fff;
+  border:none;
+  border-radius:20px;
+  padding:.5rem 1.1rem;
+  font-size:.85rem;
+  cursor:pointer;
+  transition:background .2s;
+}
+.memo_btn:hover{background:#ffb606;}
+.memo_btn--outline{
+  background:transparent;
+  color:#ffb606;
+  border:1px solid#ffb606;
+}
+.memo_btn--outline:hover{background:rgba(200,160,80,.08);}
+
+/* Burger */
+.memo_burger{
+  display:none;
+  flex-direction:column;
+  gap:4px;
+  background:none;border:none;
+  cursor:pointer;
+}
+.memo_burger span{
+  width:22px;height:3px;
+  background:#ffb606;
+  border-radius:2px;
+  transition:transform .3s;
+}
+.memo_burger:hover span{transform:scaleX(1.1);}
+@media (max-width:992px){
+  .memo_nav,
+  .memo_actions{display:none;}
+  .memo_burger{display:flex;}
+}
+.chat_msg_author{
+  color:inherit;
+  text-decoration:none;
+  font-weight:600;
+}
+.chat_msg_author:hover{
+  text-decoration:underline;
+  color:#c8a050;
+}
+/* ===== PASTILLE VERTE ===== */
+.send_ok{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:#28a745;
+  color:#fff;
+  border-radius:12px;
+  padding:.25rem .5rem;
+  font-size:.65rem;
+  z-index:10;
+  display:none;
+}
+.memoire_card{
+  position:relative;   /* ← pour que la pastille soit « collée » */
+  background:#ffffff;
+  border:1px solid #e5e5e5;
+  border-radius:12px;
+  overflow:hidden;     /* évite que la pastille sorte */
+}
+/* étoiles = note moyenne */
+.star.selected{color:#ffb606;}
+.star.user-rated{color:#ffca30;}   /* persistant = note user */
+/* ===== CARTE IMMERSIVE ===== */
+.memoire_card{
+  position:relative;
+  background:#ffffff;
+  border:1px solid #e5e5e5;
+  border-radius:12px;
+  overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+}
+.memoire_card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 30px rgba(0,0,0,.1);
+  border-color:#ffb606;
+}
+
+.memoire_header{
+  position:relative;
+  height:180px;
+  overflow:hidden;
+  border-radius:12px 12px 0 0;
+}
+.memoire_cover{
+  width:100%;height:100%;
+  object-fit:cover;
+  transition:transform .4s;
+}
+.memoire_card:hover .memoire_cover{transform:scale(1.05);}
+
+.memoire_header_overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,.5) 100%);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:1rem;
+  color:#fff;
+}
+
+.memoire_title{
+  font-size:1.1rem;
+  font-weight:700;
+  margin-bottom:.5rem;
+  line-height:1.3;
+}
+
+.memoire_meta{
+  display:flex;
+  gap:1rem;
+  font-size:.8rem;
+  align-items:center;
+}
+.auteur_thumb{
+  width:24px;height:24px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-right:6px;
+}
+.auteur_link{
+  color:#fff;
+  text-decoration:none;
+}
+.auteur_link:hover{text-decoration:underline;}
+
+/* ===== BADGES COULEURS ===== */
+.memoire_badges{
+  display:flex;
+  gap:.5rem;
+  margin-top:.75rem;
+}
+.quality_badge{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:.7rem;
+  font-weight:600;
+}
+.quality_badge.gold{background:#ffb606;color:#000;}
+.quality_badge.silver{background:#c0c0c0;color:#000;}
+.quality_badge.bronze{background:#cd7f32;color:#fff;}
+
+.stat_badge{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 8px;
+  border-radius:12px;
+  background:#f5f5f5;
+  color:#666;
+  font-size:.7rem;
+}
+.stat_badge i{color:#c8a050;}
+
+/* ===== ACTIONS ===== */
+.memoire_actions{
+  display:flex;
+  gap:.5rem;
+  margin-top:1rem;
+}
+.action_btn{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:.6rem;
+  background:#f5f5f5;
+  border:1px solid #e0e0e0;
+  border-radius:8px;
+  font-size:.75rem;
+  color:#666;
+  cursor:pointer;
+  transition:background .2s,transform .2s;
+}
+.action_btn:hover{
+  background:#c8a050;
+  color:#fff;
+  border-color:#c8a050;
+  transform:translateY(-2px);
+}
+.action_btn.liked{
+  border-color:#ff4757;
+  color:#ff4757;
+  background:rgba(255,71,87,.05);
+}
+.chat_pastille{
+  position:absolute;
+  top:-6px;right:-6px;
+  background:#ff4757;
+  color:#fff;
+  font-size:.65rem;
+  border-radius:50%;
+  width:18px;height:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+</style>
 </head>
 <body>
 
 
  <div id="chatPortal"></div>
 <!-- Header -->
-<header class="header">
-    <div class="header_content">
-        <div class="logo_container">
-            <div style="display: flex; align-items: center;">
-                <span class="logo_text">📚 ENSTP</span>
-            </div>
-        </div>
-        <nav class="main_nav">
-            <a href="index.html">Accueil</a>
-            <a href="#">À propos</a>
-            <a href="courses.html">Formations</a>
-            <a href="#">Bibliothèque</a>
-            <a href="contact.html">Contact</a>
-        </nav>
+<header class="memo_header">
+  <div class="memo_header_inner">
+    <!-- Logo -->
+    <a href="./" class="memo_logo">
+      <img src="images/logo.png" alt="ENSTP">
+      <span>Bibliothèque <span class="gold">des Mémoires</span></span>
+    </a>
+
+    <!-- Navigation desktop -->
+    <nav class="memo_nav">
+     <li class="menu_item menu_mm"><a href="#">About us</a></li>
+					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
+					<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
+					<li class="menu_item menu_mm"><a href="news.html">News</a></li>
+					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
+					<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
+					
+    </nav>
+
+    <!-- Boutons droite -->
+    <div class="memo_actions">
+      <button class="memo_btn memo_btn--outline" id="loginBtn">Connexion</button>
+      <button class="memo_btn" id="publishBtn">Publier</button>
     </div>
-    <div class="header_side">
-        <i class="fas fa-phone"></i>
-        <span>(237) 222 23 09 44</span>
+
+    <!-- Burger mobile -->
+    <button class="memo_burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Menu mobile (slide from right) -->
+  <aside class="memo_sidebar" id="sidebar">
+    <div class="memo_sidebar_head">
+      <span>Menu</span>
+      <button class="memo_close">&times;</button>
     </div>
+    <nav class="memo_sidebar_nav">
+     <li class="menu_item menu_mm"><a href="#">Home</a></li>
+					<li class="menu_item menu_mm"><a href="#">About us</a></li>
+					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
+					<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
+					<li class="menu_item menu_mm"><a href="news.html">News</a></li>
+					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
+					<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
+					
+    </nav>
+  </aside>
 </header>
 <!-- Hero Section -->
 <section class="hero_section hero_fixed">
@@ -1599,79 +2529,45 @@ body {
 
   <div class="hero_overlay"></div>
 
-  <div class="container hero_content">
-    <h1><span>Bibliothèque</span> des Mémoires</h1>
-    <p>Explorez et téléchargez les mémoires de fin d'études de l'ENSTP</p>
+   <div class="container hero_content">
+     <h1><span>Bibliothèque</span> des Mémoires</h1>
+     <p>Explorez et téléchargez les mémoires de fin d'études de l'ENSTP</p>
+
+     <!-- BADGES STATS -->
+     <div class="hero_badges" id="heroBadges"></div>
+     <div class="hero_actions_bar">
+  <button class="hero_action_btn" onclick="openMesStats()">
+    <i class="fas fa-chart-line"></i> Mes Stats
+  </button>
+  <button class="hero_action_btn" onclick="openMesTelechargements()">
+    <i class="fas fa-download"></i> Mes Téléchargements
+  </button>
+  <button class="hero_action_btn" onclick="openMesLikes()">
+    <i class="fas fa-heart"></i> Mes Likes
+  </button>
+  <button class="hero_action_btn" onclick="openMesCommentaires()">
+    <i class="fas fa-comment"></i> Mes Commentaires
+  </button>
+
+  <!-- BOUTON VUE COMPACTE (même design) -->
+  <button class="hero_action_btn" id="btn_toggle_view" onclick="toggleView()" title="Vue compacte">
+    <i class="fas fa-list"></i> Vue
+  </button>
+</div>
+  </div>
   </div>
 </section>
-<!-- Stats Widgets -->
-<section class="stats_widgets">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat_card">
-                    <div class="stat_icon">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <div class="stat_number" id="total_memoires">-</div>
-                    <div class="stat_label">Mémoires</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat_card">
-                    <div class="stat_icon">
-                        <i class="fas fa-download"></i>
-                    </div>
-                    <div class="stat_number" id="total_downloads">-</div>
-                    <div class="stat_label">Téléchargements</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat_card">
-                    <div class="stat_icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <div class="stat_number" id="total_likes">-</div>
-                    <div class="stat_label">Likes</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat_card">
-                    <div class="stat_icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="stat_number" id="avg_rating">-</div>
-                    <div class="stat_label">Note Moyenne</div>
-                </div>
-            </div>
+
         </div>
     </div>
 </section>
 
-<!-- User Actions Bar -->
-<div class="user_actions_bar">
-    <div class="container">
-        <div class="user_actions">
-            <button class="user_action_btn" onclick="openMesStats()">
-                <i class="fas fa-chart-line"></i> Mes Stats
-            </button>
-            <button class="user_action_btn" onclick="openMesTelechargements()">
-                <i class="fas fa-download"></i> Mes Téléchargements
-            </button>
-            <button class="user_action_btn" onclick="openMesLikes()">
-                <i class="fas fa-heart"></i> Mes Likes
-            </button>
-            <button class="user_action_btn" onclick="openMesCommentaires()">
-                <i class="fas fa-comment"></i> Mes Commentaires
-            </button>
-        </div>
-    </div>
-</div>
 
 <!-- Container principal -->
 <div class="container">
     <div class="row">
         <!-- Filtres à gauche (optionnel mais recommandé) -->
+<!-- Filtres à gauche (optionnel mais recommandé) -->
         <div class="col-lg-3">
             <div class="filters_section">
                 <h3><i class="fas fa-filter"></i> Filtres</h3>
@@ -1709,6 +2605,8 @@ body {
                 </button>
             </div>
         </div>
+
+
 
         <!-- Grille des mémoires -->
         <div class="col-lg-9">
@@ -1759,6 +2657,43 @@ function switchImg(){
 }
 switchImg();
 setInterval(switchImg,5000);
+const burger = document.querySelector('.memo_burger');
+const sidebar = document.getElementById('sidebar');
+const closeBtn = document.querySelector('.memo_close');
+
+burger.addEventListener('click', () => sidebar.classList.add('open'));
+closeBtn.addEventListener('click', () => sidebar.classList.remove('open'));
+
+/* ferme aussi si clic outside */
+document.addEventListener('click', e => {
+  if (!sidebar.contains(e.target) && !burger.contains(e.target)) {
+    sidebar.classList.remove('open');
+  }
+});
+
+/* Ouverture / fermeture */
+const filtersAside = document.getElementById('filtersAside');
+const filtersClose = document.querySelector('.filters_close');
+
+filterBtn.addEventListener('click', () => filtersAside.classList.add('open'));
+filtersClose.addEventListener('click', () => filtersAside.classList.remove('open'));
+
+/* clic outside */
+document.addEventListener('click', e => {
+  if (!filtersAside.contains(e.target) && !filterBtn.contains(e.target))
+    filtersAside.classList.remove('open');
+});
+/* ESC */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') filtersAside.classList.remove('open');
+});
+function fullMediaUrl(path) {
+  if (!path) return 'https://via.placeholder.com/80'; // fallback
+  if (path.startsWith('http')) return path;           // déjà absolue
+  // on enlève le « /api » de baseAPI pour obtenir le domaine pur
+  const domain = baseAPI.replace(/\/api\/?$/, '');
+  return domain + path;
+}
 </script>
 <script>
 /* =========================================================
@@ -1766,7 +2701,7 @@ setInterval(switchImg,5000);
    JS complet – 9 API + rôles + interactions
    ========================================================= */
 
-const baseAPI         = 'http://127.0.0.1:8000/api';
+const baseAPI         = 'https://memocloudbackend.onrender.com/api';
 const UNIV_SLUG       = 'ecole-des-travaux';
 const TOKEN           = localStorage.getItem('access') || localStorage.getItem('authToken') || '';
 let USER_ROLE         = null;
@@ -1927,79 +2862,128 @@ window.closeChatBubble = function (memoireId) {
 };
 
 /* ---------- BULLE MESSAGE (HTML) ---------- */
-function renderChatMessage(c) {
-    const isMine = c.utilisateur_id === USER_ID;
-    const time = moment(c.date).fromNow();
-    return `
+function renderChatMessage(c, isStaff) {
+  const isMine = c.utilisateur_id === USER_ID;
+  const time   = moment(c.date).fromNow();
+
+  /* on sécurise TOUTES les propriétés */
+  const user        = c.utilisateur || {};
+  const nom         = user.nom || 'Utilisateur';
+  const photo       = user.photo_profil ? fullMediaUrl(user.photo_profil) : 'https://via.placeholder.com/32';
+  const linkedin    = user.realisation_linkedin ? fullMediaUrl(user.realisation_linkedin) : null;
+  const contenu     = c.contenu || '';
+  const modere      = Boolean(c.modere);
+
+  const authorTag = linkedin
+    ? `<a class="chat_msg_author" href="${linkedin}" target="_blank" rel="noopener">${nom}</a>`
+    : `<span class="chat_msg_author">${nom}</span>`;
+
+  return `
     <div class="chat_msg ${isMine ? 'mine' : 'theirs'}">
-        <img src="${c.utilisateur_photo || 'https://via.placeholder.com/32'}" class="chat_msg_avatar">
+        <img src="${photo}" class="chat_msg_avatar" alt="${nom}">
         <div class="chat_msg_content">
             <div class="chat_msg_meta">
-                <span class="chat_msg_author">${c.utilisateur_nom}</span>
+                ${authorTag}
                 <span class="chat_msg_time">${time}</span>
             </div>
-            <div class="chat_msg_text">${c.contenu}</div>
+            <div class="chat_msg_text">${contenu}</div>
+            ${isStaff && !modere ? `<button class="btn btn-sm btn-warning mt-2" onclick="modererCommentaire(${c.id})">Modérer</button>` : ''}
         </div>
     </div>`;
-    $(document).on('mouseenter','.stars_container',function(){
-  $(this).find('.star').hover(
-    function(){ $(this).prevAll().addBack().addClass('selected'); },
-    function(){ $(this).parent().find('.star').removeClass('selected'); }
-  );
-});
 }
 
 /* ---------- ENVOI RAPIDE (depuis l’infobulle) ---------- */
-window.quickSend = async function (memoireId) {
-    const input = $(`#chat_input_${memoireId}`);
-    const txt = $.trim(input.val());
-    if (!txt) return;
+async function quickSend(memoireId) {
+  const input = document.getElementById(`chat_input_${memoireId}`);
+  const txt   = input.value.trim();
+  if (!txt) return;
 
-    try {
-        const nouveau = await $.ajax({
-            url: `${baseAPI}/interactions/commentaires/`,
-            method: 'POST',
-            data: JSON.stringify({ memoire: memoireId, contenu: txt }),
-            contentType: 'application/json',
-            headers: authHeaders()
-        });
-        // Ajout instantané
-        $(`#chat_msg_${memoireId}`).append(renderChatMessage(nouveau));
-        input.val('');
-        // MAJ pastille
-        const pastille = $(`[data-id="${memoireId}"] .chat_pastille`);
-        pastille.text(parseInt(pastille.text()) + 1);
-    } catch (e) {
-        alerte('Erreur lors de l’envoi', 'error');
-    }
-};
+  /* on récupère les données UTILISATEUR sécurisées */
+  const user = window.USER || {};                     // objet global injecté par Django
+  const nom         = user.nom || 'Utilisateur';
+  const photo       = user.photo_profil ? fullMediaUrl(user.photo_profil) : 'https://via.placeholder.com/32';
+  const linkedin    = user.realisation_linkedin ? fullMediaUrl(user.realisation_linkedin) : null;
 
-/* ---------- NOTATION RAPIDE (depuis bulle) ---------- */
+  /* on envoie le commentaire */
+  try {
+    const res = await $.ajax({
+      url: `${baseAPI}/interactions/commentaires/`,
+      method: 'POST',
+      data: JSON.stringify({memoire: memoireId, contenu: txt}),
+      contentType: 'application/json',
+      headers: authHeaders()
+    });
+
+    /* on construit le message **sans erreur** */
+    const nouveau = {
+      id: res.id,
+      utilisateur: {
+        nom: nom,
+        photo_profil: photo,
+        realisation_linkedin: linkedin
+      },
+      contenu: txt,
+      date: res.date,
+      modere: false
+    };
+
+    /* on injecte dans le chat */
+    const $msg = $(`#chat_msg_${memoireId}`);
+    $msg.append(renderChatMessage(nouveau, false));
+    $msg.scrollTop($msg[0].scrollHeight);
+
+    input.value = '';
+    /* on met à jour la pastille */
+    /* petite pastille verte (check) qui apparaît */
+const $card = $(`[data-id="${memoireId}"]`);
+const $notif = $('<div class="send_ok"><i class="fas fa-check-circle"></i> Envoyé</div>');
+$card.append($notif);
+$notif.fadeIn(200).delay(1500).fadeOut(400, () => $notif.remove());
+
+  } catch (e) {
+    alerte('Erreur lors de l’envoi du commentaire', 'error');
+  }
+}
+/* ---------- NOTATION RAPIDE + AFFICHAGE ===== */
 window.quickRate = async function (memoireId, note) {
-    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
-    try {
-        await $.ajax({
-            url: `${baseAPI}/interactions/notations/`,
-            method: 'POST',
-            data: JSON.stringify({ memoire_id: memoireId, note }),
-            contentType: 'application/json',
-            headers: authHeaders()
-        });
+  if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
 
-        /* ---- verrou visuel ---- */
-        const $stars = $(`#chat_${memoireId} .star`);
-        $stars.each(function (idx) {
-            const val = 5 - idx;                 // 5,4,3,2,1
-            $(this)
-                .toggleClass('selected', val <= note)   // colorie
-                .toggleClass('user-rated', val <= note) // persistant
-                .off('click');                          // empêche de re-noter
-        });
+  try {
+    /* 1. on envoie la note */
+    await $.ajax({
+      url: `${baseAPI}/interactions/notations/`,
+      method: 'POST',
+      data: JSON.stringify({ memoire_id: memoireId, note }),
+      contentType: 'application/json',
+      headers: authHeaders()
+    });
 
-        alerte(`Note ${note}/5 enregistrée`, 'success');
-    } catch (e) {
-        alerte('Erreur', 'error');
-    }
+    /* 2. on récupère la note moyenne ACTUALISÉE */
+    const data = await $.get({
+      url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/notations/?memoire=${memoireId}`,
+      headers: authHeaders()
+    });
+    const noteMoyenne = data.note_moyenne ? data.note_moyenne.toFixed(1) : '0.0';
+
+    /* 3. on colorie les étoiles **selon la moyenne** */
+    const $stars = $(`#chat_${memoireId} .star`);
+    $stars.each(function (idx) {
+      const val = 5 - idx;                 // 5,4,3,2,1
+      $(this)
+        .toggleClass('selected', val <= noteMoyenne)   // couleur = moyenne
+        .toggleClass('user-rated', val <= note)        // persistant = note user
+        .off('click');                                 // 1 seule fois
+    });
+
+    /* 4. on met à jour la pastille */
+    const $avg = $(`#chat_${memoireId} .chat_rating small`);
+    $avg.text(`${note}/5`);
+
+    alerte(`Note ${note}/5 enregistrée`, 'success');
+
+  } catch (e) {
+    alerte('Erreur', 'error');
+  }
 };
 /* ---------- INITIALISATION ---------- */
 $(async function(){
@@ -2074,7 +3058,68 @@ async function loadStats(){
         $('#avg_rating').text(data.note_moyenne?data.note_moyenne.toFixed(1):'0.0');
     }catch(e){console.error(e);}
 }
+/* ---------- SPEED COUNTER ---------- */
+function speedCounter($el,target,decimals=0,duration=800){
+  const start=0;
+  const increment=target/(duration/10);  // 10 ms/frame → très rapide
+  let current=start;
 
+  function step(){
+    current+=increment;
+    if(current<target){
+      $el.text(current.toFixed(decimals));
+      requestAnimationFrame(step);
+    }else{
+      $el.text(target.toFixed(decimals));
+    }
+  }
+  step();
+}
+
+/* ---------- LOAD & INJECT ---------- */
+async function loadHeroBadges(){
+  try{
+    const data=await $.get(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/stats/`);
+
+    const html=`
+      <div class="hero_badge" data-target="${data.total_memoires||0}">
+        <div class="hero_badge_icon"><i class="fas fa-file-alt"></i></div>
+        <div class="hero_badge_number">0</div>
+        <div class="hero_badge_label">Mémoires</div>
+      </div>
+      <div class="hero_badge" data-target="${data.total_telechargements||0}">
+        <div class="hero_badge_icon"><i class="fas fa-download"></i></div>
+        <div class="hero_badge_number">0</div>
+        <div class="hero_badge_label">Téléchargements</div>
+      </div>
+      <div class="hero_badge" data-target="${data.total_likes||0}">
+        <div class="hero_badge_icon"><i class="fas fa-heart"></i></div>
+        <div class="hero_badge_number">0</div>
+        <div class="hero_badge_label">Likes</div>
+      </div>
+      <div class="hero_badge" data-target="${data.note_moyenne||0}" data-decimals="1">
+        <div class="hero_badge_icon"><i class="fas fa-star"></i></div>
+        <div class="hero_badge_number">0.0</div>
+        <div class="hero_badge_label">Note</div>
+      </div>`;
+
+    $('#heroBadges').html(html);
+
+    /* lancement rapide */
+    $('.hero_badge').each(function(){
+      const $n=$(this).find('.hero_badge_number');
+      const target=parseFloat($(this).data('target'));
+      const dec=parseInt($(this).data('decimals'))||0;
+      speedCounter($n,target,dec,800);   // 800 ms même pour 1 000 000
+    });
+
+  }catch(e){console.error(e);}
+}
+
+/* appel après le hero */
+$(async ()=>{
+  await loadHeroBadges();
+});
 /* ---------- PAGINATION ---------- */
 function renderPagination(data) {
     const total = Math.ceil(data.count / 10);
@@ -2127,6 +3172,7 @@ window.openDetailModal = async function (id) {
     const full = await loadMemoireComplet(id);
     const m = full.memoire;
     const isLogged = !!TOKEN;
+      
     const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
 
     let html = `
@@ -2142,11 +3188,11 @@ window.openDetailModal = async function (id) {
             <div class="info_item"><div class="info_label">Date de création</div><div class="info_value">${new Date(m.created_at).toLocaleDateString('fr-FR')}</div></div>
         </div>
     </div>
-
+ 
     <div class="detail_section">
         <h3><i class="fas fa-user"></i> Auteur</h3>
         <div style="display:flex;align-items:center;gap:15px">
-            <img src="${m.auteur.photo_profil}" style="width:80px;height:80px;border-radius:50%;object-fit:cover">
+            <img src="${fullMediaUrl(m.auteur.photo_profil)}"  style="width:80px;height:80px;border-radius:50%;object-fit:cover">
             <div>
                 <div class="memoire_title">${m.auteur.nom}</div>
                 <button class="action_btn" onclick="window.open('${m.auteur.linkedin}')">
@@ -2155,7 +3201,7 @@ window.openDetailModal = async function (id) {
             </div>
         </div>
     </div>`;
-
+  
     if (m.encadreurs.length) {
         html += `
         <div class="detail_section">
@@ -2283,39 +3329,49 @@ function renderMemoireComplet(d) {
     const m = d.memoire;
     const isLogged = !!TOKEN;
     const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
-
-    // 1) CARTE
+  
+       // 1) CARTE
     const cardHtml = `
     <div class="memoire_card" data-id="${m.id}">
-        <div class="memoire_header">
-            <div class="memoire_title">${m.titre}</div>
-            <div class="memoire_meta">
-                <span>
-                    <img src="${m.auteur.photo_profil}" class="auteur_thumb" alt="">
-                    <i class="fab fa-linkedin ml-2 cursor" onclick="window.open('${m.auteur.linkedin}')"></i>
-                    ${m.auteur.nom}
-                </span>
-                <span><i class="fas fa-chalkboard-teacher"></i> ${m.encadreurs.length} encadreur(s)</span>
-                <span><i class="fas fa-calendar"></i> ${m.annee}</span>
-            </div>
-        </div>
-        <div class="memoire_body">
-            <div class="memoire_resume">${m.resume || 'Aucun résumé'}</div>
-            <div class="memoire_domains">${(m.domaines_list || []).map(dom => `<span class="domain_badge">${dom}</span>`).join('')}</div>
-            <div class="memoire_stats">
-                <span><i class="fas fa-download"></i> ${m.nb_telechargements}</span>
-                <span><i class="fas fa-heart"></i> ${m.nb_likes}</span>
-                <span><i class="fas fa-star"></i> ${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}</span>
-                <span><i class="fas fa-comment"></i> ${m.nb_commentaires || 0}</span>
-            </div>
-            <div class="memoire_actions">
-   <button class="action_btn chat_opener" onclick="openChatBubble(${m.id}, '${m.titre.replace(/'/g, "\\'")}')" title="Discuter">
-    <i class="fas fa-comments"></i>
-    <span class="chat_pastille">${m.nb_commentaires || 0}</span>
-</button>
-</div>
-        </div>
-    </div>`;
+  <!-- IMAGE DE COUVERTURE -->
+  <div class="memoire_header">
+    <img src="${fullMediaUrl(m.images) || 'https://via.placeholder.com/600x300?text=Memoire'}" class="memoire_cover" alt="Couverture">
+    <div class="memoire_header_overlay">
+      <div class="memoire_title">${m.titre}</div>
+      <div class="memoire_meta">
+        <span><img src="${fullMediaUrl(m.auteur.photo_profil)}" class="auteur_thumb" alt=""><a href="${m.auteur.linkedin}" target="_blank" class="auteur_link">${m.auteur.nom}</a></span>
+        <span><i class="fas fa-calendar"></i> ${m.annee}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENU -->
+  <div class="memoire_body">
+    <div class="memoire_resume">${m.resume || 'Aucun résumé'}</div>
+    <div class="memoire_domains">${(m.domaines_list || []).map(dom => `<span class="domain_badge">${dom}</span>`).join('')}</div>
+
+    <!-- BADGES COULEURS -->
+    <div class="memoire_badges">
+      <span class="quality_badge ${m.note_moyenne >= 4 ? 'gold' : m.note_moyenne >= 3 ? 'silver' : 'bronze'}" title="Note moyenne">
+        <i class="fas fa-star"></i> ${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}
+      </span>
+      <span class="stat_badge"><i class="fas fa-download"></i> ${m.nb_telechargements}</span>
+      <span class="stat_badge"><i class="fas fa-heart"></i> ${m.nb_likes}</span>
+      <span class="stat_badge"><i class="fas fa-comment"></i> ${m.nb_commentaires || 0}</span>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="memoire_actions">
+      ${isLogged ? `
+        <button class="action_btn ${m.is_liked ? 'liked' : ''}" onclick="toggleLike(${m.id},this)"><i class="fas fa-heart"></i> <span>${m.nb_likes}</span></button>
+        <button class="action_btn" onclick="openDetailModal(${m.id})"><i class="fas fa-eye"></i> Détails</button>
+        <button class="action_btn chat_opener" onclick="openChatBubble(${m.id}, '${m.titre.replace(/'/g, "\\'")}')" title="Discuter"><i class="fas fa-comments"></i><span class="chat_pastille">${m.nb_commentaires || 0}</span></button>
+        <button class="action_btn btn_download" onclick="downloadMemoire(${m.id},'${m.pdf_url}')"><i class="fas fa-download"></i></button>
+        ${isProf ? `<button class="action_btn" onclick="encadrerMemoire(${m.id})"><i class="fas fa-chalkboard-teacher"></i> Encadrer</button>` : ''}
+      ` : `<button class="action_btn" onclick="window.location.href='register.html'"><i class="fas fa-sign-in-alt"></i> Connexion</button>`}
+    </div>
+  </div>
+</div>`;
 
     $('#memoires_grid').append(cardHtml);
 }
@@ -2368,12 +3424,15 @@ window.submitRating = async function (memoireId, note) {
 function renderChatMessage(c, isStaff) {
     const isMine = c.utilisateur_id === USER_ID;
     const time = moment(c.date).fromNow();
+    console.log(c.utilisateur)
     return `
     <div class="chat_msg ${isMine ? 'mine' : 'theirs'}">
-        <img src="${c.utilisateur_photo || 'https://via.placeholder.com/32'}" class="chat_msg_avatar">
+        <img src="${c.utilisateur.photo_profil || 'https://via.placeholder.com/32'}"  class="chat_msg_avatar">
         <div class="chat_msg_content">
             <div class="chat_msg_meta">
-                <span class="chat_msg_author">${c.utilisateur_nom}</span>
+               <a class="chat_msg_author" href="${c.utilisateur.realisation_linkedin}" target="_blank" rel="noopener">
+  ${c.utilisateur.nom}
+</a>
                 <span class="chat_msg_time">${time}</span>
             </div>
             <div class="chat_msg_text">${c.contenu}</div>
@@ -2400,7 +3459,12 @@ function renderGrid(list) {
             <div class="memoire_header">
                 <div class="memoire_title">${m.titre}</div>
                 <div class="memoire_meta">
-                    <span><i class="fas fa-user"></i> ${m.auteur_nom}</span>
+
+                  
+                    <span> <a class="chat_msg_author" href="${m.auteur.realisation_linkedin}" target="_blank" rel="noopener">
+  ${m.auteur.nom}
+</a></span>
+                  
                     <span><i class="fas fa-calendar"></i> ${m.annee}</span>
                 </div>
             </div>
@@ -2422,7 +3486,9 @@ function renderGrid(list) {
 </button>
                         <button class="action_btn btn_download" onclick="downloadMemoire(${m.id},'${m.pdf_url}')"><i class="fas fa-download"></i></button>
                         ${isProf ? `<button class="action_btn" onclick="encadrerMemoire(${m.id})"><i class="fas fa-chalkboard-teacher"></i> Encadrer</button>` : ''}
-                    ` : `<button class="action_btn" onclick="alerte('Connectez-vous pour interagir','info')"><i class="fas fa-sign-in-alt"></i> Connexion</button>`}
+                    ` : `<button class="action_btn" onclick="window.location.href='register.html'">
+    <i class="fas fa-sign-in-alt"></i> Connexion
+</button>`}
                 </div>
             </div>
         </div>`).join('');
