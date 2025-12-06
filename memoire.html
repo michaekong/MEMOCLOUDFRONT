@@ -1,0 +1,2626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="Bibliothèque des Mémoires - ENSTP">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Bibliothèque des Mémoires - ENSTP</title>
+<!-- jQuery 3.6 CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
+<script>moment.locale('fr');</script><script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
+<script>moment.locale('fr');</script>
+<!-- Font Awesome 5 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800|Roboto:400,500,700');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    background: #f8f9fb;
+    color: #a5a5a5;
+    overflow-x: hidden;
+}
+
+/* Background Slideshow */
+.background_slideshow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    opacity: 0.08;
+}
+
+.background_slideshow img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    animation: slideshow 24s infinite;
+}
+
+.background_slideshow img:nth-child(1) { animation-delay: 0s; }
+.background_slideshow img:nth-child(2) { animation-delay: 6s; }
+.background_slideshow img:nth-child(3) { animation-delay: 12s; }
+.background_slideshow img:nth-child(4) { animation-delay: 18s; }
+
+@keyframes slideshow {
+    0%, 25% { opacity: 1; transform: scale(1); }
+    33%, 100% { opacity: 0; transform: scale(1.1); }
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1318px;
+    height: 104px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: 0px 20px 49px rgba(0,0,0,0.17);
+    transition: all 200ms ease;
+    display: flex;
+}
+
+.header.scrolled {
+    top: 15px;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.25);
+}
+
+.header_content {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 50px;
+    flex: 1;
+}
+
+.logo_container img {
+    height: 50px;
+}
+
+.logo_text {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-left: 15px;
+}
+
+.main_nav {
+    margin-left: auto;
+    display: flex;
+    gap: 40px;
+}
+
+.main_nav a {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #3a3a3a;
+    text-decoration: none;
+    transition: all 200ms ease;
+    position: relative;
+}
+
+.main_nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: #ffb606;
+    transition: width 0.3s ease;
+}
+
+.main_nav a:hover {
+    color: #ffb606;
+}
+
+.main_nav a:hover::after {
+    width: 100%;
+}
+
+.header_side {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    padding: 0 30px;
+    height: 100%;
+}
+
+.header_side span {
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Hero Section */
+/* ======  MOBILE (déjà OK)  ====== */
+.hero_fixed{
+  position:relative;
+  height:50vh;
+  min-height:320px;
+  margin-top:180px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#fff;
+}
+
+.hero_slider{
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
+.hero_slider img{
+  position:absolute;
+  inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:opacity 1.2s ease-in-out;
+}
+.hero_slider img.active{opacity:1;}
+
+.hero_overlay{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:rgba(0,0,0,.35);
+}
+
+.hero_content{
+  position:relative;
+  z-index:2;
+  max-width:800px;
+  padding:2rem;
+}
+/* ======  COULEURS & ANIMATION INITIALES  ====== */
+.hero_fixed h1{
+  font-size:56px;
+  font-weight:700;
+  margin-bottom:15px;
+  animation:fadeInUp .8s ease;
+}
+.hero_fixed h1 span{
+  background:#ffb606;
+  color:#000;                 /* ← noir sur fond doré */
+  padding:5px 25px;
+  display:inline-block;
+  box-shadow:0 10px 30px rgba(255,182,6,.3);
+}
+.hero_fixed p{
+  color:rgba(255,255,255,.9);
+  font-size:20px;
+  animation:fadeInUp .8s ease .2s backwards;
+}
+
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(30px);}
+  to  {opacity:1;transform:translateY(0);}
+}
+
+/* PETIT EFFET AU SURVOL (comme avant) */
+.hero_fixed h1 span:hover{
+  background:#ffca30;
+  transition:.25s;
+}
+/* ======  DESKTOP  ====== */
+@media (min-width:769px){
+  .hero_fixed{
+    height:auto;
+    min-height:380px;
+    max-height:480px;
+    padding:100px 0;          /* centre vertical */
+  }
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stats Widgets */
+.stats_widgets {
+    margin-top: -60px;
+    position: relative;
+    z-index: 10;
+}
+
+.stat_card {
+    background: white;
+    border-radius: 12px;
+    padding: 35px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid transparent;
+}
+
+.stat_card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    border-color: #ffb606;
+}
+
+.stat_icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    box-shadow: 0 10px 30px rgba(255,182,6,0.3);
+}
+
+.stat_icon i {
+    font-size: 32px;
+    color: white;
+}
+
+.stat_number {
+    font-size: 42px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.stat_label {
+    font-size: 14px;
+    color: #a5a5a5;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Filters Section */
+.filters_section {
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    margin: 40px 0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 200px;
+}
+
+.filters_section h3 {
+    color: #1a1a1a;
+    margin-bottom: 25px;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter_group {
+    margin-bottom: 20px;
+}
+
+.filter_group:last-child {
+    margin-bottom: 0;
+}
+
+.filter_group label {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter_input,
+.filter_select {
+    width: 100%;
+    height: 45px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0 15px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #f8f9fb;
+}
+
+.filter_input:focus,
+.filter_select:focus {
+    outline: none;
+    border-color: #ffb606;
+    background: white;
+    box-shadow: 0 5px 15px rgba(255,182,6,0.1);
+}
+
+.btn_filter {
+    width: 100%;
+    height: 48px;
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    border: none;
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.btn_filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,182,6,0.4);
+}
+
+.btn_reset {
+    background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+    margin-top: 10px;
+}
+
+.btn_reset:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Memoires Grid */
+.memoires_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.memoire_card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid transparent;
+}
+
+.memoire_card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-color: #ffb606;
+}
+
+.memoire_header {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    padding: 25px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.memoire_header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+
+.memoire_title {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    position: relative;
+}
+
+.memoire_meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    position: relative;
+}
+
+.memoire_meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.memoire_body {
+    padding: 25px;
+}
+
+.memoire_resume {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 63px;
+}
+
+.memoire_domains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    min-height: 30px;
+}
+
+.domain_badge {
+    background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #1a1a1a;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.domain_badge:hover {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    color: white;
+}
+
+.memoire_stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fb;
+    border-radius: 8px;
+}
+
+.memoire_stats span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #666;
+    font-weight: 600;
+}
+
+.memoire_stats i {
+    color: #ffb606;
+}
+
+.memoire_actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.action_btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    font-weight: 700;
+    color: #666;
+}
+
+.action_btn:hover {
+    border-color: #ffb606;
+    color: #ffb606;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,182,6,0.2);
+}
+
+.action_btn.liked {
+    border-color: #ff4757;
+    color: #ff4757;
+    background: rgba(255,71,87,0.05);
+}
+
+.action_btn.liked:hover {
+    background: #ff4757;
+    color: white;
+}
+
+.btn_download {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    color: white;
+    border-color: #ffb606;
+}
+
+.btn_download:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff9500 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(255,182,6,0.4);
+}
+
+/* Modal Styles */
+.modal_overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 2000;
+    overflow-y: auto;
+    backdrop-filter: blur(5px);
+}
+
+.modal_overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal_content {
+    background: white;
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal_header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    color: white;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modal_header h2 {
+    font-size: 26px;
+    margin: 0;
+    font-weight: 700;
+}
+
+.modal_close {
+    width: 45px;
+    height: 45px;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal_close:hover {
+    background: #ffb606;
+    border-color: #ffb606;
+    transform: rotate(90deg);
+}
+
+.modal_body {
+    padding: 35px;
+}
+
+.detail_section {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.detail_section:last-child {
+    border-bottom: none;
+}
+
+.detail_section h3 {
+    color: #1a1a1a;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.detail_section h3 i {
+    color: #ffb606;
+}
+
+.detail_info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.info_item {
+    background: #f8f9fb;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.info_label {
+    font-size: 12px;
+    color: #a5a5a5;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.info_value {
+    font-size: 16px;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+/* Comments Section */
+.comments_section {
+    margin-top: 30px;
+}
+
+.comment_form {
+    background: #f8f9fb;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.comment_textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    resize: vertical;
+    font-family: 'Roboto', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.comment_textarea:focus {
+    outline: none;
+    border-color: #ffb606;
+    box-shadow: 0 5px 15px rgba(255,182,6,0.1);
+}
+
+.btn_submit_comment {
+    margin-top: 15px;
+    padding: 12px 35px;
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn_submit_comment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,182,6,0.4);
+}
+
+.comments_list {
+    margin-top: 25px;
+}
+
+.comment_item {
+    background: white;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.comment_item:hover {
+    border-color: #ffb606;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.comment_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.comment_author {
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 15px;
+}
+
+.comment_date {
+    font-size: 12px;
+    color: #a5a5a5;
+}
+
+.comment_text {
+    color: #666;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+/* Pagination */
+.pagination_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 0;
+    gap: 10px;
+}
+
+.pagination_btn {
+    padding: 12px 20px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.pagination_btn:hover {
+    border-color: #ffb606;
+    color: #ffb606;
+    transform: translateY(-2px);
+}
+
+.pagination_btn.active {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    border-color: #ffb606;
+    color: white;
+}
+
+.pagination_btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Loading Spinner */
+.loading_spinner {
+    display: none;
+    text-align: center;
+    padding: 60px;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #ffb606;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* User Actions Bar */
+.user_actions_bar {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 170px;
+    z-index: 100;
+    margin-bottom: 30px;
+}
+
+.user_actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.user_action_btn {
+    padding: 12px 25px;
+    background: white;
+    border: 2px solid #ffb606;
+    color: #ffb606;
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.user_action_btn:hover {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,182,6,0.3);
+}
+
+/* Empty State */
+.empty_state {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.empty_state i {
+    font-size: 100px;
+    color: #e0e0e0;
+    margin-bottom: 25px;
+}
+
+.empty_state h3 {
+    color: #1a1a1a;
+    font-size: 28px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.empty_state p {
+    color: #a5a5a5;
+    font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .header {
+        width: 95%;
+        flex-direction: column;
+        height: auto;
+    }
+
+    .header_content {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .header_side {
+        width: 100%;
+        justify-content: center;
+        padding: 15px;
+    }
+
+    .main_nav {
+        display: none;
+    }
+
+    .hero_section {
+        margin-top: 200px;
+        padding: 60px 20px;
+    }
+
+    .hero_section h1 {
+        font-size: 36px;
+    }
+
+    .memoires_grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .filters_section {
+        position: static;
+    }
+}
+
+@media (max-width: 576px) {
+    .stat_card {
+        margin-bottom: 20px;
+    }
+
+    .user_actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .user_action_btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .memoire_actions {
+        flex-wrap: wrap;
+    }
+
+    .action_btn {
+        flex: 1 1 45%;
+    }
+}
+
+/* Success/Error Messages */
+.alert_message {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 3000;
+    animation: slideInRight 0.4s ease;
+    max-width: 400px;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.alert_success {
+    background: #4caf50;
+    color: white;
+}
+
+.alert_error {
+    background: #f44336;
+    color: white;
+}
+
+.alert_info {
+    background: #2196F3;
+    color: white;
+}
+.memoires_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.memoire_card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid transparent;
+}
+
+.memoire_card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-color: #ffb606;
+}
+
+.memoire_header {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    padding: 25px;
+    color: white;
+}
+
+.memoire_title {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.memoire_meta {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+}
+
+.memoire_body {
+    padding: 25px;
+}
+
+.memoire_resume {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 63px;
+}
+
+.memoire_domains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.domain_badge {
+    background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.memoire_stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fb;
+    border-radius: 8px;
+}
+
+.memoire_actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.action_btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    font-weight: 700;
+    color: #666;
+}
+
+.action_btn:hover {
+    border-color: #ffb606;
+    color: #ffb606;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,182,6,0.2);
+}
+
+.action_btn.liked {
+    border-color: #ff4757;
+    color: #ff4757;
+    background: rgba(255,71,87,0.05);
+}
+
+.btn_download {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    color: white;
+    border-color: #ffb606;
+}
+
+/* ---------- MODALES ---------- */
+.modal_overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 2000;
+    overflow-y: auto;
+    backdrop-filter: blur(5px);
+}
+
+.modal_overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal_content {
+    background: white;
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal_header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    color: white;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modal_close {
+    width: 45px;
+    height: 45px;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal_close:hover {
+    background: #ffb606;
+    border-color: #ffb606;
+    transform: rotate(90deg);
+}
+
+.modal_body {
+    padding: 35px;
+}
+
+/* ---------- LOADING ---------- */
+.loading_spinner {
+    display: none;
+    text-align: center;
+    padding: 60px;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #ffb606;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ---------- PAGINATION ---------- */
+.pagination_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 0;
+    gap: 10px;
+}
+
+.pagination_btn {
+    padding: 12px 20px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.pagination_btn:hover {
+    border-color: #ffb606;
+    color: #ffb606;
+    transform: translateY(-2px);
+}
+
+.pagination_btn.active {
+    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
+    border-color: #ffb606;
+    color: white;
+}
+
+.pagination_btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---------- ALERTES ---------- */
+.alert_message {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 3000;
+    animation: slideInRight 0.4s ease;
+    max-width: 400px;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.alert_success {
+    background: #4caf50;
+    color: white;
+}
+
+.alert_error {
+    background: #f44336;
+    color: white;
+}
+
+.alert_info {
+    background: #2196F3;
+    color: white;
+}
+</style>
+<style>
+.stars_container { font-size: 2rem; cursor: pointer; color: #ffb606; }
+.stars_container .star:hover,
+.stars_container .star:hover ~ .star { color: #ffb606; }
+.stars_container .star { transition: color 0.2s; }
+.auteur_thumb { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 6px; vertical-align: middle; }
+.encadreurs_grid { display: flex; gap: 20px; flex-wrap: wrap; }
+.encadreur_card { background: #f8f9fa; border-radius: 12px; padding: 15px; text-align: center; width: 140px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.encadreur_card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
+.encadreur_photo { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid #fff; }
+.encadreur_name { font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; }
+.encadreur_linkedin { color: #0077b5; font-size: 1.4rem; transition: color 0.2s; }
+.encadreur_card:hover .encadreur_linkedin { color: #005582; }
+.stars_container { font-size: 2rem; cursor: pointer; color: #ffb606; }
+.stars_container .star:hover,
+.stars_container .star:hover ~ .star { color: #ffb606; }
+.stars_container .star { transition: color 0.2s; }
+/* ---- BOUTON CHAT CARTE ---- */
+.chat_opener       { position: relative; margin-left: 6px; }
+.chat_pastille     { position: absolute; top: -6px; right: -6px; background: #ff4757; color: #fff; font-size: 0.7rem; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+
+/* ---- POPUP CHAT ---- */
+/* ===== BULLE CHAT – DESIGN SYSTEM ENSTP ===== */
+.chat_bubble_popup{
+  position:absolute;
+  inset:auto auto 0 0;          /* collée en bas à gauche de la carte */
+  width:100%;
+  max-width:420px;
+  max-height:75vh;
+  background:#ffffff;
+  border-radius:16px 16px 0 0;
+  box-shadow:0 -10px 40px rgba(0,0,0,.25);
+  display:flex;
+  flex-direction:column;
+  z-index:100;
+  animation:slideUp .35s ease-out;
+}
+@keyframes slideUp{
+  from{transform:translateY(20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+
+.chat_header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 18px;
+  background:#1a1a1a;
+  color:#ffb606;
+  border-radius:16px 16px 0 0;
+  font-weight:600;
+  font-size:1rem;
+}
+.chat_close{
+  cursor:pointer;
+  font-size:1.1rem;
+  transition:transform .2s;
+}
+.chat_close:hover{transform:rotate(90deg);}
+
+.chat_body{
+  flex:1 1 auto;
+  overflow-y:auto;
+  padding:12px 16px;
+  scroll-behavior:smooth;
+}
+.chat_messages{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.chat_msg{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  animation:fadeIn .3s;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(.95);}
+  to{opacity:1;transform:scale(1);}
+}
+.chat_msg.mine{flex-direction:row-reverse;}
+.chat_msg_avatar{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #ffb606;
+}
+.chat_msg_content{max-width:70%;}
+.chat_msg_meta{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:.7rem;
+  color:#666;
+  margin-bottom:4px;
+}
+.chat_msg_text{
+  background:#f2f2f2;
+  padding:10px 14px;
+  border-radius:18px;
+  font-size:.95rem;
+  line-height:1.35;
+  word-break:break-word;
+}
+.chat_msg.mine .chat_msg_text{
+  background:#ffb606;
+  color:#000;
+}
+
+.chat_rating{
+  padding:12px 16px;
+  border-top:1px solid #e5e5e5;
+  text-align:center;
+}
+.stars_container{
+  display:inline-flex;
+  gap:6px;
+  font-size:1.4rem;
+  cursor:pointer;
+}
+.star{color:#ddd;transition:color .2s;}
+.star:hover,.star.selected{color:#ffb606;}
+
+.chat_input_bar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 16px;
+  border-top:1px solid #e5e5e5;
+  background:#fafafa;
+}
+.chat_input_bar input{
+  flex:1;
+  border:1px solid #ccc;
+  border-radius:20px;
+  padding:10px 16px;
+  font-size:.95rem;
+  outline:none;
+  transition:border .2s;
+}
+.chat_input_bar input:focus{border-color:#ffb606;}
+.chat_input_bar button{
+  background:#ffb606;
+  color:#000;
+  border:none;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  transition:background .2s;
+}
+.chat_input_bar button:hover{background:#ffca30;}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:576px){
+  .chat_bubble_popup{
+    max-width:100%;
+    max-height:65vh;
+    border-radius:0;
+    inset:auto 0 0 0;
+  }
+  .chat_header{padding:12px 16px;font-size:.95rem;}
+  .chat_body{padding:10px 12px;}
+  .chat_msg_text{font-size:.9rem;padding:8px 12px;}
+  .chat_msg_avatar{width:28px;height:28px;}
+  .chat_input_bar{padding:10px 12px;}
+  .chat_input_bar input{font-size:.9rem;}
+}
+/* ===== PORTAIL ===== */
+#chatPortal{
+  position:fixed;
+  inset:0;
+  z-index:9999;               /* au-dessus de absolument tout */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  pointer-events:none;        /* on laisse passer les clics sur le fond */
+}
+
+/* bulle unique */
+.chat_bubble_popup{
+  position:relative;          /* plus d’absolute, plus de conflit */
+  width:90%;
+  max-width:420px;
+  max-height:75vh;
+  background:#ffffff;
+  border-radius:16px;
+  box-shadow:0 15px 50px rgba(0,0,0,.35);
+  display:flex;
+  flex-direction:column;
+  pointer-events:auto;        /* seule la bulle est cliquable */
+  animation:popIn .3s ease-out;
+}
+@keyframes popIn{
+  from{transform:scale(.95);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+/* très grands écrans */
+@media (min-width:1200px){
+  .chat_bubble_popup{max-width:560px;}
+}
+/* petits écrans */
+@media (max-width:576px){
+  .chat_bubble_popup{
+    width:100%;
+    max-height:65vh;
+    border-radius:0;
+  }
+}
+
+/*_overlay semi-transparent derrière la bulle*/
+.chat_backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  animation:fadeBackdrop .3s;
+}
+@keyframes fadeBackdrop{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+/* ===== inside (non modifié visuellement) ===== */
+.chat_header{...}
+.chat_body{...}
+.chat_input_bar{...}
+/* etc. reprends les couleurs que tu avais */
+.star.selected,
+.star.user-rated{            /* couleur persistante */
+    color:#ffb606 !important;
+}</style>
+</head>
+<body>
+
+
+ <div id="chatPortal"></div>
+<!-- Header -->
+<header class="header">
+    <div class="header_content">
+        <div class="logo_container">
+            <div style="display: flex; align-items: center;">
+                <span class="logo_text">📚 ENSTP</span>
+            </div>
+        </div>
+        <nav class="main_nav">
+            <a href="index.html">Accueil</a>
+            <a href="#">À propos</a>
+            <a href="courses.html">Formations</a>
+            <a href="#">Bibliothèque</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </div>
+    <div class="header_side">
+        <i class="fas fa-phone"></i>
+        <span>(237) 222 23 09 44</span>
+    </div>
+</header>
+<!-- Hero Section -->
+<section class="hero_section hero_fixed">
+  <div class="hero_slider">
+    <img src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=1920" alt="">
+    <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920" alt="">
+    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920" alt="">
+    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920" alt="">
+  </div>
+
+  <div class="hero_overlay"></div>
+
+  <div class="container hero_content">
+    <h1><span>Bibliothèque</span> des Mémoires</h1>
+    <p>Explorez et téléchargez les mémoires de fin d'études de l'ENSTP</p>
+  </div>
+</section>
+<!-- Stats Widgets -->
+<section class="stats_widgets">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat_card">
+                    <div class="stat_icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat_number" id="total_memoires">-</div>
+                    <div class="stat_label">Mémoires</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat_card">
+                    <div class="stat_icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="stat_number" id="total_downloads">-</div>
+                    <div class="stat_label">Téléchargements</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat_card">
+                    <div class="stat_icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat_number" id="total_likes">-</div>
+                    <div class="stat_label">Likes</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat_card">
+                    <div class="stat_icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat_number" id="avg_rating">-</div>
+                    <div class="stat_label">Note Moyenne</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- User Actions Bar -->
+<div class="user_actions_bar">
+    <div class="container">
+        <div class="user_actions">
+            <button class="user_action_btn" onclick="openMesStats()">
+                <i class="fas fa-chart-line"></i> Mes Stats
+            </button>
+            <button class="user_action_btn" onclick="openMesTelechargements()">
+                <i class="fas fa-download"></i> Mes Téléchargements
+            </button>
+            <button class="user_action_btn" onclick="openMesLikes()">
+                <i class="fas fa-heart"></i> Mes Likes
+            </button>
+            <button class="user_action_btn" onclick="openMesCommentaires()">
+                <i class="fas fa-comment"></i> Mes Commentaires
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Container principal -->
+<div class="container">
+    <div class="row">
+        <!-- Filtres à gauche (optionnel mais recommandé) -->
+        <div class="col-lg-3">
+            <div class="filters_section">
+                <h3><i class="fas fa-filter"></i> Filtres</h3>
+                <div class="filter_group">
+                    <label>Recherche</label>
+                    <input type="text" class="filter_input" id="search_input" placeholder="Titre ou auteur...">
+                </div>
+                <div class="filter_group">
+                    <label>Année</label>
+                    <select class="filter_select" id="year_select">
+                        <option value="">Toutes les années</option>
+                    </select>
+                </div>
+                <div class="filter_group">
+                    <label>Domaine</label>
+                    <select class="filter_select" id="domain_select">
+                        <option value="">Tous les domaines</option>
+                    </select>
+                </div>
+                <div class="filter_group">
+                    <label>Trier par</label>
+                    <select class="filter_select" id="sort_select">
+                        <option value="-created_at">Plus récent</option>
+                        <option value="created_at">Plus ancien</option>
+                        <option value="-nb_telechargements">Plus téléchargé</option>
+                        <option value="-nb_likes">Plus aimé</option>
+                        <option value="-note_moyenne">Mieux noté</option>
+                    </select>
+                </div>
+                <button class="btn_filter" onclick="applyFilters()">
+                    <i class="fas fa-search"></i> Rechercher
+                </button>
+                <button class="btn_filter btn_reset" onclick="resetFilters()">
+                    <i class="fas fa-redo"></i> Réinitialiser
+                </button>
+            </div>
+        </div>
+
+        <!-- Grille des mémoires -->
+        <div class="col-lg-9">
+            <div class="loading_spinner" id="loading_spinner">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #666; font-weight: 600;">Chargement des mémoires...</p>
+            </div>
+            <div class="memoires_grid" id="memoires_grid"></div>
+            <div class="pagination_container" id="pagination_container"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modale de détail -->
+<div class="modal_overlay" id="detail_modal">
+    <div class="modal_content">
+        <div class="modal_header">
+            <h2 id="modal_title">Détails du Mémoire</h2>
+            <button class="modal_close" onclick="closeModal('detail_modal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal_body" id="modal_body"></div>
+    </div>
+</div>
+
+     
+
+<!-- Modal Generic -->
+<div class="modal_overlay" id="generic_modal">
+    <div class="modal_content">
+        <div class="modal_header">
+            <h2 id="generic_modal_title">Modal</h2>
+            <button class="modal_close" onclick="closeModal('generic_modal')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal_body" id="generic_modal_body"></div>
+    </div>
+</div>
+<script>
+const imgs = document.querySelectorAll('.hero_slider img');
+let idx = 0;
+function switchImg(){
+  imgs.forEach(i=>i.classList.remove('active'));
+  imgs[idx].classList.add('active');
+  idx = (idx+1)%imgs.length;
+}
+switchImg();
+setInterval(switchImg,5000);
+</script>
+<script>
+/* =========================================================
+   BIBLIOTHÈQUE DES MÉMOIRES – ENSTP
+   JS complet – 9 API + rôles + interactions
+   ========================================================= */
+
+const baseAPI         = 'http://127.0.0.1:8000/api';
+const UNIV_SLUG       = 'ecole-des-travaux';
+const TOKEN           = localStorage.getItem('access') || localStorage.getItem('authToken') || '';
+let USER_ROLE         = null;
+let USER_ID           = null;
+let compactView       = false;
+let currentPage       = 1;
+
+const $grid           = $('#memoires_grid');
+const $spin           = $('#loading_spinner');
+const $page           = $('#pagination_container');
+
+/* ---------- UTILITAIRES ---------- */
+function showSpin(show=true){ $spin.toggle(show); $grid.toggle(!show); }
+function alerte(msg, type='info', delay=3000){
+    const ic = type==='success'?'check-circle':(type==='error'?'exclamation-circle':'info-circle');
+    const $a=$(`<div class="alert_message alert_${type}"><i class="fas fa-${ic}"></i> ${msg}</div>`).appendTo('body');
+    setTimeout(()=>$a.fadeOut(300,()=>$a.remove()),delay);
+}
+function errorMsg(jqXHR){
+    const m=jqXHR.responseJSON?.detail||jqXHR.statusText||'Erreur inconnue';
+    alerte(`❌ ${m}`,'error');
+}
+function authHeaders(){
+    return TOKEN ? {Authorization:`Bearer ${TOKEN}`} : {};
+}
+
+/* =========================================================
+   CONSOMMATION COMPLETE – 9 API
+   ========================================================= */
+
+const api = (url, opts = {}) => $.ajax({ url, dataType: 'json', headers: authHeaders(), ...opts });
+
+/* ---------- FETCH UN SEUL MEMOIRE + TOUTES SES INTERACTIONS ---------- */
+async function loadMemoireComplet(memoireId) {
+    console.log('🔍 Chargement mémoire + interactions ID =', memoireId);
+
+    // 1) requêtes SÛRES
+const [memo, likes, downloads, comments, preview] = await Promise.all([
+    api(`${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/${memoireId}/`),
+    api(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/likes/?memoire=${memoireId}`),
+    api(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/telechargements/?memoire=${memoireId}`),
+    api(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/commentaires/?memoire=${memoireId}`),
+    api(`${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/${memoireId}/preview/image/`)
+]);
+
+// 2) requêtes OPTIONNELLES (404 possibles)
+const [notes, signalements] = await Promise.allSettled([
+    api(`${baseAPI}/interactions/notations/?memoire=${memoireId}`),
+    loadSignalements(memoireId)
+]);
+
+// 3) stats déjà dans le mémoire
+const stats = {
+    note_moyenne: memo.note_moyenne,
+    nb_likes: memo.nb_likes,
+    nb_telechargements: memo.nb_telechargements
+};
+
+return {
+    memoire: memo,
+    stats,
+    likes: { count: likes.length, list: likes },
+    notations: { count: notes.value?.length || 0, list: notes.value || [] },
+    downloads: { count: downloads.length, list: downloads },
+    comments: { count: comments.length, list: comments },
+    preview: preview.preview_url || null,
+    signalements: signalements.value || { count: 0, list: [] }
+};}
+
+/* ---------- SIGNALEMENTS ---------- */
+async function loadSignalements(memoireId) {
+    try {
+        const res = await api(`${baseAPI}/interactions/signalements/?memoire=${memoireId}`);
+        return { count: res.length, list: res };
+    } catch (e) {
+        if (e.status === 404) return { count: 0, list: [] };   // route absente
+        console.warn('Signalements non chargés', e);
+        return { count: 0, list: [] };
+    }
+}
+/* ---------- INFOBULLE CHAT (carte) ---------- */
+window.openChatBubble = async function (memoireId, titre) {
+     if ($(`#chat_${memoireId}`).length) return;
+    // 1. Récupérer les interactions
+    const [comments, likes, downloads] = await Promise.all([
+        $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/commentaires/?memoire=${memoireId}`, headers: authHeaders() }),
+        $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/likes/?memoire=${memoireId}`, headers: authHeaders() }),
+        $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/telechargements/?memoire=${memoireId}`, headers: authHeaders() })
+    ]);
+
+    // 2. Construction HTML
+    
+   /* 2.  construction HTML */
+  const html = `
+  <div class="chat_backdrop" onclick="closeChatBubble(${memoireId})"></div>
+  <div class="chat_bubble_popup" id="chat_${memoireId}">
+    <div class="chat_header">
+      <span class="chat_title">${titre}</span>
+      <i class="fas fa-times chat_close" onclick="closeChatBubble(${memoireId})"></i>
+    </div>
+    <div class="chat_body">
+      <div class="chat_messages" id="chat_msg_${memoireId}">
+        ${comments.map(c => renderChatMessage(c)).join('')}
+      </div>
+    </div>
+    ${TOKEN ? `
+    <div class="chat_rating">
+      <small>Noter ce mémoire</small>
+      <div class="stars_container">
+        ${[5,4,3,2,1].map(i=>`<i class="far fa-star star" onclick="quickRate(${memoireId},${i})"></i>`).join('')}
+      </div>
+    </div>` : ''}
+    ${TOKEN ? `
+    <div class="chat_input_bar">
+      <input type="text" id="chat_input_${memoireId}" placeholder="Votre message…" maxlength="500">
+      <button onclick="quickSend(${memoireId})"><i class="fas fa-paper-plane"></i></button>
+    </div>` : ''}
+  </div>`;
+
+  /* 3.  envoi dans le portail + verrou scroll */
+  $('#chatPortal').html(html).css('pointer-events','auto');
+  $('body').css('overflow','hidden');   // bloque derrière
+
+  /* 4.  scroll down si déjà des messages */
+  const $msg = $(`#chat_msg_${memoireId}`);
+  $msg.scrollTop($msg[0].scrollHeight);
+};
+
+window.closeChatBubble = function (memoireId) {
+    $('#chatPortal').empty().css('pointer-events','none');
+    $('body').css('overflow','');          // ← retire la propriété
+    $(document).off('keydown.chatEsc'); 
+
+    // 3. Injecter et positionner
+    $(`[data-id="${memoireId}"]`).append(html).find('.chat_bubble_popup').fadeIn(200);
+};
+
+/* ---------- FERMER L’INFOBULLE ---------- */
+window.closeChatBubble = function (memoireId) {
+    try {
+        // 1. retire la bulle et le backdrop
+        $('#chatPortal').empty().css('pointer-events','none');
+
+        // 2. restore scroll ‑- PRIMAIRE
+        $('body').css('overflow','');
+
+        // 3. (option) si tu avais bloqué la nav
+        $('nav.fixed, .navbar-fixed').css('padding-right','');
+
+        // 4. (option) si tu utilises un overlay global
+        $('.global-overlay').fadeOut(200);
+
+    } catch (e) {
+        console.error('closeChatBubble error',e);
+        // en dernier recours on force
+        $('body').css('overflow','');
+    }
+};
+
+/* ---------- BULLE MESSAGE (HTML) ---------- */
+function renderChatMessage(c) {
+    const isMine = c.utilisateur_id === USER_ID;
+    const time = moment(c.date).fromNow();
+    return `
+    <div class="chat_msg ${isMine ? 'mine' : 'theirs'}">
+        <img src="${c.utilisateur_photo || 'https://via.placeholder.com/32'}" class="chat_msg_avatar">
+        <div class="chat_msg_content">
+            <div class="chat_msg_meta">
+                <span class="chat_msg_author">${c.utilisateur_nom}</span>
+                <span class="chat_msg_time">${time}</span>
+            </div>
+            <div class="chat_msg_text">${c.contenu}</div>
+        </div>
+    </div>`;
+    $(document).on('mouseenter','.stars_container',function(){
+  $(this).find('.star').hover(
+    function(){ $(this).prevAll().addBack().addClass('selected'); },
+    function(){ $(this).parent().find('.star').removeClass('selected'); }
+  );
+});
+}
+
+/* ---------- ENVOI RAPIDE (depuis l’infobulle) ---------- */
+window.quickSend = async function (memoireId) {
+    const input = $(`#chat_input_${memoireId}`);
+    const txt = $.trim(input.val());
+    if (!txt) return;
+
+    try {
+        const nouveau = await $.ajax({
+            url: `${baseAPI}/interactions/commentaires/`,
+            method: 'POST',
+            data: JSON.stringify({ memoire: memoireId, contenu: txt }),
+            contentType: 'application/json',
+            headers: authHeaders()
+        });
+        // Ajout instantané
+        $(`#chat_msg_${memoireId}`).append(renderChatMessage(nouveau));
+        input.val('');
+        // MAJ pastille
+        const pastille = $(`[data-id="${memoireId}"] .chat_pastille`);
+        pastille.text(parseInt(pastille.text()) + 1);
+    } catch (e) {
+        alerte('Erreur lors de l’envoi', 'error');
+    }
+};
+
+/* ---------- NOTATION RAPIDE (depuis bulle) ---------- */
+window.quickRate = async function (memoireId, note) {
+    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
+    try {
+        await $.ajax({
+            url: `${baseAPI}/interactions/notations/`,
+            method: 'POST',
+            data: JSON.stringify({ memoire_id: memoireId, note }),
+            contentType: 'application/json',
+            headers: authHeaders()
+        });
+
+        /* ---- verrou visuel ---- */
+        const $stars = $(`#chat_${memoireId} .star`);
+        $stars.each(function (idx) {
+            const val = 5 - idx;                 // 5,4,3,2,1
+            $(this)
+                .toggleClass('selected', val <= note)   // colorie
+                .toggleClass('user-rated', val <= note) // persistant
+                .off('click');                          // empêche de re-noter
+        });
+
+        alerte(`Note ${note}/5 enregistrée`, 'success');
+    } catch (e) {
+        alerte('Erreur', 'error');
+    }
+};
+/* ---------- INITIALISATION ---------- */
+$(async function(){
+    await loadUserProfile();
+    loadYears();
+    loadDomains();
+    loadStats();
+    loadMemoires();
+    loadTopContrib();
+    buildUserBar();
+    bindEvents();
+});
+
+/* ---------- PROFIL UTILISATEUR ---------- */
+async function loadUserProfile(){
+    if(!TOKEN) return;
+    try{
+        const user = await $.get({url:`${baseAPI}/auth/profile/`,headers:authHeaders()});
+        USER_ROLE = user.type;
+        USER_ID   = user.id;
+    }catch(e){
+        console.warn('Profil non chargé – utilisateur non connecté ou token invalide');
+    }
+}
+
+/* ---------- BINDINGS ---------- */
+function bindEvents(){
+    $('#search_input').on('keypress',e=>{if(e.which===13)loadMemoires(1);});
+    $('#year_select,#domain_select,#sort_select').on('change',()=>loadMemoires(1));
+}
+
+/* ---------- ANNEES ---------- */
+async function loadYears(){
+    try{
+        const data=await $.get(`${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/annees/`);
+        const $sel=$('#year_select');
+        data.annees.forEach(y=>$sel.append(`<option value="${y}">${y}</option>`));
+    }catch(e){console.error(e);}
+}
+
+/* ---------- DOMAINES ---------- */
+async function loadDomains() {
+    try {
+        const data = await $.get({
+            url: `${baseAPI}/universites/domaines/`,
+            headers: authHeaders(),
+            dataType: 'json'
+        });
+        const domainesSet = new Set(
+            data
+                .filter(d => d.universites.some(u => u.slug === UNIV_SLUG))
+                .map(d => d.nom)
+        );
+        const $sel = $('#domain_select');
+        $sel.append('<option value="">Tous les domaines</option>');
+        Array.from(domainesSet).sort().forEach(nom =>
+            $sel.append(`<option value="${nom}">${nom}</option>`)
+        );
+    } catch (e) {
+        console.error('loadDomains erreur :', e);
+        $('#domain_select').html('<option value="">Domaines non chargés</option>');
+    }
+}
+
+/* ---------- STATS GLOBALES ---------- */
+async function loadStats(){
+    try{
+        const data=await $.get(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/stats/`);
+        $('#total_memoires').text(data.total_memoires||0);
+        $('#total_downloads').text(data.total_telechargements||0);
+        $('#total_likes').text(data.total_likes||0);
+        $('#avg_rating').text(data.note_moyenne?data.note_moyenne.toFixed(1):'0.0');
+    }catch(e){console.error(e);}
+}
+
+/* ---------- PAGINATION ---------- */
+function renderPagination(data) {
+    const total = Math.ceil(data.count / 10);
+    if (total <= 1) {
+        $('#pagination_container').html('');
+        return;
+    }
+    let html = '';
+    if (data.previous) html += `<button class="pagination_btn" onclick="loadMemoires(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(total, currentPage + 2);
+    for (let i = start; i <= end; i++) html += `<button class="pagination_btn ${i === currentPage ? 'active' : ''}" onclick="loadMemoires(${i})">${i}</button>`;
+    if (data.next) html += `<button class="pagination_btn" onclick="loadMemoires(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+    $('#pagination_container').html(html);
+}
+
+/* ---------- GRILLE PRINCIPALE ---------- */
+async function loadMemoires(page = 1) {
+    showSpin(true);
+    const search = $.trim($('#search_input').val());
+    const year = $('#year_select').val();
+    const domain = $('#domain_select').val();
+    const order = $('#sort_select').val() || '-created_at';
+
+    let url = `${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/?page=${page}`;
+    if (search) url += '&search=' + encodeURIComponent(search);
+    if (year) url += '&annee=' + year;
+    if (domain) url += '&domaine=' + encodeURIComponent(domain);
+    if (order) url += '&ordering=' + order;
+
+    try {
+        const data = await $.get({ url, headers: authHeaders() });
+        if (Array.isArray(data)) {
+            renderGrid(data);
+            renderPagination({ count: data.length, next: null, previous: null });
+        } else if (data && Array.isArray(data.results)) {
+            renderGrid(data.results);
+            renderPagination(data);
+        } else {
+            renderGrid([]);
+        }
+        currentPage = page;
+    } catch (e) {
+        errorMsg(e);
+    } finally {
+        showSpin(false);
+    }
+}
+window.openDetailModal = async function (id) {
+    const full = await loadMemoireComplet(id);
+    const m = full.memoire;
+    const isLogged = !!TOKEN;
+    const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
+
+    let html = `
+    <div class="detail_section">
+        <h3><i class="fas fa-info-circle"></i> Informations</h3>
+        <div class="detail_info">
+            <div class="info_item"><div class="info_label">Auteur</div><div class="info_value">${m.auteur.nom}</div></div>
+            <div class="info_item"><div class="info_label">Année</div><div class="info_value">${m.annee}</div></div>
+            <div class="info_item"><div class="info_label">Note moyenne</div><div class="info_value">${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}/5</div></div>
+            <div class="info_item"><div class="info_label">Téléchargements</div><div class="info_value">${m.nb_telechargements}</div></div>
+            <div class="info_item"><div class="info_label">Likes</div><div class="info_value">${full.likes.count}</div></div>
+            <div class="info_item"><div class="info_label">Commentaires</div><div class="info_value">${m.nb_commentaires || 0}</div></div>
+            <div class="info_item"><div class="info_label">Date de création</div><div class="info_value">${new Date(m.created_at).toLocaleDateString('fr-FR')}</div></div>
+        </div>
+    </div>
+
+    <div class="detail_section">
+        <h3><i class="fas fa-user"></i> Auteur</h3>
+        <div style="display:flex;align-items:center;gap:15px">
+            <img src="${m.auteur.photo_profil}" style="width:80px;height:80px;border-radius:50%;object-fit:cover">
+            <div>
+                <div class="memoire_title">${m.auteur.nom}</div>
+                <button class="action_btn" onclick="window.open('${m.auteur.linkedin}')">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </button>
+            </div>
+        </div>
+    </div>`;
+
+    if (m.encadreurs.length) {
+        html += `
+        <div class="detail_section">
+            <h3><i class="fas fa-chalkboard-teacher"></i> Encadreurs</h3>
+            <div class="encadreurs_grid">` +
+            m.encadreurs.map(enc => `
+                <div class="encadreur_card" onclick="window.open('${enc.linkedin}', '_blank')">
+                    <img src="${enc.photo_profil}" alt="${enc.nom}" class="encadreur_photo">
+                    <div class="encadreur_name">${enc.nom}</div>
+                    <i class="fab fa-linkedin encadreur_linkedin"></i>
+                </div>`).join('') +
+            `</div>
+        </div>`;
+    }
+
+    if (m.images) {
+        html += `
+        <div class="detail_section">
+            <h3><i class="fas fa-image"></i> Image de couverture</h3>
+            <img src="${m.images}" style="width:100%;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.15)">
+        </div>`;
+    }
+
+    html += `
+    <div class="detail_section">
+        <h3><i class="fas fa-align-left"></i> Résumé</h3>
+        <p style="color:#666;line-height:1.8">${m.resume || 'Aucun résumé'}</p>
+    </div>
+
+    <div class="detail_section">
+        <h3><i class="fas fa-tags"></i> Domaines</h3>
+        <div class="memoire_domains">${(m.domaines_list || []).map(dom => `<span class="domain_badge">${dom}</span>`).join('')}</div>
+    </div>`;
+
+    if (m.universites_list.length) {
+        html += `
+        <div class="detail_section">
+            <h3><i class="fas fa-university"></i> Universités</h3>
+            <div class="memoire_domains">` +
+            m.universites_list.map(u => `<span class="domain_badge">${u}</span>`).join('') +
+            `</div>
+        </div>`;
+    }
+
+    // CHAT STYLE
+    html += `
+    <div class="detail_section">
+        <h3><i class="fas fa-comments"></i> Commentaires (${full.comments.count})</h3>
+        <div class="chat_container" id="chat_comments_${m.id}">
+            ${full.comments.list.map(c => renderChatMessage(c, isStaff)).join('')}
+        </div>
+    </div>`;
+
+    if (isLogged) {
+        html += `
+        <div class="detail_section">
+            <h3><i class="fas fa-pen"></i> Votre réponse</h3>
+            <div class="comment_form">
+                <textarea class="comment_textarea" id="comment_input_modal" placeholder="Tapez votre message…"></textarea>
+                <button class="btn_submit_comment" onclick="submitCommentModal(${m.id})"><i class="fas fa-paper-plane"></i> Envoyer</button>
+            </div>
+        </div>`;
+
+        html += `
+        <div class="detail_section">
+            <h3><i class="fas fa-star"></i> Noter ce mémoire</h3>
+            <div class="rating_form">
+                <div class="stars_container" id="stars_container">
+                    ${[5,4,3,2,1].map(i => `
+                        <i class="far fa-star star" data-value="${i}" onclick="submitRating(${m.id}, ${i})"></i>
+                    `).join('')}
+                </div>
+                <small>Cliquez sur une étoile pour valider</small>
+            </div>
+        </div>`;
+    }
+
+    if (isStaff && full.signalements.count > 0) {
+        html += `<div class="detail_section">
+            <h3><i class="fas fa-flag"></i> Signalements (${full.signalements.count})</h3>
+            <div class="comments_list">` +
+            full.signalements.list.map(s => `
+                <div class="comment_item">
+                    <div class="comment_header">
+                        <div class="comment_author">${s.utilisateur_nom}</div>
+                        <div class="comment_date">${new Date(s.date).toLocaleDateString('fr-FR')}</div>
+                    </div>
+                    <div class="comment_text"><strong>Motif :</strong> ${s.motif}</div>
+                </div>`).join('') +
+            `</div></div>`;
+    }
+
+    if (isLogged) {
+        html += `<div class="detail_section" style="text-align:right">
+            <button class="action_btn" onclick="signalerMemoire(${m.id},'Contenu inapproprié')">
+                <i class="fas fa-flag"></i> Signaler ce mémoire
+            </button>
+        </div>`;
+    }
+
+    $('#modal_title').text(m.titre);
+    $('#modal_body').html(html);
+    openModal('detail_modal');
+};
+async function signalerMemoire(memoireId, motif = 'Contenu inapproprié') {
+    if (!TOKEN) { alerte('Connectez-vous pour signaler', 'info'); return; }
+    try {
+        await $.ajax({
+            url: `${baseAPI}/interactions/signalements/`,
+            method: 'POST',
+            data: JSON.stringify({ memoire: memoireId, motif }),
+            contentType: 'application/json',
+            headers: authHeaders()
+        });
+        alerte('Signalement envoyé. Merci.', 'success');
+    } catch (e) {
+        errorMsg(e);
+    }
+}
+
+/* ---------- AFFICHAGE COMPLET (carte + modale) ---------- */
+/* ---------- AFFICHAGE COMPLET (carte + modale) ---------- */
+/* ---------- AFFICHAGE COMPLET (carte + modale) ---------- */
+function renderMemoireComplet(d) {
+    const m = d.memoire;
+    const isLogged = !!TOKEN;
+    const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
+
+    // 1) CARTE
+    const cardHtml = `
+    <div class="memoire_card" data-id="${m.id}">
+        <div class="memoire_header">
+            <div class="memoire_title">${m.titre}</div>
+            <div class="memoire_meta">
+                <span>
+                    <img src="${m.auteur.photo_profil}" class="auteur_thumb" alt="">
+                    <i class="fab fa-linkedin ml-2 cursor" onclick="window.open('${m.auteur.linkedin}')"></i>
+                    ${m.auteur.nom}
+                </span>
+                <span><i class="fas fa-chalkboard-teacher"></i> ${m.encadreurs.length} encadreur(s)</span>
+                <span><i class="fas fa-calendar"></i> ${m.annee}</span>
+            </div>
+        </div>
+        <div class="memoire_body">
+            <div class="memoire_resume">${m.resume || 'Aucun résumé'}</div>
+            <div class="memoire_domains">${(m.domaines_list || []).map(dom => `<span class="domain_badge">${dom}</span>`).join('')}</div>
+            <div class="memoire_stats">
+                <span><i class="fas fa-download"></i> ${m.nb_telechargements}</span>
+                <span><i class="fas fa-heart"></i> ${m.nb_likes}</span>
+                <span><i class="fas fa-star"></i> ${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}</span>
+                <span><i class="fas fa-comment"></i> ${m.nb_commentaires || 0}</span>
+            </div>
+            <div class="memoire_actions">
+   <button class="action_btn chat_opener" onclick="openChatBubble(${m.id}, '${m.titre.replace(/'/g, "\\'")}')" title="Discuter">
+    <i class="fas fa-comments"></i>
+    <span class="chat_pastille">${m.nb_commentaires || 0}</span>
+</button>
+</div>
+        </div>
+    </div>`;
+
+    $('#memoires_grid').append(cardHtml);
+}
+/* ---------- MODALE DÉTAIL (GLOBALE) ---------- */
+/* ---------- MODALE DÉTAIL (GLOBALE) ---------- */
+
+/* ---------- SOUMISSION COMMENTAIRE MODALE ---------- */
+/* ---------- SOUMISSION COMMENTAIRE MODALE ---------- */
+async function submitCommentModal(memoireId) {
+    const txt = $.trim($('#comment_input_modal').val());
+    if (!txt) { alerte('Commentaire vide', 'error'); return; }
+    try {
+        await $.ajax({
+            url: `${baseAPI}/interactions/commentaires/`,
+            method: 'POST',
+            data: JSON.stringify({ memoire: memoireId, contenu: txt }),
+            contentType: 'application/json',
+            headers: authHeaders()
+        });
+        $('#comment_input_modal').val('');
+        alerte('Commentaire publié', 'success');
+        await loadMemoireComplet(memoireId);
+    } catch (e) {
+        const msg = e.responseJSON ? Object.values(e.responseJSON).flat().join(', ') : e.statusText || 'Erreur';
+        alerte(`❌ ${msg}`, 'error');
+    }
+}
+
+/* ---------- SOUMISSION NOTE (1-5 étoiles) ---------- */
+window.submitRating = async function (memoireId, note) {
+    if (!TOKEN) { alerte('Connectez-vous pour noter', 'info'); return; }
+    if (note < 1 || note > 5) return;
+
+    try {
+        await $.ajax({
+            url: `${baseAPI}/interactions/notations/`,
+            method: 'POST',
+            data: JSON.stringify({ memoire_id: memoireId, note: note }),
+            contentType: 'application/json',
+            headers: authHeaders()
+        });
+        alerte(`Note ${note}/5 enregistrée`, 'success');
+        openDetailModal(memoireId);
+    } catch (e) {
+        const msg = e.responseJSON ? Object.values(e.responseJSON).flat().join(', ') : e.statusText || 'Erreur';
+        alerte(`❌ ${msg}`, 'error');
+    }
+};
+/* ---------- BULLE CHAT ---------- */
+function renderChatMessage(c, isStaff) {
+    const isMine = c.utilisateur_id === USER_ID;
+    const time = moment(c.date).fromNow();
+    return `
+    <div class="chat_msg ${isMine ? 'mine' : 'theirs'}">
+        <img src="${c.utilisateur_photo || 'https://via.placeholder.com/32'}" class="chat_msg_avatar">
+        <div class="chat_msg_content">
+            <div class="chat_msg_meta">
+                <span class="chat_msg_author">${c.utilisateur_nom}</span>
+                <span class="chat_msg_time">${time}</span>
+            </div>
+            <div class="chat_msg_text">${c.contenu}</div>
+            ${isStaff && !c.modere ? `<button class="btn btn-sm btn-warning mt-2" onclick="modererCommentaire(${c.id})">Modérer</button>` : ''}
+        </div>
+    </div>`;
+}
+
+
+
+/* ---------- RENDU GRILLE ---------- */
+function renderGrid(list) {
+    if (!list || !list.length) {
+        $grid.html(`<div class="empty_state col-12"><i class="fas fa-inbox"></i><h3>Aucun mémoire</h3></div>`);
+        return;
+    }
+
+    const isLogged = !!TOKEN;
+    const isProf = USER_ROLE === 'professeur';
+    const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
+
+    const cards = list.map((m, i) => `
+        <div class="memoire_card ${compactView ? 'compact' : ''}" data-id="${m.id}">
+            <div class="memoire_header">
+                <div class="memoire_title">${m.titre}</div>
+                <div class="memoire_meta">
+                    <span><i class="fas fa-user"></i> ${m.auteur_nom}</span>
+                    <span><i class="fas fa-calendar"></i> ${m.annee}</span>
+                </div>
+            </div>
+            <div class="memoire_body">
+                <div class="memoire_resume">${m.resume || 'Aucun résumé'}</div>
+                <div class="memoire_domains">${(m.domaines_list || []).map(d => `<span class="domain_badge">${d}</span>`).join('')}</div>
+                <div class="memoire_stats">
+                    <span><i class="fas fa-download"></i> ${m.nb_telechargements}</span>
+                    <span><i class="fas fa-heart"></i> ${m.nb_likes}</span>
+                    <span><i class="fas fa-star"></i> ${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}</span>
+                </div>
+                <div class="memoire_actions">
+                    ${isLogged ? `
+                        <button class="action_btn ${m.is_liked ? 'liked' : ''}" onclick="toggleLike(${m.id},this)"><i class="fas fa-heart"></i> <span>${m.nb_likes}</span></button>
+                        <button class="action_btn" onclick="openDetailModal(${m.id})"><i class="fas fa-eye"></i> Détails</button>
+                        <button class="action_btn chat_opener" onclick="openChatBubble(${m.id}, '${m.titre.replace(/'/g, "\\'")}')" title="Discuter">
+    <i class="fas fa-comments"></i>
+    <span class="chat_pastille">${m.nb_commentaires || 0}</span>
+</button>
+                        <button class="action_btn btn_download" onclick="downloadMemoire(${m.id},'${m.pdf_url}')"><i class="fas fa-download"></i></button>
+                        ${isProf ? `<button class="action_btn" onclick="encadrerMemoire(${m.id})"><i class="fas fa-chalkboard-teacher"></i> Encadrer</button>` : ''}
+                    ` : `<button class="action_btn" onclick="alerte('Connectez-vous pour interagir','info')"><i class="fas fa-sign-in-alt"></i> Connexion</button>`}
+                </div>
+            </div>
+        </div>`).join('');
+
+    $grid.html(cards);
+}
+
+/* ---------- INTERACTIONS ---------- */
+async function toggleLike(id,btn){
+    if(!TOKEN){alerte('Connectez-vous pour liker','info');return;}
+    try{
+        const data=await $.ajax({url:`${baseAPI}/interactions/likes/toggle/`,method:'POST',data:JSON.stringify({memoire_id:id}),contentType:'application/json',headers:authHeaders()});
+        $(btn).toggleClass('liked',data.liked).find('span').text(data.count);
+        alerte(data.liked?'Ajouté aux favoris':'Retiré des favoris','success');
+    }catch(e){errorMsg(e);}
+}
+async function downloadMemoire(id,url){
+    if(!TOKEN){alerte('Connectez-vous pour télécharger','info');return;}
+    try{
+        await $.ajax({url:`${baseAPI}/interactions/telechargements/telecharger/`,method:'POST',data:JSON.stringify({memoire:id}),contentType:'application/json',headers:authHeaders()});
+        window.open(url,'_blank');
+        alerte('Téléchargement lancé','success');
+        loadStats();
+    }catch(e){errorMsg(e);}
+}
+async function encadrerMemoire(id){
+    if(!TOKEN){alerte('Connectez-vous','info');return;}
+    if(USER_ROLE!=='professeur'){alerte('Réservé aux professeurs','error');return;}
+    alerte('Fonctionnalité d’encadrement en cours','info');
+}
+
+/* ---------- MODALES ---------- */
+function openModal(id){$('#'+id).addClass('active');$('body').css('overflow','hidden');}
+function closeModal(id){$('#'+id).removeClass('active');$('body').css('overflow','auto');}
+$('.modal_overlay').on('click', function (e) {
+    if (e.target === this) closeModal(this.id);
+});
+
+/* ---------- USER ACTIONS ---------- */
+function buildUserBar() {
+    const bar = `
+
+    <button class="user_action_btn" id="btn_toggle_view" onclick="toggleView()" title="Vue compacte"><i class="fas fa-list"></i> Vue</button>`;
+    $('.user_actions').append(bar);
+}
+
+/* ---------- MES STATISTIQUES ---------- */
+async function openMesStats() {
+    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
+    try {
+        const d = await $.get({ url: `${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/mes-stats/`, headers: authHeaders() });
+        $('#generic_modal_title').html('<i class="fas fa-chart-line"></i> Mes Statistiques');
+        $('#generic_modal_body').html(`
+            <div class="detail_section">
+                <h3>Vue d'ensemble</h3>
+                <div class="detail_info">
+                    <div class="info_item"><div class="info_label">Mémoires publiés</div><div class="info_value">${d.total_memoires || 0}</div></div>
+                    <div class="info_item"><div class="info_label">Total téléchargements</div><div class="info_value">${d.total_telechargements || 0}</div></div>
+                    <div class="info_item"><div class="info_label">Note moyenne</div><div class="info_value">${d.note_moyenne ? d.note_moyenne.toFixed(1) : 'N/A'}</div></div>
+                </div>
+            </div>
+            ${d.classement?.length ? `<div class="detail_section"><h3>Top 5 de mes mémoires</h3>${d.classement.map((m, i) => `
+                <div class="comment_item">
+                    <div style="display:flex;justify-content:space-between">
+                        <div><strong>#${i + 1}</strong> ${m.titre}</div>
+                        <div style="color:#ffb606"><i class="fas fa-download"></i> ${m.dl}</div>
+                    </div>
+                </div>`).join('')}</div>` : ''}`);
+        openModal('generic_modal');
+    } catch (e) { errorMsg(e); }
+}
+
+/* ---------- MES TÉLÉCHARGEMENTS ---------- */
+async function openMesTelechargements() {
+    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
+    try {
+        const list = await $.get({ url: `${baseAPI}/interactions/telechargements/mes-telechargements/`, headers: authHeaders() });
+        const searchBox = `<div class="filter_group"><input class="filter_input" id="search_downloads" placeholder="Rechercher..." onkeyup="filterDownloads()"></div>`;
+        const html = list.length ? list.map(dl => `
+            <div class="comment_item download_item">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div><strong>${dl.memoire_titre}</strong><div style="font-size:12px;color:#a5a5a5">${new Date(dl.date).toLocaleDateString('fr-FR')}</div></div>
+                    <button class="action_btn btn_download" onclick="window.open('${dl.pdf_url}','_blank')"><i class="fas fa-download"></i></button>
+                </div>
+            </div>`).join('') : '<p style="text-align:center;color:#a5a5a5;padding:40px">Aucun téléchargement</p>';
+        $('#generic_modal_title').html('<i class="fas fa-download"></i> Mes Téléchargements');
+        $('#generic_modal_body').html(searchBox + '<div id="downloads_list">' + html + '</div>');
+        openModal('generic_modal');
+    } catch (e) { errorMsg(e); }
+}
+
+function filterDownloads() {
+    const s = $('#search_downloads').val().toLowerCase();
+    $('.download_item').each(function () {
+        $(this).toggle($(this).text().toLowerCase().includes(s));
+    });
+}
+
+/* ---------- MES LIKES ---------- */
+async function openMesLikes() {
+    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
+    try {
+        const list = await $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/likes/`, headers: authHeaders() });
+        const html = list.length ? list.map(l => `
+            <div class="comment_item" style="cursor:pointer" onclick="openDetailModal(${l.memoire})">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div><strong>${l.memoire_titre}</strong><div style="font-size:12px;color:#a5a5a5">Par ${l.utilisateur_nom}</div></div>
+                    <div style="color:#ff4757;font-size:24px"><i class="fas fa-heart"></i></div>
+                </div>
+            </div>`).join('') : '<p style="text-align:center;color:#a5a5a5;padding:40px">Aucun like</p>';
+        $('#generic_modal_title').html('<i class="fas fa-heart"></i> Mes Likes');
+        $('#generic_modal_body').html(html);
+        openModal('generic_modal');
+    } catch (e) { errorMsg(e); }
+}
+
+/* ---------- MES COMMENTAIRES ---------- */
+async function openMesCommentaires() {
+    alerte('Fonctionnalité en cours', 'info');
+}
+
+/* ---------- ANNUAIRE ---------- */
+async function openAnnuaire() {
+    try {
+        const data = await $.get(`${baseAPI}/auth/${UNIV_SLUG}/users/annuaire/`);
+        const cards = data.results.map(u => `
+            <div class="memoire_card" style="padding:20px;display:flex;align-items:center;gap:15px">
+                <img src="${u.photo_profil || 'https://via.placeholder.com/60'}" style="width:60px;height:60px;border-radius:50%;object-fit:cover">
+                <div>
+                    <div class="memoire_title">${u.nom} ${u.prenom}</div>
+                    <div class="memoire_meta">${u.role_display || 'Membre'}</div>
+                    <div style="font-size:12px;color:#999">${u.total_memoires || 0} mémoire(s)</div>
+                </div>
+            </div>`).join('');
+        $('#generic_modal_title').html('<i class="fas fa-address-book"></i> Annuaire ENSTP');
+        $('#generic_modal_body').html(`<div class="memoires_grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">${cards}</div>`);
+        openModal('generic_modal');
+    } catch (e) { errorMsg(e); }
+}
+
+/* ---------- EXPORT CSV ---------- */
+function exportMyDownloads() {
+    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
+    $.get({ url: `${baseAPI}/interactions/telechargements/mes-telechargements/`, headers: authHeaders() })
+        .done(list => {
+            const head = 'Titre,Auteur,Date\n';
+            const rows = list.map(d => `"${d.memoire_titre}","${d.utilisateur_nom}","${new Date(d.date).toLocaleDateString('fr-FR')}"`).join('\n');
+            const csv = '\uFEFF' + head + rows;
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'mes_telechargements_enstp.csv';
+            link.click();
+        })
+        .fail(e => errorMsg(e));
+}
+
+/* ---------- VUE COMPACTE ---------- */
+function toggleView() {
+    compactView = !compactView;
+    $('#memoires_grid').toggleClass('compact', compactView);
+    $('#btn_toggle_view i').attr('class', compactView ? 'fas fa-th-large' : 'fas fa-list');
+}
+
+$('<style>')
+.text(`.memoires_grid.compact .memoire_card{display:flex;align-items:center;padding:12px}
+.memoires_grid.compact .memoire_header{width:180px;padding:15px;margin-right:15px;border-radius:8px 0 0 8px}
+.memoires_grid.compact .memoire_body{flex:1;padding:10px 15px 10px 0}
+.memoires_grid.compact .memoire_resume{-webkit-line-clamp:2;margin-bottom:8px}
+.memoires_grid.compact .memoire_domains{margin-bottom:8px}
+.memoires_grid.compact .memoire_actions{padding-top:8px;margin-top:8px}`)
+.appendTo('head');
+
+/* ---------- TOP CONTRIBUTEURS ---------- */
+async function loadTopContrib() {
+    try {
+        const data = await $.get(`${baseAPI}/auth/${UNIV_SLUG}/users/top-contrib/`);
+        const html = data.map((u, i) => `
+            <div class="comment_item">
+                <div style="display:flex;justify-content:space-between">
+                    <div><strong>#${i + 1}</strong> ${u.nom} ${u.prenom}</div>
+                    <div style="color:#ffb606"><i class="fas fa-file-alt"></i> ${u.total_memoires || 0}</div>
+                </div>
+            </div>`).join('');
+        $('#top_contrib_box').html(html);
+    } catch (e) { console.error(e); }
+}
+
+/* ---------- FILTRES ---------- */
+function applyFilters() { loadMemoires(1); }
+function resetFilters() {
+    $('#search_input').val('');
+    $('#year_select').val('');
+    $('#domain_select').val('');
+    $('#sort_select').val('-created_at');
+    applyFilters();
+}
+</script>
+
+</body>
+</html>

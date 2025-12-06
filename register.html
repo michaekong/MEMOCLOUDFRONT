@@ -51,36 +51,86 @@ body::before {
 
 /* Hero Section */
 .hero_section {
+    margin-top: 180px;
+    padding: 80px 0;
+    color: white;
     text-align: center;
-    color: #FFFFFF;
-    animation: fadeInDown 0.8s ease-out;
+    position: relative;
+    overflow: hidden;
+    height: 60vh; /* ← pour que l’image remplisse bien */
 }
 
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
+/* 🖼️ CARROUSEL */
+.hero_slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
 
-.hero_title {
-    font-size: 48px;
-    font-weight: 800;
-    margin-bottom: 12px;
-    letter-spacing: -1px;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+.hero_slider img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
 }
 
-.hero_title span {
-    background: linear-gradient(135deg, #ffb606 0%, #ffd454 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: none;
+.hero_slider img.active {
+    opacity: 1;
 }
 
-.hero_subtitle {
-    font-size: 18px;
-    color: #e2e8f0;
-    font-weight: 500;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+/* 🧥 OVERLAY LÉGER */
+.hero_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.35); /* ← ajuste ici pour plus ou moins de contraste */
+    z-index: 1;
+}
+
+/* ✅ TEXTE (inchangé) */
+.hero_section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero_section h1 {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    animation: fadeInUp 0.8s ease;
+}
+
+.hero_section h1 span {
+    background: #ffb606;
+    padding: 5px 25px;
+    display: inline-block;
+    box-shadow: 0 10px 30px rgba(255, 182, 6, 0.3);
+}
+
+.hero_section p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 20px;
+    animation: fadeInUp 0.8s ease 0.2s backwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Auth Container */
@@ -569,6 +619,14 @@ body::before {
 
     <!-- Features Grid -->
     <div class="features_grid">
+         <div class="feature_card">
+            <div class="feature_card_icon">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h3>Topographie & Géomatique</h3>
+            <p>Travaux en topographie et sciences géospatiales.</p>
+        </div>
+
         <div class="feature_card">
             <div class="feature_card_icon">
                 <i class="fas fa-building"></i>
@@ -577,14 +635,7 @@ body::before {
             <p>Bibliothèque complète de mémoires en architecture et construction.</p>
         </div>
 
-        <div class="feature_card">
-            <div class="feature_card_icon">
-                <i class="fas fa-map-marked-alt"></i>
-            </div>
-            <h3>Topographie & Géomatique</h3>
-            <p>Travaux en topographie et sciences géospatiales.</p>
-        </div>
-
+       
         <div class="feature_card">
             <div class="feature_card_icon">
                 <i class="fas fa-leaf"></i>
@@ -602,7 +653,25 @@ body::before {
         </div>
     </div>
 </div>
+<script>
+    const slides = document.querySelectorAll('.hero_slider img');
+    let current = 0;
 
+    function showSlide(index) {
+        slides.forEach((img, i) => {
+            img.classList.toggle('active', i === index);
+        });
+    }
+
+    function nextSlide() {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+    }
+
+    // Initialisation
+    showSlide(current);
+    setInterval(nextSlide, 5000); // change toutes les 5s
+</script>
 <script>
 const API_URL = 'http://127.0.0.1:8000';
 const UNIV_SLUG = 'ecole-des-travaux';
@@ -777,12 +846,26 @@ async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) 
     }
 
     try {
-        const response = await fetch(`${API_URL}/api/auth/auth/${UNIV_SLUG}/register/`, {
+        // Créer FormData pour supporter l'envoi de fichiers
+        const fd = new FormData();
+        
+        // Ajouter tous les champs sauf la photo
+        Object.keys(data).forEach(key => {
+            if (key !== 'photo_profil') {
+                fd.append(key, data[key]);
+            }
+        });
+        
+        // Ajouter la photo si elle existe
+        const fileInput = form.querySelector('input[type="file"][name="photo_profil"]');
+        if (fileInput && fileInput.files[0]) {
+            fd.append('photo_profil', fileInput.files[0]);
+        }
+
+        const response = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
+            // Pas de headers Content-Type - le navigateur le gère automatiquement avec FormData
+            body: fd
         });
 
         const result = await response.json();
@@ -827,7 +910,6 @@ async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) 
         submitBtn.textContent = 'Créer mon Compte';
     }
 }
-
 function showResetPassword() {
     const email = prompt('Entrez votre adresse email pour réinitialiser votre mot de passe :');
     if (!email || !email.trim()) return;
@@ -868,6 +950,7 @@ function showResetPassword() {
         console.error('Erreur:', error);
     });
 }
+
 </script>
 
 </body>
