@@ -1,3692 +1,412 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="Bibliothèque des Mémoires - ENSTP">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Bibliothèque des Mémoires - ENSTP</title>
-<!-- jQuery 3.6 CDN -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
-<script>moment.locale('fr');</script><script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
-<script>moment.locale('fr');</script>
-<!-- Font Awesome 5 -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<style>
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800|Roboto:400,500,700');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    background: #f8f9fb;
-    color: #a5a5a5;
-    overflow-x: hidden;
-}
-
-/* Background Slideshow */
-.background_slideshow {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: -1;
-    opacity: 0.08;
-}
-
-.background_slideshow img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    animation: slideshow 24s infinite;
-}
-
-.background_slideshow img:nth-child(1) { animation-delay: 0s; }
-.background_slideshow img:nth-child(2) { animation-delay: 6s; }
-.background_slideshow img:nth-child(3) { animation-delay: 12s; }
-.background_slideshow img:nth-child(4) { animation-delay: 18s; }
-
-@keyframes slideshow {
-    0%, 25% { opacity: 1; transform: scale(1); }
-    33%, 100% { opacity: 0; transform: scale(1.1); }
-}
-
-/* Header */
-.header {
-    position: fixed;
-    top: 45px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 1318px;
-    height: 104px;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    box-shadow: 0px 20px 49px rgba(0,0,0,0.17);
-    transition: all 200ms ease;
-    display: flex;
-}
-
-.header.scrolled {
-    top: 15px;
-    box-shadow: 0px 10px 30px rgba(0,0,0,0.25);
-}
-
-.header_content {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 0 50px;
-    flex: 1;
-}
-
-.logo_container img {
-    height: 50px;
-}
-
-.logo_text {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: #1a1a1a;
-    margin-left: 15px;
-}
-
-.main_nav {
-    margin-left: auto;
-    display: flex;
-    gap: 40px;
-}
-
-.main_nav a {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: #3a3a3a;
-    text-decoration: none;
-    transition: all 200ms ease;
-    position: relative;
-}
-
-.main_nav a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 3px;
-    background: #ffb606;
-    transition: width 0.3s ease;
-}
-
-.main_nav a:hover {
-    color: #ffb606;
-}
-
-.main_nav a:hover::after {
-    width: 100%;
-}
-
-.header_side {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    padding: 0 30px;
-    height: 100%;
-}
-
-.header_side span {
-    color: #FFFFFF;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-/* Hero Section */
-/* ======  MOBILE (déjà OK)  ====== */
-.hero_fixed{
-  position:relative;
-  height:50vh;
-  min-height:320px;
-  margin-top:180px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:#fff;
-}
-
-.hero_slider{
-  position:absolute;
-  inset:0;
-  z-index:0;
-}
-.hero_slider img{
-  position:absolute;
-  inset:0;
-  width:100%; height:100%;
-  object-fit:cover;
-  opacity:0;
-  transition:opacity 1.2s ease-in-out;
-}
-.hero_slider img.active{opacity:1;}
-
-.hero_overlay{
-  position:absolute;
-  inset:0;
-  z-index:1;
-  background:rgba(0,0,0,.35);
-}
-
-.hero_content{
-  position:relative;
-  z-index:2;
-  max-width:800px;
-  padding:2rem;
-}
-/* ======  COULEURS & ANIMATION INITIALES  ====== */
-.hero_fixed h1{
-  font-size:56px;
-  font-weight:700;
-  margin-bottom:15px;
-  animation:fadeInUp .8s ease;
-}
-.hero_fixed h1 span{
-  background:#ffb606;
-  color:#000;                 /* ← noir sur fond doré */
-  padding:5px 25px;
-  display:inline-block;
-  box-shadow:0 10px 30px rgba(255,182,6,.3);
-}
-.hero_fixed p{
-  color:rgba(255,255,255,.9);
-  font-size:20px;
-  animation:fadeInUp .8s ease .2s backwards;
-}
-
-@keyframes fadeInUp{
-  from{opacity:0;transform:translateY(30px);}
-  to  {opacity:1;transform:translateY(0);}
-}
-
-/* PETIT EFFET AU SURVOL (comme avant) */
-.hero_fixed h1 span:hover{
-  background:#ffca30;
-  transition:.25s;
-}
-/* ======  DESKTOP  ====== */
-@media (min-width:769px){
-  .hero_fixed{
-    height:auto;
-    min-height:380px;
-    max-height:480px;
-    padding:100px 0;          /* centre vertical */
-  }
-}
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Stats Widgets */
-.stats_widgets {
-    margin-top: -60px;
-    position: relative;
-    z-index: 10;
-}
-
-.stat_card {
-    background: white;
-    border-radius: 12px;
-    padding: 35px;
-    text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 2px solid transparent;
-}
-
-.stat_card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    border-color: #ffb606;
-}
-
-.stat_icon {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 25px;
-    box-shadow: 0 10px 30px rgba(255,182,6,0.3);
-}
-
-.stat_icon i {
-    font-size: 32px;
-    color: white;
-}
-
-.stat_number {
-    font-size: 42px;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-    font-family: 'Open Sans', sans-serif;
-}
-
-.stat_label {
-    font-size: 14px;
-    color: #a5a5a5;
-    text-transform: uppercase;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-
-/* Filters Section */
-.filters_section {
-    background: white;
-    padding: 35px;
-    border-radius: 12px;
-    margin: 40px 0;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    position: sticky;
-    top: 200px;
-}
-
-.filters_section h3 {
-    color: #1a1a1a;
-    margin-bottom: 25px;
-    font-size: 20px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.filter_group {
-    margin-bottom: 20px;
-}
-
-.filter_group:last-child {
-    margin-bottom: 0;
-}
-
-.filter_group label {
-    font-weight: 600;
-    color: #1a1a1a;
-    margin-bottom: 10px;
-    display: block;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.filter_input,
-.filter_select {
-    width: 100%;
-    height: 45px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 0 15px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    background: #f8f9fb;
-}
-
-.filter_input:focus,
-.filter_select:focus {
-    outline: none;
-    border-color: #ffb606;
-    background: white;
-    box-shadow: 0 5px 15px rgba(255,182,6,0.1);
-}
-
-.btn_filter {
-    width: 100%;
-    height: 48px;
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    border: none;
-    color: white;
-    font-weight: 700;
-    text-transform: uppercase;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-}
-
-.btn_filter:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255,182,6,0.4);
-}
-
-.btn_reset {
-    background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
-    margin-top: 10px;
-}
-
-.btn_reset:hover {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* Memoires Grid */
-.memoires_grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 30px;
-    margin: 40px 0;
-}
-
-.memoire_card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 2px solid transparent;
-}
-
-.memoire_card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    border-color: #ffb606;
-}
-
-.memoire_header {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    padding: 25px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-}
-
-.memoire_header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-}
-
-.memoire_title {
-    font-size: 19px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    line-height: 1.4;
-    position: relative;
-}
-
-.memoire_meta {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    font-size: 13px;
-    position: relative;
-}
-
-.memoire_meta span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.memoire_body {
-    padding: 25px;
-}
-
-.memoire_resume {
-    color: #666;
-    font-size: 14px;
-    line-height: 1.7;
-    margin-bottom: 20px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    min-height: 63px;
-}
-
-.memoire_domains {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-    min-height: 30px;
-}
-
-.domain_badge {
-    background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    color: #1a1a1a;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.domain_badge:hover {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    color: white;
-}
-
-.memoire_stats {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding: 15px;
-    background: #f8f9fb;
-    border-radius: 8px;
-}
-
-.memoire_stats span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    color: #666;
-    font-weight: 600;
-}
-
-.memoire_stats i {
-    color: #ffb606;
-}
-
-.memoire_actions {
-    display: flex;
-    gap: 10px;
-    padding-top: 20px;
-    border-top: 2px solid #f0f0f0;
-}
-
-.action_btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 13px;
-    font-weight: 700;
-    color: #666;
-}
-
-.action_btn:hover {
-    border-color: #ffb606;
-    color: #ffb606;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255,182,6,0.2);
-}
-
-.action_btn.liked {
-    border-color: #ff4757;
-    color: #ff4757;
-    background: rgba(255,71,87,0.05);
-}
-
-.action_btn.liked:hover {
-    background: #ff4757;
-    color: white;
-}
-
-.btn_download {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    color: white;
-    border-color: #ffb606;
-}
-
-.btn_download:hover {
-    background: linear-gradient(135deg, #ffa500 0%, #ff9500 100%);
-    color: white;
-    box-shadow: 0 5px 15px rgba(255,182,6,0.4);
-}
-
-/* Modal Styles */
-.modal_overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 2000;
-    overflow-y: auto;
-    backdrop-filter: blur(5px);
-}
-
-.modal_overlay.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.modal_content {
-    background: white;
-    border-radius: 16px;
-    max-width: 900px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal_header {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-    color: white;
-    padding: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.modal_header h2 {
-    font-size: 26px;
-    margin: 0;
-    font-weight: 700;
-}
-
-.modal_close {
-    width: 45px;
-    height: 45px;
-    background: transparent;
-    border: 2px solid white;
-    border-radius: 50%;
-    color: white;
-    font-size: 22px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal_close:hover {
-    background: #ffb606;
-    border-color: #ffb606;
-    transform: rotate(90deg);
-}
-
-.modal_body {
-    padding: 35px;
-}
-
-.detail_section {
-    margin-bottom: 30px;
-    padding-bottom: 30px;
-    border-bottom: 2px solid #f0f0f0;
-}
-
-.detail_section:last-child {
-    border-bottom: none;
-}
-
-.detail_section h3 {
-    color: #1a1a1a;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.detail_section h3 i {
-    color: #ffb606;
-}
-
-.detail_info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.info_item {
-    background: #f8f9fb;
-    padding: 15px;
-    border-radius: 8px;
-}
-
-.info_label {
-    font-size: 12px;
-    color: #a5a5a5;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.info_value {
-    font-size: 16px;
-    color: #1a1a1a;
-    font-weight: 600;
-}
-
-/* Comments Section */
-.comments_section {
-    margin-top: 30px;
-}
-
-.comment_form {
-    background: #f8f9fb;
-    padding: 25px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-}
-
-.comment_textarea {
-    width: 100%;
-    min-height: 120px;
-    padding: 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-    resize: vertical;
-    font-family: 'Roboto', sans-serif;
-    transition: all 0.3s ease;
-}
-
-.comment_textarea:focus {
-    outline: none;
-    border-color: #ffb606;
-    box-shadow: 0 5px 15px rgba(255,182,6,0.1);
-}
-
-.btn_submit_comment {
-    margin-top: 15px;
-    padding: 12px 35px;
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.btn_submit_comment:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255,182,6,0.4);
-}
-
-.comments_list {
-    margin-top: 25px;
-}
-
-.comment_item {
-    background: white;
-    border: 2px solid #f0f0f0;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 15px;
-    transition: all 0.3s ease;
-}
-
-.comment_item:hover {
-    border-color: #ffb606;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-}
-
-.comment_header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.comment_author {
-    font-weight: 700;
-    color: #1a1a1a;
-    font-size: 15px;
-}
-
-.comment_date {
-    font-size: 12px;
-    color: #a5a5a5;
-}
-
-.comment_text {
-    color: #666;
-    line-height: 1.7;
-    font-size: 14px;
-}
-
-/* Pagination */
-.pagination_container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 50px 0;
-    gap: 10px;
-}
-
-.pagination_btn {
-    padding: 12px 20px;
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    color: #666;
-}
-
-.pagination_btn:hover {
-    border-color: #ffb606;
-    color: #ffb606;
-    transform: translateY(-2px);
-}
-
-.pagination_btn.active {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    border-color: #ffb606;
-    color: white;
-}
-
-.pagination_btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* Loading Spinner */
-.loading_spinner {
-    display: none;
-    text-align: center;
-    padding: 60px;
-}
-
-.spinner {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #ffb606;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* User Actions Bar */
-.user_actions_bar {
-    background: white;
-    padding: 20px 0;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    position: sticky;
-    top: 170px;
-    z-index: 100;
-    margin-bottom: 30px;
-}
-
-.user_actions {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.user_action_btn {
-    padding: 12px 25px;
-    background: white;
-    border: 2px solid #ffb606;
-    color: #ffb606;
-    border-radius: 30px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-}
-
-.user_action_btn:hover {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255,182,6,0.3);
-}
-
-/* Empty State */
-.empty_state {
-    text-align: center;
-    padding: 80px 20px;
-}
-
-.empty_state i {
-    font-size: 100px;
-    color: #e0e0e0;
-    margin-bottom: 25px;
-}
-
-.empty_state h3 {
-    color: #1a1a1a;
-    font-size: 28px;
-    margin-bottom: 15px;
-    font-weight: 700;
-}
-
-.empty_state p {
-    color: #a5a5a5;
-    font-size: 16px;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-    .header {
-        width: 95%;
-        flex-direction: column;
-        height: auto;
-    }
-
-    .header_content {
-        padding: 20px;
-        width: 100%;
-    }
-
-    .header_side {
-        width: 100%;
-        justify-content: center;
-        padding: 15px;
-    }
-
-    .main_nav {
-        display: none;
-    }
-
-    .hero_section {
-        margin-top: 200px;
-        padding: 60px 20px;
-    }
-
-    .hero_section h1 {
-        font-size: 36px;
-    }
-
-    .memoires_grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .filters_section {
-        position: static;
-    }
-}
-
-@media (max-width: 576px) {
-    .stat_card {
-        margin-bottom: 20px;
-    }
-
-    .user_actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .user_action_btn {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .memoire_actions {
-        flex-wrap: wrap;
-    }
-
-    .action_btn {
-        flex: 1 1 45%;
-    }
-}
-
-/* Success/Error Messages */
-.alert_message {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    z-index: 3000;
-    animation: slideInRight 0.4s ease;
-    max-width: 400px;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(400px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.alert_success {
-    background: #4caf50;
-    color: white;
-}
-
-.alert_error {
-    background: #f44336;
-    color: white;
-}
-
-.alert_info {
-    background: #2196F3;
-    color: white;
-}
-.memoires_grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 30px;
-    margin: 40px 0;
-}
-
-.memoire_card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 2px solid transparent;
-}
-
-.memoire_card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    border-color: #ffb606;
-}
-
-.memoire_header {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    padding: 25px;
-    color: white;
-}
-
-.memoire_title {
-    font-size: 19px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.memoire_meta {
-    display: flex;
-    gap: 20px;
-    font-size: 13px;
-}
-
-.memoire_body {
-    padding: 25px;
-}
-
-.memoire_resume {
-    color: #666;
-    font-size: 14px;
-    line-height: 1.7;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    min-height: 63px;
-}
-
-.memoire_domains {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.domain_badge {
-    background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    color: #1a1a1a;
-    font-weight: 600;
-}
-
-.memoire_stats {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding: 15px;
-    background: #f8f9fb;
-    border-radius: 8px;
-}
-
-.memoire_actions {
-    display: flex;
-    gap: 10px;
-    padding-top: 20px;
-    border-top: 2px solid #f0f0f0;
-}
-
-.action_btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 13px;
-    font-weight: 700;
-    color: #666;
-}
-
-.action_btn:hover {
-    border-color: #ffb606;
-    color: #ffb606;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255,182,6,0.2);
-}
-
-.action_btn.liked {
-    border-color: #ff4757;
-    color: #ff4757;
-    background: rgba(255,71,87,0.05);
-}
-
-.btn_download {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    color: white;
-    border-color: #ffb606;
-}
-
-/* ---------- MODALES ---------- */
-.modal_overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 2000;
-    overflow-y: auto;
-    backdrop-filter: blur(5px);
-}
-
-.modal_overlay.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.3s ease;
-}
-
-.modal_content {
-    background: white;
-    border-radius: 16px;
-    max-width: 900px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.modal_header {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-    color: white;
-    padding: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.modal_close {
-    width: 45px;
-    height: 45px;
-    background: transparent;
-    border: 2px solid white;
-    border-radius: 50%;
-    color: white;
-    font-size: 22px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal_close:hover {
-    background: #ffb606;
-    border-color: #ffb606;
-    transform: rotate(90deg);
-}
-
-.modal_body {
-    padding: 35px;
-}
-
-/* ---------- LOADING ---------- */
-.loading_spinner {
-    display: none;
-    text-align: center;
-    padding: 60px;
-}
-
-.spinner {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #ffb606;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* ---------- PAGINATION ---------- */
-.pagination_container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 50px 0;
-    gap: 10px;
-}
-
-.pagination_btn {
-    padding: 12px 20px;
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    color: #666;
-}
-
-.pagination_btn:hover {
-    border-color: #ffb606;
-    color: #ffb606;
-    transform: translateY(-2px);
-}
-
-.pagination_btn.active {
-    background: linear-gradient(135deg, #ffb606 0%, #ffa500 100%);
-    border-color: #ffb606;
-    color: white;
-}
-
-.pagination_btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* ---------- ALERTES ---------- */
-.alert_message {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    z-index: 3000;
-    animation: slideInRight 0.4s ease;
-    max-width: 400px;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(400px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.alert_success {
-    background: #4caf50;
-    color: white;
-}
-
-.alert_error {
-    background: #f44336;
-    color: white;
-}
-
-.alert_info {
-    background: #2196F3;
-    color: white;
-}
-</style>
-<style>
-.stars_container { font-size: 2rem; cursor: pointer; color: #ffb606; }
-.stars_container .star:hover,
-.stars_container .star:hover ~ .star { color: #ffb606; }
-.stars_container .star { transition: color 0.2s; }
-.auteur_thumb { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 6px; vertical-align: middle; }
-.encadreurs_grid { display: flex; gap: 20px; flex-wrap: wrap; }
-.encadreur_card { background: #f8f9fa; border-radius: 12px; padding: 15px; text-align: center; width: 140px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-.encadreur_card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
-.encadreur_photo { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid #fff; }
-.encadreur_name { font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; }
-.encadreur_linkedin { color: #0077b5; font-size: 1.4rem; transition: color 0.2s; }
-.encadreur_card:hover .encadreur_linkedin { color: #005582; }
-.stars_container { font-size: 2rem; cursor: pointer; color: #ffb606; }
-.stars_container .star:hover,
-.stars_container .star:hover ~ .star { color: #ffb606; }
-.stars_container .star { transition: color 0.2s; }
-/* ---- BOUTON CHAT CARTE ---- */
-.chat_opener       { position: relative; margin-left: 6px; }
-.chat_pastille     { position: absolute; top: -6px; right: -6px; background: #ff4757; color: #fff; font-size: 0.7rem; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
-
-/* ---- POPUP CHAT ---- */
-/* ===== BULLE CHAT – DESIGN SYSTEM ENSTP ===== */
-.chat_bubble_popup{
-  position:absolute;
-  inset:auto auto 0 0;          /* collée en bas à gauche de la carte */
-  width:100%;
-  max-width:420px;
-  max-height:75vh;
-  background:#ffffff;
-  border-radius:16px 16px 0 0;
-  box-shadow:0 -10px 40px rgba(0,0,0,.25);
-  display:flex;
-  flex-direction:column;
-  z-index:100;
-  animation:slideUp .35s ease-out;
-}
-@keyframes slideUp{
-  from{transform:translateY(20px);opacity:0;}
-  to{transform:translateY(0);opacity:1;}
-}
-
-.chat_header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:14px 18px;
-  background:#1a1a1a;
-  color:#ffb606;
-  border-radius:16px 16px 0 0;
-  font-weight:600;
-  font-size:1rem;
-}
-.chat_close{
-  cursor:pointer;
-  font-size:1.1rem;
-  transition:transform .2s;
-}
-.chat_close:hover{transform:rotate(90deg);}
-
-.chat_body{
-  flex:1 1 auto;
-  overflow-y:auto;
-  padding:12px 16px;
-  scroll-behavior:smooth;
-}
-.chat_messages{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.chat_msg{
-  display:flex;
-  align-items:flex-end;
-  gap:8px;
-  animation:fadeIn .3s;
-}
-@keyframes fadeIn{
-  from{opacity:0;transform:scale(.95);}
-  to{opacity:1;transform:scale(1);}
-}
-.chat_msg.mine{flex-direction:row-reverse;}
-.chat_msg_avatar{
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid #ffb606;
-}
-.chat_msg_content{max-width:70%;}
-.chat_msg_meta{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:.7rem;
-  color:#666;
-  margin-bottom:4px;
-}
-.chat_msg_text{
-  background:#f2f2f2;
-  padding:10px 14px;
-  border-radius:18px;
-  font-size:.95rem;
-  line-height:1.35;
-  word-break:break-word;
-}
-.chat_msg.mine .chat_msg_text{
-  background:#ffb606;
-  color:#000;
-}
-
-.chat_rating{
-  padding:12px 16px;
-  border-top:1px solid #e5e5e5;
-  text-align:center;
-}
-.stars_container{
-  display:inline-flex;
-  gap:6px;
-  font-size:1.4rem;
-  cursor:pointer;
-}
-.star{color:#ddd;transition:color .2s;}
-.star:hover,.star.selected{color:#ffb606;}
-
-.chat_input_bar{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 16px;
-  border-top:1px solid #e5e5e5;
-  background:#fafafa;
-}
-.chat_input_bar input{
-  flex:1;
-  border:1px solid #ccc;
-  border-radius:20px;
-  padding:10px 16px;
-  font-size:.95rem;
-  outline:none;
-  transition:border .2s;
-}
-.chat_input_bar input:focus{border-color:#ffb606;}
-.chat_input_bar button{
-  background:#ffb606;
-  color:#000;
-  border:none;
-  border-radius:50%;
-  width:40px;
-  height:40px;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-  transition:background .2s;
-}
-.chat_input_bar button:hover{background:#ffca30;}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width:576px){
-  .chat_bubble_popup{
-    max-width:100%;
-    max-height:65vh;
-    border-radius:0;
-    inset:auto 0 0 0;
-  }
-  .chat_header{padding:12px 16px;font-size:.95rem;}
-  .chat_body{padding:10px 12px;}
-  .chat_msg_text{font-size:.9rem;padding:8px 12px;}
-  .chat_msg_avatar{width:28px;height:28px;}
-  .chat_input_bar{padding:10px 12px;}
-  .chat_input_bar input{font-size:.9rem;}
-}
-/* ===== PORTAIL ===== */
-#chatPortal{
-  position:fixed;
-  inset:0;
-  z-index:9999;               /* au-dessus de absolument tout */
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:1rem;
-  pointer-events:none;        /* on laisse passer les clics sur le fond */
-}
-
-/* bulle unique */
-.chat_bubble_popup{
-  position:relative;          /* plus d’absolute, plus de conflit */
-  width:90%;
-  max-width:420px;
-  max-height:75vh;
-  background:#ffffff;
-  border-radius:16px;
-  box-shadow:0 15px 50px rgba(0,0,0,.35);
-  display:flex;
-  flex-direction:column;
-  pointer-events:auto;        /* seule la bulle est cliquable */
-  animation:popIn .3s ease-out;
-}
-@keyframes popIn{
-  from{transform:scale(.95);opacity:0;}
-  to{transform:scale(1);opacity:1;}
-}
-
-/* très grands écrans */
-@media (min-width:1200px){
-  .chat_bubble_popup{max-width:560px;}
-}
-/* petits écrans */
-@media (max-width:576px){
-  .chat_bubble_popup{
-    width:100%;
-    max-height:65vh;
-    border-radius:0;
-  }
-}
-
-/*_overlay semi-transparent derrière la bulle*/
-.chat_backdrop{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  animation:fadeBackdrop .3s;
-}
-@keyframes fadeBackdrop{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-/* ===== inside (non modifié visuellement) ===== */
-.chat_header{...}
-.chat_body{...}
-.chat_input_bar{...}
-/* etc. reprends les couleurs que tu avais */
-.star.selected,
-.star.user-rated{            /* couleur persistante */
-    color:#ffb606 !important;
-}
-/* ===== MINI STATS HERO ===== */
-.hero_stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1rem;
-  margin-top:2rem;
-  max-width:600px;
-  margin-left:auto;
-  margin-right:auto;
-}
-.hero_stat_card{
-  background:rgba(26,26,26,.75);
-  border:1px solid rgba(255,182,6,.35);
-  border-radius:12px;
-  padding:.9rem .5rem;
-  text-align:center;
-  color:#ffb606;
-  backdrop-filter:blur(4px);
-  transition:transform .3s,background .3s;
-}
-.hero_stat_card:hover{
-  transform:translateY(-3px);
-  background:rgba(26,26,26,.9);
-}
-.hero_stat_icon{
-  font-size:1.4rem;
-  margin-bottom:.25rem;
-}
-.hero_stat_number{
-  font-size:1.3rem;
-  font-weight:700;
-  line-height:1;
-}
-.hero_stat_label{
-  font-size:.65rem;
-  opacity:.85;
-  margin-top:.15rem;
-}
-
-/* mobile first : on masque 2 stats, puis 3, puis tout */
-@media (max-width:768px){
-  .hero_stats{grid-template-columns:repeat(2,1fr);}
-  .hero_stat_card:nth-child(3),
-  .hero_stat_card:nth-child(4){display:none;}
-}
-@media (max-width:576px){
-  .hero_stats{grid-template-columns:1fr;}
-  .hero_stat_card:nth-child(2){display:none;}
-}
-@media (max-width:400px){
-  .hero_stats{display:none;}   /* très petit écran : hero ultra-clean */
-}
-/* ===== HERO COUNTER ===== */
-.hero_counter_wrapper{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1.2rem;
-  margin-top:2.5rem;
-  perspective:1000px;        /* 3-D tilt */
-}
-.hero_counter_card{
-  position:relative;
-  background:linear-gradient(145deg,#1f1f1f 0%,#141414 100%);
-  border:1px solid rgba(255,182,6,.25);
-  border-radius:16px;
-  padding:1.2rem .6rem;
-  text-align:center;
-  color:#ffb606;
-  overflow:hidden;
-  transform-style:preserve-3d;
-  transition:transform .3s,box-shadow .3s;
-  will-change:transform;
-}
-.hero_counter_card::before{   /* reflet doré */
-  content:'';
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at 50% 0%,rgba(255,182,6,.15),transparent 70%);
-  opacity:0;
-  transition:opacity .3s;
-}
-.hero_counter_card:hover{
-  transform:rotateX(5deg) rotateY(-3deg) scale(1.03);
-  box-shadow:0 15px 30px rgba(255,182,6,.25);
-}
-.hero_counter_card:hover::before{opacity:1;}
-
-.hero_counter_icon{
-  font-size:2rem;
-  margin-bottom:.4rem;
-  display:inline-block;
-  animation:pulse 2s infinite;
-}
-@keyframes pulse{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.1);}
-}
-
-.hero_counter_number{
-  font-size:2.2rem;
-  font-weight:700;
-  line-height:1;
-  letter-spacing:-1px;
-  font-variant-numeric:tabular-nums;
-  min-height:2.2rem;          /* évite saut quand chiffre change */
-}
-.hero_counter_label{
-  font-size:.75rem;
-  opacity:.85;
-  margin-top:.2rem;
-}
-
-/* message 0 mémoire */
-.hero_zero_msg{
-  grid-column:1/-1;
-  font-size:1.1rem;
-  opacity:.8;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width:992px){
-  .hero_counter_wrapper{grid-template-columns:repeat(2,1fr);}
-  .hero_counter_card:nth-child(3),
-  .hero_counter_card:nth-child(4){display:none;}
-}
-@media (max-width:576px){
-  .hero_counter_wrapper{grid-template-columns:1fr;}
-  .hero_counter_card:nth-child(2){display:none;}
-}
-@media (max-width:400px){
-  .hero_counter_wrapper{display:none;}
-}
-/* ===== HERO BADGES ===== */
-.hero_badges{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:.5rem;
-  margin-top:1.2rem;
-  max-width:340px;
-  margin-left:auto;
-  margin-right:auto;
-}
-.hero_badge{
-  background:rgba(0,0,0,.45);
-  border:1px solid rgba(255,182,6,.35);
-  border-radius:8px;
-  padding:.4rem .3rem;
-  text-align:center;
-  color:#ffb606;
-  font-size:.7rem;
-  line-height:1;
-  backdrop-filter:blur(3px);
-  transition:background .2s;
-}
-.hero_badge_icon{
-  font-size:1rem;
-  margin-bottom:.15rem;
-}
-.hero_badge_number{
-  font-size:1.05rem;
-  font-weight:700;
-  font-variant-numeric:tabular-nums;
-  min-height:1.05rem;
-}
-.hero_badge_label{
-  font-size:.55rem;
-  opacity:.8;
-  margin-top:.1rem;
-}
-
-/* MOBILE FIRST : on n'affiche que 2 badges */
-@media (max-width:768px){
-  .hero_badges{grid-template-columns:1fr 1fr;}
-  .hero_badge:nth-child(3),
-  .hero_badge:nth-child(4){display:none;}
-}
-/* très petit : 1 seul badge */
-@media (max-width:400px){
-  .hero_badges{grid-template-columns:1fr;}
-  .hero_badge:nth-child(2){display:none;}
-}
-/* grand écran : on remet 4 */
-@media (min-width:769px){
-  .hero_badges{grid-template-columns:repeat(4,1fr);gap:.6rem;}
-  .hero_badge{
-    padding:.5rem .4rem;
-    font-size:.75rem;
-  }
-  .hero_badge_number{font-size:1.2rem;}
-}
-.hero_badge_number.final{
-  animation:flashGold .4s;
-}
-@keyframes flashGold{
-  0%,100%{color:#ffb606;}
-  50%{color:#fff600;text-shadow:0 0 8px #ffb606;}
-}
-/* ANNULATION de la règle cachante */
-@media (max-width:768px){
-  .hero_badges{grid-template-columns:repeat(4,1fr);}
-  .hero_badge:nth-child(3),
-  .hero_badge:nth-child(4){display:block !important;}
-}
-/* très petit écran : on met 2 colonnes au lieu de 4 */
-@media (max-width:400px){
-  .hero_badges{grid-template-columns:1fr 1fr;}
-}
-/* compact mobile */
-@media (max-width:576px){
-  .hero_badge{
-    padding:.35rem .25rem;
-    font-size:.6rem;
-  }
-  .hero_badge_icon{font-size:.9rem;}
-  .hero_badge_number{font-size:.95rem;}
-  .hero_badge_label{font-size:.5rem;}
-}
-/* ===== MEMO HEADER ===== */
-.memo_header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:#1a1a1a;
-  border-bottom:1px solid rgba(255,182,6,.25);
-}
-.memo_header_inner{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:.75rem 1.25rem;
-  max-width:1240px;
-  margin:auto;
-}
-.memo_logo{
-  display:flex;
-  align-items:center;
-  gap:.5rem;
-  color:#fff;
-  font-weight:600;
-  font-size:1.1rem;
-  text-decoration:none;
-}
-.memo_logo img{height:28px;}
-.memo_logo .gold{color:#ffb606;}
-
-.memo_nav{
-  display:flex;
-  gap:1.5rem;
-}
-.memo_nav a{
-  color:#ccc;
-  text-decoration:none;
-  font-size:.9rem;
-  transition:color .2s;
-  position:relative;
-}
-.memo_nav a::after{
-  content:'';
-  position:absolute;
-  bottom:-4px;left:0;
-  width:0;height:2px;
-  background:#ffb606;
-  transition:width .3s;
-}
-.memo_nav a:hover,
-.memo_nav a.active{color:#ffb606;}
-.memo_nav a:hover::after,
-.memo_nav a.active::after{width:100%;}
-
-.memo_actions{display:flex;gap:.75rem;}
-.memo_btn{
-  background:#ffb606;
-  color:#000;
-  border:none;
-  border-radius:20px;
-  padding:.4rem 1.1rem;
-  font-size:.85rem;
-  cursor:pointer;
-  transition:background .2s;
-}
-.memo_btn:hover{background:#ffca30;}
-.memo_btn--outline{
-  background:transparent;
-  color:#ffb606;
-  border:1px solid #ffb606;
-}
-.memo_btn--outline:hover{background:rgba(255,182,6,.1);}
-
-.memo_burger{
-  display:none;
-  flex-direction:column;
-  gap:4px;
-  background:none;border:none;
-  cursor:pointer;
-}
-.memo_burger span{
-  width:22px;height:3px;
-  background:#ffb606;
-  border-radius:2px;
-  transition:transform .3s;
-}
-
-/* ===== SIDEBAR MOBILE ===== */
-.memo_sidebar{
-  position:fixed;
-  top:0;right:-260px;
-  width:260px;height:100vh;
-  background:#141414;
-  border-left:1px solid rgba(255,182,6,.2);
-  transition:right .35s ease;
-  z-index:1100;
-}
-.memo_sidebar.open{right:0;}
-.memo_sidebar_head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:1rem;
-  color:#ffb606;
-  font-weight:600;
-}
-.memo_close{
-  background:none;border:none;
-  color:#ffb606;
-  font-size:1.4rem;
-  cursor:pointer;
-}
-.memo_sidebar_nav{
-  display:flex;
-  flex-direction:column;
-  padding:0 1rem 1rem;
-}
-.memo_sidebar_nav a{
-  color:#ccc;
-  text-decoration:none;
-  padding:.7rem 0;
-  border-bottom:1px solid rgba(255,255,255,.05);
-  transition:color .2s;
-}
-.memo_sidebar_nav a:hover{color:#ffb606;}
-.memo_sidebar_nav .memo_btn--full{
-  margin-top:.5rem;
-  text-align:center;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width:768px){
-  .memo_nav,.memo_actions{display:none;}
-  .memo_burger{display:flex;}
-}
-/* ===== HEADER PLUS HAUT ===== */
-.memo_header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:#1a1a1a;
-  border-bottom:1px solid rgba(255,182,6,.25);
-  /* on ajoute un peu de hauteur */
-  padding-block:1rem;          /* ← 16 px de plus */
-}
-.memo_header_inner{
-  padding:1rem 1.25rem;        /* ← un poil plus respirant */
-  max-width:1240px;
-  margin:auto;
-}
-.memo_logo{font-size:1.25rem;}/* logo un peu plus gros */
-.memo_logo img{height:32px;}  /* ← +4 px */
-.memo_nav a{font-size:.95rem;}
-.memo_btn{padding:.5rem 1.2rem;font-size:.9rem;}
-.memo_header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:#1a1a1a;
-  border-bottom:1px solid rgba(255,182,6,.25);
-  /* on augmente la hauteur */
-  padding-block:1.5rem;          /* ← 24 px de plus */
-}
-.memo_header_inner{
-  padding:1.25rem 1.5rem;
-  max-width:1240px;
-  margin:auto;
-}
-/* on grossit un peu le logo et la nav */
-.memo_logo{font-size:1.35rem;}
-.memo_logo img{height:36px;}   /* +4 px */
-.memo_nav a{font-size:1rem;}
-.memo_btn{padding:.6rem 1.3rem;font-size:.95rem;}
-.memo_header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:#1a1a1a;
-  border-bottom:1px solid rgba(255,182,6,.25);
-  /* on augmente la hauteur */
-  padding-block:1.5rem;          /* ← 24 px de plus */
-}
-.memo_header_inner{
-  padding:1.25rem 1.5rem;
-  max-width:1240px;
-  margin:auto;
-}
-/* on grossit un peu le logo et la nav */
-.memo_logo{font-size:1.35rem;}
-.memo_logo img{height:36px;}   /* +4 px */
-.memo_nav a{font-size:1rem;}
-.memo_btn{padding:.6rem 1.3rem;font-size:.95rem;}
-
-/* on remonte légèrement le bloc pour équilibrer visuellement */
-.hero_content{
-  transform:translateY(-10px); /* petit offset esthétique */
-}.memo_header{
-  height:104px;        /* 104 px total */
-  display:flex;
-  align-items:center;
-}
-.hero_action_btn i{margin-right:.35rem;}
-#btn_toggle_view i{margin-right:.35rem;}
-/* ===== HERO ACTIONS BAR ===== */
-.hero_actions_bar{
-  display:flex;
-  gap:.75rem;
-  margin-top:1.5rem;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-.hero_action_btn{
-  background:rgba(0,0,0,.45);
-  border:1px solid rgba(255,182,6,.35);
-  color:#ffb606;
-  border-radius:20px;
-  padding:.45rem .9rem;
-  font-size:.75rem;
-  cursor:pointer;
-  transition:background .2s,transform .2s;
-  backdrop-filter:blur(3px);
-}
-.hero_action_btn:hover{
-  background:rgba(255,182,6,.15);
-  transform:translateY(-2px);
-}
-.hero_action_btn i{margin-right:.35rem;}
-
-/* mobile : 2 boutons par ligne */
-@media (max-width:576px){
-  .hero_actions_bar{gap:.5rem;}
-  .hero_action_btn{font-size:.7rem;padding:.4rem .7rem;}
-}
-/* très petit : 1 bouton par ligne */
-@media (max-width:400px){
-  .hero_action_btn{width:100%;max-width:200px;margin:auto;}
-}
-/* RESET TOTAL */
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-html,body{
-  margin:0;
-  padding:0;
-  background:#1a1a1a;   /* même couleur que header → pas de blanc */
-}
-
-/* HEADER : ZÉRO MARGE */
-.memo_header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:#1a1a1a;
-  border-bottom:1px solid rgba(255,182,6,.25);
-  padding-block:1.5rem;
-  margin-bottom:0;          /* ← supprime TOUT espace externe */
-}
-
-/* HERO : ZÉRO MARGE + collé dessous */
-.hero_fixed{
-  padding-top:104px;        /* ← hauteur mesurée + 4 px marge visuelle */
-  margin-top:0;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  min-height:50vh;
-  background:#1a1a1a;
-}
-/* ===== SIDEBAR NOIRE & OR ===== */
-.memo_sidebar{
-  position:fixed;
-  top:0;right:-280px;
-  width:280px;height:100vh;
-  background:#faf8f8;
-  border-left:1px solid rgba(255,182,6,.25);
-  transition:right .35s ease;
-  z-index:1100;
-  display:flex;
-  flex-direction:column;
-}
-.memo_sidebar.open{right:0;}
-
-.memo_sidebar_head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:1rem 1.25rem;
-  color:#ffb606;
-  font-weight:600;
-  font-size:1.1rem;
-}
-.memo_close{
-  background:none;border:none;
-  color:#ffb606;
-  font-size:1.6rem;
-  cursor:pointer;
-  transition:transform .2s;
-}
-.memo_close:hover{transform:rotate(90deg);}
-
-/* liste existante */
-.menu_list{
-  list-style:none;
-  margin:0;
-  padding:0;
-  flex:1;
-  overflow-y:auto;
-}
-.menu_item{
-  border-bottom:1px solid rgba(255,255,255,.05);
-}
-.menu_item a{
-  display:flex;
-  align-items:center;
-  gap:.75rem;
-  color:#ccc;
-  text-decoration:none;
-  padding:.9rem 1.25rem;
-  font-size:.9rem;
-  transition:color .2s, background .2s;
-  position:relative;
-}
-.menu_item a::before{   /* icône automatique */
-  font-family:"Font Awesome 5 Free";
-  font-weight:900;
-  width:20px;
-  text-align:center;
-  color:#ffb606;
-}
-/* icônes par lien */
-.menu_item:nth-child(1) a::before{content:"\f015";}   /* home */
-.menu_item:nth-child(2) a::before{content:"\f129";} /* about */
-.menu_item:nth-child(3) a::before{content:"\f19d";} /* courses */
-.menu_item:nth-child(4) a::before{content:"\f12e";} /* elements */
-.menu_item:nth-child(5) a::before{content:"\f1ea";} /* news */
-.menu_item:nth-child(6) a::before{content:"\f2bb";} /* contact */
-.menu_item:nth-child(7) a::before{content:"\f234";} /* register */
-.menu_item:nth-child(8) a::before{content:"\f15c";} /* mémoire */
-
-.menu_item a:hover{
-  color:#ffb606;
-  background:rgba(255,182,6,.08);
-}
-
-/* boutons en bas */
-.memo_sidebar_nav .memo_btn--full{
-  margin:1rem 1.25rem;
-  text-align:center;
-}
-
-.btn_reset{
-  background:transparent;
-  color:#ffb606;
-  border:1px solid rgba(255,182,6,.4);
-}
-.btn_reset:hover{background:rgba(255,182,6,.08);}
-
-/* ===== GRILLE À CÔTÉ ===== */
-.memoires_container{
-  margin-left:260px;          /* espace = largeur du panneau */
-  padding:1.5rem;
-  min-height:100vh;
-
-
-
-  /* grille prend toute la largeur */
-  .memoires_container{
-    margin-left:0;
-    padding:1rem;
-  }
-}
-
-
-:root{
-  --bg-dark:#1E1E1E;        /* presque noir, plus doux */
-  --bg-card:#252525;        /* cards / inputs */
-  --gold-mat:#ffb606;       /* doré mat */
-  --gold-light:#ffb606;    /* doré plus clair (hover) */
-  --text:#E0E0E0;           /* blanc cassé */
-  --text-dim:#B0B0B0;       /* gris clair */
-}
-/* ===== FONDS BLANCS / GRIS CLAIRS ===== */
-.memo_header{
-  background:#fefefe;
-  border-bottom:1px solid #e5e5e5;
-  color:#333;
-}
-.hero_fixed{
-  background:#fefefe;
-  color:#333;
-}
-
-.memo_sidebar{
-  background:#f5f5f5;
-  border-left:1px solid #e5e5e5;
-}
-html,body{
-  background:#ffffff;
-  color:#333;
-}
-.hero_action_btn,
-
-.hero_action_btn:hover,
-.btn_filter:hover{
-  background:#a7956d;
-  color:#fff;
-  border-color:#ffb606;
-}
-.memo_nav a{color:#555;}
-.memo_nav a:hover,
-.memo_nav a.active{color:#ffb606;}
-
-.menu_item a{color:#666;}
-.menu_item a:hover{color:#ffb606;}
-
-
-/* ===== HEADER CLAIR & AÉRÉ ===== */
-.memo_header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:#fefefe;        /* blanc cassé */
-  border-bottom:1px solid #e5e5e5;
-  padding:.75rem 0;          /* un peu d’air */
-}
-.memo_header_inner{
-  display:flex;
-  align-items:center;
-  gap:2rem;                  /* ESPACE entre blocs */
-  max-width:1240px;
-  margin:auto;
-  padding:0 1.5rem;
-}
-
-/* Logo */
-.memo_logo{
-  display:flex;
-  align-items:center;
-  gap:.5rem;
-  color:#333;               /* NOIR, pas blanc */
-  font-weight:600;
-  font-size:1.2rem;
-  text-decoration:none;
-  white-space:nowrap;
-}
-.memo_logo img{height:34px;}
-.memo_logo .gold{color:#ffb606;}  /* doré mat */
-
-/* Navigation */
-.memo_nav{
-  display:flex;
-  gap:1.75rem;
-  margin-left:auto;         /* pousse tout à droite */
-}
-.memo_nav a{
-  color:#555;               /* gris foncé, pas blanc */
-  text-decoration:none;
-  font-size:.9rem;
-  position:relative;
-  transition:color .2s;
-}
-.memo_nav a::after{
-  content:'';
-  position:absolute;
-  bottom:-4px;left:0;
-  width:0;height:2px;
-  background:#ffb606;
-  transition:width .3s;
-}
-.memo_nav a:hover,
-.memo_nav a.active{color:#ffb606;}
-.memo_nav a:hover::after,
-.memo_nav a.active::after{width:100%;}
-
-/* Boutons */
-.memo_actions{display:flex;gap:1rem;}
-.memo_btn{
-  background:#ffb606;
-  color:#fff;
-  border:none;
-  border-radius:20px;
-  padding:.5rem 1.1rem;
-  font-size:.85rem;
-  cursor:pointer;
-  transition:background .2s;
-}
-.memo_btn:hover{background:#ffb606;}
-.memo_btn--outline{
-  background:transparent;
-  color:#ffb606;
-  border:1px solid#ffb606;
-}
-.memo_btn--outline:hover{background:rgba(200,160,80,.08);}
-
-/* Burger */
-.memo_burger{
-  display:none;
-  flex-direction:column;
-  gap:4px;
-  background:none;border:none;
-  cursor:pointer;
-}
-.memo_burger span{
-  width:22px;height:3px;
-  background:#ffb606;
-  border-radius:2px;
-  transition:transform .3s;
-}
-.memo_burger:hover span{transform:scaleX(1.1);}
-@media (max-width:992px){
-  .memo_nav,
-  .memo_actions{display:none;}
-  .memo_burger{display:flex;}
-}
-.chat_msg_author{
-  color:inherit;
-  text-decoration:none;
-  font-weight:600;
-}
-.chat_msg_author:hover{
-  text-decoration:underline;
-  color:#c8a050;
-}
-/* ===== PASTILLE VERTE ===== */
-.send_ok{
-  position:absolute;
-  top:8px;
-  right:8px;
-  background:#28a745;
-  color:#fff;
-  border-radius:12px;
-  padding:.25rem .5rem;
-  font-size:.65rem;
-  z-index:10;
-  display:none;
-}
-.memoire_card{
-  position:relative;   /* ← pour que la pastille soit « collée » */
-  background:#ffffff;
-  border:1px solid #e5e5e5;
-  border-radius:12px;
-  overflow:hidden;     /* évite que la pastille sorte */
-}
-/* étoiles = note moyenne */
-.star.selected{color:#ffb606;}
-.star.user-rated{color:#ffca30;}   /* persistant = note user */
-/* ===== CARTE IMMERSIVE ===== */
-.memoire_card{
-  position:relative;
-  background:#ffffff;
-  border:1px solid #e5e5e5;
-  border-radius:12px;
-  overflow:hidden;
-  transition:transform .3s,box-shadow .3s;
-}
-.memoire_card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 10px 30px rgba(0,0,0,.1);
-  border-color:#ffb606;
-}
-
-.memoire_header{
-  position:relative;
-  height:180px;
-  overflow:hidden;
-  border-radius:12px 12px 0 0;
-}
-.memoire_cover{
-  width:100%;height:100%;
-  object-fit:cover;
-  transition:transform .4s;
-}
-.memoire_card:hover .memoire_cover{transform:scale(1.05);}
-
-.memoire_header_overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,.5) 100%);
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  padding:1rem;
-  color:#fff;
-}
-
-.memoire_title{
-  font-size:1.1rem;
-  font-weight:700;
-  margin-bottom:.5rem;
-  line-height:1.3;
-}
-
-.memoire_meta{
-  display:flex;
-  gap:1rem;
-  font-size:.8rem;
-  align-items:center;
-}
-.auteur_thumb{
-  width:24px;height:24px;
-  border-radius:50%;
-  object-fit:cover;
-  margin-right:6px;
-}
-.auteur_link{
-  color:#fff;
-  text-decoration:none;
-}
-.auteur_link:hover{text-decoration:underline;}
-
-/* ===== BADGES COULEURS ===== */
-.memoire_badges{
-  display:flex;
-  gap:.5rem;
-  margin-top:.75rem;
-}
-.quality_badge{
-  display:flex;
-  align-items:center;
-  gap:4px;
-  padding:4px 10px;
-  border-radius:20px;
-  font-size:.7rem;
-  font-weight:600;
-}
-.quality_badge.gold{background:#ffb606;color:#000;}
-.quality_badge.silver{background:#c0c0c0;color:#000;}
-.quality_badge.bronze{background:#cd7f32;color:#fff;}
-
-.stat_badge{
-  display:flex;
-  align-items:center;
-  gap:4px;
-  padding:4px 8px;
-  border-radius:12px;
-  background:#f5f5f5;
-  color:#666;
-  font-size:.7rem;
-}
-.stat_badge i{color:#c8a050;}
-
-/* ===== ACTIONS ===== */
-.memoire_actions{
-  display:flex;
-  gap:.5rem;
-  margin-top:1rem;
-}
-.action_btn{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  padding:.6rem;
-  background:#f5f5f5;
-  border:1px solid #e0e0e0;
-  border-radius:8px;
-  font-size:.75rem;
-  color:#666;
-  cursor:pointer;
-  transition:background .2s,transform .2s;
-}
-.action_btn:hover{
-  background:#c8a050;
-  color:#fff;
-  border-color:#c8a050;
-  transform:translateY(-2px);
-}
-.action_btn.liked{
-  border-color:#ff4757;
-  color:#ff4757;
-  background:rgba(255,71,87,.05);
-}
-.chat_pastille{
-  position:absolute;
-  top:-6px;right:-6px;
-  background:#ff4757;
-  color:#fff;
-  font-size:.65rem;
-  border-radius:50%;
-  width:18px;height:18px;
-  display:flex;align-items:center;justify-content:center;
-}
-</style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Bibliothèque des Mémoires - ENSTP</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Moment.js -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
+    <script>moment.locale('fr');</script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                orange: '#ffb606',
+                black: '#1a1a1a',
+                grey: '#a5a5a5',
+                light: '#fcfcfc',
+                white: '#FFFFFF'
+              }
+            },
+            fontFamily: {
+              title: ['"Open Sans"', 'sans-serif'],
+              body: ['"Roboto"', 'sans-serif'],
+            },
+            boxShadow: {
+                'card': '0 10px 30px rgba(0,0,0,0.05)',
+                'card-hover': '0 25px 50px rgba(0,0,0,0.1)',
+                'glow': '0 0 20px rgba(255, 182, 6, 0.3)'
+            }
+          },
+        },
+      }
+    </script>
 </head>
-<body>
+<body class="bg-[#fcfcfc] text-brand-black font-body antialiased overflow-x-hidden flex flex-col min-h-screen">
 
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
- <div id="chatPortal"></div>
-<!-- Header -->
-<header class="memo_header">
-  <div class="memo_header_inner">
+   <!-- Navbar -->
+<nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm h-[90px] flex items-center border-b border-gray-100">
+  <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center h-full max-w-[1400px]">
+
     <!-- Logo -->
-    <a href="./" class="memo_logo">
-      <img src="images/logo.png" alt="ENSTP">
-      <span>Bibliothèque <span class="gold">des Mémoires</span></span>
+    <a href="/" class="flex items-center gap-3 group">
+      <div class="w-12 h-12 bg-gradient-to-br from-brand-orange to-amber-500 rounded-xl flex items-center justify-center text-white font-title font-extrabold text-xl shadow-lg shadow-brand-orange/30 group-hover:scale-105 transition-transform duration-300">E</div>
+      <div class="flex flex-col">
+        <span class="text-brand-black font-title font-extrabold text-lg uppercase leading-none tracking-tight group-hover:text-brand-orange transition-colors">Bibliothèque</span>
+        <span class="text-brand-grey font-title font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Des Mémoires</span>
+      </div>
     </a>
 
-    <!-- Navigation desktop -->
-    <nav class="memo_nav">
-     <li class="menu_item menu_mm"><a href="#">About us</a></li>
-					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
-					<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
-					<li class="menu_item menu_mm"><a href="news.html">News</a></li>
-					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
-					<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
-					
-    </nav>
-
-    <!-- Boutons droite -->
-    <div class="memo_actions">
-      <button class="memo_btn memo_btn--outline" id="loginBtn">Connexion</button>
-      <button class="memo_btn" id="publishBtn">Publier</button>
+    <!-- Desktop Nav -->
+    <div class="hidden lg:flex main_nav_container ml-auto mr-10">
+      <ul class="main_nav_list flex gap-8 items-center">
+        <li><a href="#" class="nav-link">home</a></li>
+        <li><a href="#" class="nav-link">about us</a></li>
+        <li><a href="courses.html" class="nav-link">courses</a></li>
+        <li><a href="elements.html" class="nav-link">elements</a></li>
+        <li><a href="news.html" class="nav-link">news</a></li>
+        <li><a href="contact.html" class="nav-link">contact</a></li>
+        <li><a href="register.html" class="nav-link">register</a></li>
+        <li><a href="memoire.html" class="nav-link text-brand-orange active">memoire</a></li>
+      </ul>
     </div>
 
-    <!-- Burger mobile -->
-    <button class="memo_burger" aria-label="Menu">
-      <span></span><span></span><span></span>
+    <!-- Desktop Login -->
+    <div class="hidden lg:flex items-center gap-3">
+      <button id="login-btn" class="px-6 py-2.5 rounded-full bg-brand-black text-white hover:bg-brand-orange hover:text-brand-black transition-all shadow-md text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+        <i data-lucide="log-in" class="w-4 h-4"></i> Connexion
+      </button>
+    </div>
+
+    <!-- Mobile Burger -->
+    <button id="mobile-menu-btn" class="lg:hidden text-brand-black hover:text-brand-orange transition-colors p-2 bg-gray-50 rounded-lg">
+      <i data-lucide="menu" class="w-7 h-7"></i>
     </button>
   </div>
+</nav>
 
-  <!-- Menu mobile (slide from right) -->
-  <aside class="memo_sidebar" id="sidebar">
-    <div class="memo_sidebar_head">
-      <span>Menu</span>
-      <button class="memo_close">&times;</button>
+<!-- Mobile Sidebar (UNIQUE + Glass + Vertical) -->
+<div id="mobile-sidebar" class="fixed inset-0 z-[1000] transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
+  <div id="mobile-backdrop" class="absolute inset-0 bg-brand-black/60 backdrop-blur-sm"></div>
+
+  <div class="absolute right-0 top-0 h-full w-[300px] bg-white/90 backdrop-blur-xl border-l border-white/20 shadow-2xl flex flex-col rounded-l-3xl overflow-hidden">
+    <!-- Header -->
+    <div class="flex justify-between items-center p-6 bg-white/50 border-b border-white/20">
+      <span class="text-brand-orange font-title font-extrabold text-xl uppercase tracking-widest">Menu</span>
+      <button id="close-mobile-menu" class="p-3 bg-white/70 hover:bg-white rounded-full transition-all text-brand-black hover:rotate-90">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
     </div>
-    <nav class="memo_sidebar_nav">
-     <li class="menu_item menu_mm"><a href="#">Home</a></li>
-					<li class="menu_item menu_mm"><a href="#">About us</a></li>
-					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
-					<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
-					<li class="menu_item menu_mm"><a href="news.html">News</a></li>
-					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
-					<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
-					
+
+    <!-- Navigation Links (Vertical + Glass) -->
+    <nav class="flex-1 overflow-y-auto px-5 py-6 space-y-3">
+      <a href="#" class="mobile-glass-link"><i data-lucide="home" class="w-5 h-5"></i> Accueil</a>
+      <a href="#" class="mobile-glass-link"><i data-lucide="info" class="w-5 h-5"></i> À propos</a>
+      <a href="courses.html" class="mobile-glass-link"><i data-lucide="book-open" class="w-5 h-5"></i> Cours</a>
+      <a href="elements.html" class="mobile-glass-link"><i data-lucide="layers" class="w-5 h-5"></i> Éléments</a>
+      <a href="news.html" class="mobile-glass-link"><i data-lucide="newspaper" class="w-5 h-5"></i> Actualités</a>
+      <a href="contact.html" class="mobile-glass-link"><i data-lucide="mail" class="w-5 h-5"></i> Contact</a>
+      <a href="register.html" class="mobile-glass-link"><i data-lucide="user-plus" class="w-5 h-5"></i> Inscription</a>
+      <a href="memoire.html" class="mobile-glass-link active"><i data-lucide="graduation-cap" class="w-5 h-5"></i> Mémoires</a>
     </nav>
-  </aside>
-</header>
-<!-- Hero Section -->
-<section class="hero_section hero_fixed">
-  <div class="hero_slider">
-    <img src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=1920" alt="">
-    <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920" alt="">
-    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920" alt="">
-    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920" alt="">
-  </div>
 
-  <div class="hero_overlay"></div>
-
-   <div class="container hero_content">
-     <h1><span>Bibliothèque</span> des Mémoires</h1>
-     <p>Explorez et téléchargez les mémoires de fin d'études de l'ENSTP</p>
-
-     <!-- BADGES STATS -->
-     <div class="hero_badges" id="heroBadges"></div>
-     <div class="hero_actions_bar">
-  <button class="hero_action_btn" onclick="openMesStats()">
-    <i class="fas fa-chart-line"></i> Mes Stats
-  </button>
-  <button class="hero_action_btn" onclick="openMesTelechargements()">
-    <i class="fas fa-download"></i> Mes Téléchargements
-  </button>
-  <button class="hero_action_btn" onclick="openMesLikes()">
-    <i class="fas fa-heart"></i> Mes Likes
-  </button>
-  <button class="hero_action_btn" onclick="openMesCommentaires()">
-    <i class="fas fa-comment"></i> Mes Commentaires
-  </button>
-
-  <!-- BOUTON VUE COMPACTE (même design) -->
-  <button class="hero_action_btn" id="btn_toggle_view" onclick="toggleView()" title="Vue compacte">
-    <i class="fas fa-list"></i> Vue
-  </button>
-</div>
-  </div>
-  </div>
-</section>
-
-        </div>
+    <!-- Footer Button -->
+    <div class="p-6 bg-white/50 border-t border-white/20">
+      <button id="mobile-login-btn" class="w-full py-4 bg-brand-black text-white rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-brand-orange hover:text-brand-black transition-all shadow-lg hover:shadow-brand-orange/30">
+        Connexion
+      </button>
     </div>
-</section>
+  </div>
+</div>
+    <!-- Hero Section -->
+    <section class="relative w-full min-h-[70vh] lg:min-h-[650px] flex items-center justify-center overflow-hidden bg-brand-black pt-[90px]">
+        <!-- Background Slideshow -->
+        <div id="hero-slideshow" class="absolute inset-0 w-full h-full opacity-40 pointer-events-none">
+            <div class="slide absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-[2000ms] scale-100" style="background-image: url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=1920&q=80')"></div>
+            <div class="slide absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-[2000ms] scale-100 opacity-0" style="background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920&q=80')"></div>
+            <div class="slide absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-[2000ms] scale-100 opacity-0" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&q=80')"></div>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/60 to-brand-black/80"></div>
+        
+        <div class="relative z-10 container mx-auto px-4 flex flex-col items-center text-center py-20">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-orange/10 border border-brand-orange/30 text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-6 animate-fade-in-up">
+                <span class="w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span> Portail Académique
+            </div>
+            
+            <h1 class="font-title font-extrabold text-4xl md:text-6xl lg:text-7xl text-white mb-6 uppercase leading-tight animate-fade-in-up drop-shadow-2xl max-w-4xl mx-auto">
+                <span class="text-brand-orange inline-block mb-2 md:mb-0">L'Excellence</span>
+                <span class="block md:inline">à portée de clic</span>
+            </h1>
+            
+            <p class="font-body text-xl md:text-2xl text-gray-300 mb-10 font-light animate-fade-in-up tracking-wide leading-relaxed italic" style="animation-delay: 0.1s;">
+                Découvrez, consultez et partagez le savoir de l'ENSTP.
+            </p>
 
+            <!-- Stats Grid (Animated) -->
+            <div id="hero-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <!-- Injecté via JS -->
+            </div>
 
-<!-- Container principal -->
-<div class="container">
-    <div class="row">
-        <!-- Filtres à gauche (optionnel mais recommandé) -->
-<!-- Filtres à gauche (optionnel mais recommandé) -->
-        <div class="col-lg-3">
-            <div class="filters_section">
-                <h3><i class="fas fa-filter"></i> Filtres</h3>
-                <div class="filter_group">
-                    <label>Recherche</label>
-                    <input type="text" class="filter_input" id="search_input" placeholder="Titre ou auteur...">
-                </div>
-                <div class="filter_group">
-                    <label>Année</label>
-                    <select class="filter_select" id="year_select">
-                        <option value="">Toutes les années</option>
-                    </select>
-                </div>
-                <div class="filter_group">
-                    <label>Domaine</label>
-                    <select class="filter_select" id="domain_select">
-                        <option value="">Tous les domaines</option>
-                    </select>
-                </div>
-                <div class="filter_group">
-                    <label>Trier par</label>
-                    <select class="filter_select" id="sort_select">
-                        <option value="-created_at">Plus récent</option>
-                        <option value="created_at">Plus ancien</option>
-                        <option value="-nb_telechargements">Plus téléchargé</option>
-                        <option value="-nb_likes">Plus aimé</option>
-                        <option value="-note_moyenne">Mieux noté</option>
-                    </select>
-                </div>
-                <button class="btn_filter" onclick="applyFilters()">
-                    <i class="fas fa-search"></i> Rechercher
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 animate-fade-in-up w-full px-2" style="animation-delay: 0.3s;">
+                <button class="hero-btn group" onclick="handleAction('annuaire')">
+                    <i data-lucide="users" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Annuaire
                 </button>
-                <button class="btn_filter btn_reset" onclick="resetFilters()">
-                    <i class="fas fa-redo"></i> Réinitialiser
+                <button class="hero-btn group" onclick="handleAction('stats')">
+                    <i data-lucide="chart-line" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Mes Stats
+                </button>
+                <button class="hero-btn group" onclick="handleAction('downloads')">
+                    <i data-lucide="download" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Mes DLs
+                </button>
+                <button class="hero-btn group" onclick="handleAction('likes')">
+                    <i data-lucide="heart" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Mes Likes
+                </button>
+                <button id="view-toggle-btn" class="hero-btn-outline group" onclick="toggleView()">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> <span id="view-label">Vue</span>
                 </button>
             </div>
         </div>
-
-
-
-        <!-- Grille des mémoires -->
-        <div class="col-lg-9">
-            <div class="loading_spinner" id="loading_spinner">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: #666; font-weight: 600;">Chargement des mémoires...</p>
-            </div>
-            <div class="memoires_grid" id="memoires_grid"></div>
-            <div class="pagination_container" id="pagination_container"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Modale de détail -->
-<div class="modal_overlay" id="detail_modal">
-    <div class="modal_content">
-        <div class="modal_header">
-            <h2 id="modal_title">Détails du Mémoire</h2>
-            <button class="modal_close" onclick="closeModal('detail_modal')">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="modal_body" id="modal_body"></div>
-    </div>
-</div>
-
-     
-
-<!-- Modal Generic -->
-<div class="modal_overlay" id="generic_modal">
-    <div class="modal_content">
-        <div class="modal_header">
-            <h2 id="generic_modal_title">Modal</h2>
-            <button class="modal_close" onclick="closeModal('generic_modal')">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="modal_body" id="generic_modal_body"></div>
-    </div>
-</div>
-<script>
-const imgs = document.querySelectorAll('.hero_slider img');
-let idx = 0;
-function switchImg(){
-  imgs.forEach(i=>i.classList.remove('active'));
-  imgs[idx].classList.add('active');
-  idx = (idx+1)%imgs.length;
-}
-switchImg();
-setInterval(switchImg,5000);
-const burger = document.querySelector('.memo_burger');
-const sidebar = document.getElementById('sidebar');
-const closeBtn = document.querySelector('.memo_close');
-
-burger.addEventListener('click', () => sidebar.classList.add('open'));
-closeBtn.addEventListener('click', () => sidebar.classList.remove('open'));
-
-/* ferme aussi si clic outside */
-document.addEventListener('click', e => {
-  if (!sidebar.contains(e.target) && !burger.contains(e.target)) {
-    sidebar.classList.remove('open');
-  }
-});
-
-/* Ouverture / fermeture */
-const filtersAside = document.getElementById('filtersAside');
-const filtersClose = document.querySelector('.filters_close');
-
-filterBtn.addEventListener('click', () => filtersAside.classList.add('open'));
-filtersClose.addEventListener('click', () => filtersAside.classList.remove('open'));
-
-/* clic outside */
-document.addEventListener('click', e => {
-  if (!filtersAside.contains(e.target) && !filterBtn.contains(e.target))
-    filtersAside.classList.remove('open');
-});
-/* ESC */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') filtersAside.classList.remove('open');
-});
-function fullMediaUrl(path) {
-  if (!path) return 'https://via.placeholder.com/80'; // fallback
-  if (path.startsWith('http')) return path;           // déjà absolue
-  // on enlève le « /api » de baseAPI pour obtenir le domaine pur
-  const domain = baseAPI.replace(/\/api\/?$/, '');
-  return domain + path;
-}
-</script>
-<script>
-/* =========================================================
-   BIBLIOTHÈQUE DES MÉMOIRES – ENSTP
-   JS complet – 9 API + rôles + interactions
-   ========================================================= */
-
-const baseAPI         = 'https://memocloudbackend.onrender.com/api';
-const UNIV_SLUG       = 'ecole-des-travaux';
-const TOKEN           = localStorage.getItem('access') || localStorage.getItem('authToken') || '';
-let USER_ROLE         = null;
-let USER_ID           = null;
-let compactView       = false;
-let currentPage       = 1;
-
-const $grid           = $('#memoires_grid');
-const $spin           = $('#loading_spinner');
-const $page           = $('#pagination_container');
-
-/* ---------- UTILITAIRES ---------- */
-function showSpin(show=true){ $spin.toggle(show); $grid.toggle(!show); }
-function alerte(msg, type='info', delay=3000){
-    const ic = type==='success'?'check-circle':(type==='error'?'exclamation-circle':'info-circle');
-    const $a=$(`<div class="alert_message alert_${type}"><i class="fas fa-${ic}"></i> ${msg}</div>`).appendTo('body');
-    setTimeout(()=>$a.fadeOut(300,()=>$a.remove()),delay);
-}
-function errorMsg(jqXHR){
-    const m=jqXHR.responseJSON?.detail||jqXHR.statusText||'Erreur inconnue';
-    alerte(`❌ ${m}`,'error');
-}
-function authHeaders(){
-    return TOKEN ? {Authorization:`Bearer ${TOKEN}`} : {};
-}
-
-/* =========================================================
-   CONSOMMATION COMPLETE – 9 API
-   ========================================================= */
-
-const api = (url, opts = {}) => $.ajax({ url, dataType: 'json', headers: authHeaders(), ...opts });
-
-/* ---------- FETCH UN SEUL MEMOIRE + TOUTES SES INTERACTIONS ---------- */
-async function loadMemoireComplet(memoireId) {
-    console.log('🔍 Chargement mémoire + interactions ID =', memoireId);
-
-    // 1) requêtes SÛRES
-const [memo, likes, downloads, comments, preview] = await Promise.all([
-    api(`${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/${memoireId}/`),
-    api(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/likes/?memoire=${memoireId}`),
-    api(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/telechargements/?memoire=${memoireId}`),
-    api(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/commentaires/?memoire=${memoireId}`),
-    api(`${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/${memoireId}/preview/image/`)
-]);
-
-// 2) requêtes OPTIONNELLES (404 possibles)
-const [notes, signalements] = await Promise.allSettled([
-    api(`${baseAPI}/interactions/notations/?memoire=${memoireId}`),
-    loadSignalements(memoireId)
-]);
-
-// 3) stats déjà dans le mémoire
-const stats = {
-    note_moyenne: memo.note_moyenne,
-    nb_likes: memo.nb_likes,
-    nb_telechargements: memo.nb_telechargements
-};
-
-return {
-    memoire: memo,
-    stats,
-    likes: { count: likes.length, list: likes },
-    notations: { count: notes.value?.length || 0, list: notes.value || [] },
-    downloads: { count: downloads.length, list: downloads },
-    comments: { count: comments.length, list: comments },
-    preview: preview.preview_url || null,
-    signalements: signalements.value || { count: 0, list: [] }
-};}
-
-/* ---------- SIGNALEMENTS ---------- */
-async function loadSignalements(memoireId) {
-    try {
-        const res = await api(`${baseAPI}/interactions/signalements/?memoire=${memoireId}`);
-        return { count: res.length, list: res };
-    } catch (e) {
-        if (e.status === 404) return { count: 0, list: [] };   // route absente
-        console.warn('Signalements non chargés', e);
-        return { count: 0, list: [] };
-    }
-}
-/* ---------- INFOBULLE CHAT (carte) ---------- */
-window.openChatBubble = async function (memoireId, titre) {
-     if ($(`#chat_${memoireId}`).length) return;
-    // 1. Récupérer les interactions
-    const [comments, likes, downloads] = await Promise.all([
-        $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/commentaires/?memoire=${memoireId}`, headers: authHeaders() }),
-        $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/likes/?memoire=${memoireId}`, headers: authHeaders() }),
-        $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/telechargements/?memoire=${memoireId}`, headers: authHeaders() })
-    ]);
-
-    // 2. Construction HTML
-    
-   /* 2.  construction HTML */
-  const html = `
-  <div class="chat_backdrop" onclick="closeChatBubble(${memoireId})"></div>
-  <div class="chat_bubble_popup" id="chat_${memoireId}">
-    <div class="chat_header">
-      <span class="chat_title">${titre}</span>
-      <i class="fas fa-times chat_close" onclick="closeChatBubble(${memoireId})"></i>
-    </div>
-    <div class="chat_body">
-      <div class="chat_messages" id="chat_msg_${memoireId}">
-        ${comments.map(c => renderChatMessage(c)).join('')}
-      </div>
-    </div>
-    ${TOKEN ? `
-    <div class="chat_rating">
-      <small>Noter ce mémoire</small>
-      <div class="stars_container">
-        ${[5,4,3,2,1].map(i=>`<i class="far fa-star star" onclick="quickRate(${memoireId},${i})"></i>`).join('')}
-      </div>
-    </div>` : ''}
-    ${TOKEN ? `
-    <div class="chat_input_bar">
-      <input type="text" id="chat_input_${memoireId}" placeholder="Votre message…" maxlength="500">
-      <button onclick="quickSend(${memoireId})"><i class="fas fa-paper-plane"></i></button>
-    </div>` : ''}
-  </div>`;
-
-  /* 3.  envoi dans le portail + verrou scroll */
-  $('#chatPortal').html(html).css('pointer-events','auto');
-  $('body').css('overflow','hidden');   // bloque derrière
-
-  /* 4.  scroll down si déjà des messages */
-  const $msg = $(`#chat_msg_${memoireId}`);
-  $msg.scrollTop($msg[0].scrollHeight);
-};
-
-window.closeChatBubble = function (memoireId) {
-    $('#chatPortal').empty().css('pointer-events','none');
-    $('body').css('overflow','');          // ← retire la propriété
-    $(document).off('keydown.chatEsc'); 
-
-    // 3. Injecter et positionner
-    $(`[data-id="${memoireId}"]`).append(html).find('.chat_bubble_popup').fadeIn(200);
-};
-
-/* ---------- FERMER L’INFOBULLE ---------- */
-window.closeChatBubble = function (memoireId) {
-    try {
-        // 1. retire la bulle et le backdrop
-        $('#chatPortal').empty().css('pointer-events','none');
-
-        // 2. restore scroll ‑- PRIMAIRE
-        $('body').css('overflow','');
-
-        // 3. (option) si tu avais bloqué la nav
-        $('nav.fixed, .navbar-fixed').css('padding-right','');
-
-        // 4. (option) si tu utilises un overlay global
-        $('.global-overlay').fadeOut(200);
-
-    } catch (e) {
-        console.error('closeChatBubble error',e);
-        // en dernier recours on force
-        $('body').css('overflow','');
-    }
-};
-
-/* ---------- BULLE MESSAGE (HTML) ---------- */
-function renderChatMessage(c, isStaff) {
-  const isMine = c.utilisateur_id === USER_ID;
-  const time   = moment(c.date).fromNow();
-
-  /* on sécurise TOUTES les propriétés */
-  const user        = c.utilisateur || {};
-  const nom         = user.nom || 'Utilisateur';
-  const photo       = user.photo_profil ? fullMediaUrl(user.photo_profil) : 'https://via.placeholder.com/32';
-  const linkedin    = user.realisation_linkedin ? fullMediaUrl(user.realisation_linkedin) : null;
-  const contenu     = c.contenu || '';
-  const modere      = Boolean(c.modere);
-
-  const authorTag = linkedin
-    ? `<a class="chat_msg_author" href="${linkedin}" target="_blank" rel="noopener">${nom}</a>`
-    : `<span class="chat_msg_author">${nom}</span>`;
-
-  return `
-    <div class="chat_msg ${isMine ? 'mine' : 'theirs'}">
-        <img src="${photo}" class="chat_msg_avatar" alt="${nom}">
-        <div class="chat_msg_content">
-            <div class="chat_msg_meta">
-                ${authorTag}
-                <span class="chat_msg_time">${time}</span>
-            </div>
-            <div class="chat_msg_text">${contenu}</div>
-            ${isStaff && !modere ? `<button class="btn btn-sm btn-warning mt-2" onclick="modererCommentaire(${c.id})">Modérer</button>` : ''}
-        </div>
-    </div>`;
-}
-
-/* ---------- ENVOI RAPIDE (depuis l’infobulle) ---------- */
-async function quickSend(memoireId) {
-  const input = document.getElementById(`chat_input_${memoireId}`);
-  const txt   = input.value.trim();
-  if (!txt) return;
-
-  /* on récupère les données UTILISATEUR sécurisées */
-  const user = window.USER || {};                     // objet global injecté par Django
-  const nom         = user.nom || 'Utilisateur';
-  const photo       = user.photo_profil ? fullMediaUrl(user.photo_profil) : 'https://via.placeholder.com/32';
-  const linkedin    = user.realisation_linkedin ? fullMediaUrl(user.realisation_linkedin) : null;
-
-  /* on envoie le commentaire */
-  try {
-    const res = await $.ajax({
-      url: `${baseAPI}/interactions/commentaires/`,
-      method: 'POST',
-      data: JSON.stringify({memoire: memoireId, contenu: txt}),
-      contentType: 'application/json',
-      headers: authHeaders()
-    });
-
-    /* on construit le message **sans erreur** */
-    const nouveau = {
-      id: res.id,
-      utilisateur: {
-        nom: nom,
-        photo_profil: photo,
-        realisation_linkedin: linkedin
-      },
-      contenu: txt,
-      date: res.date,
-      modere: false
-    };
-
-    /* on injecte dans le chat */
-    const $msg = $(`#chat_msg_${memoireId}`);
-    $msg.append(renderChatMessage(nouveau, false));
-    $msg.scrollTop($msg[0].scrollHeight);
-
-    input.value = '';
-    /* on met à jour la pastille */
-    /* petite pastille verte (check) qui apparaît */
-const $card = $(`[data-id="${memoireId}"]`);
-const $notif = $('<div class="send_ok"><i class="fas fa-check-circle"></i> Envoyé</div>');
-$card.append($notif);
-$notif.fadeIn(200).delay(1500).fadeOut(400, () => $notif.remove());
-
-  } catch (e) {
-    alerte('Erreur lors de l’envoi du commentaire', 'error');
-  }
-}
-/* ---------- NOTATION RAPIDE + AFFICHAGE ===== */
-window.quickRate = async function (memoireId, note) {
-  if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
-
-  try {
-    /* 1. on envoie la note */
-    await $.ajax({
-      url: `${baseAPI}/interactions/notations/`,
-      method: 'POST',
-      data: JSON.stringify({ memoire_id: memoireId, note }),
-      contentType: 'application/json',
-      headers: authHeaders()
-    });
-
-    /* 2. on récupère la note moyenne ACTUALISÉE */
-    const data = await $.get({
-      url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/notations/?memoire=${memoireId}`,
-      headers: authHeaders()
-    });
-    const noteMoyenne = data.note_moyenne ? data.note_moyenne.toFixed(1) : '0.0';
-
-    /* 3. on colorie les étoiles **selon la moyenne** */
-    const $stars = $(`#chat_${memoireId} .star`);
-    $stars.each(function (idx) {
-      const val = 5 - idx;                 // 5,4,3,2,1
-      $(this)
-        .toggleClass('selected', val <= noteMoyenne)   // couleur = moyenne
-        .toggleClass('user-rated', val <= note)        // persistant = note user
-        .off('click');                                 // 1 seule fois
-    });
-
-    /* 4. on met à jour la pastille */
-    const $avg = $(`#chat_${memoireId} .chat_rating small`);
-    $avg.text(`${note}/5`);
-
-    alerte(`Note ${note}/5 enregistrée`, 'success');
-
-  } catch (e) {
-    alerte('Erreur', 'error');
-  }
-};
-/* ---------- INITIALISATION ---------- */
-$(async function(){
-    await loadUserProfile();
-    loadYears();
-    loadDomains();
-    loadStats();
-    loadMemoires();
-    loadTopContrib();
-    buildUserBar();
-    bindEvents();
-});
-
-/* ---------- PROFIL UTILISATEUR ---------- */
-async function loadUserProfile(){
-    if(!TOKEN) return;
-    try{
-        const user = await $.get({url:`${baseAPI}/auth/profile/`,headers:authHeaders()});
-        USER_ROLE = user.type;
-        USER_ID   = user.id;
-    }catch(e){
-        console.warn('Profil non chargé – utilisateur non connecté ou token invalide');
-    }
-}
-
-/* ---------- BINDINGS ---------- */
-function bindEvents(){
-    $('#search_input').on('keypress',e=>{if(e.which===13)loadMemoires(1);});
-    $('#year_select,#domain_select,#sort_select').on('change',()=>loadMemoires(1));
-}
-
-/* ---------- ANNEES ---------- */
-async function loadYears(){
-    try{
-        const data=await $.get(`${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/annees/`);
-        const $sel=$('#year_select');
-        data.annees.forEach(y=>$sel.append(`<option value="${y}">${y}</option>`));
-    }catch(e){console.error(e);}
-}
-
-/* ---------- DOMAINES ---------- */
-async function loadDomains() {
-    try {
-        const data = await $.get({
-            url: `${baseAPI}/universites/domaines/`,
-            headers: authHeaders(),
-            dataType: 'json'
-        });
-        const domainesSet = new Set(
-            data
-                .filter(d => d.universites.some(u => u.slug === UNIV_SLUG))
-                .map(d => d.nom)
-        );
-        const $sel = $('#domain_select');
-        $sel.append('<option value="">Tous les domaines</option>');
-        Array.from(domainesSet).sort().forEach(nom =>
-            $sel.append(`<option value="${nom}">${nom}</option>`)
-        );
-    } catch (e) {
-        console.error('loadDomains erreur :', e);
-        $('#domain_select').html('<option value="">Domaines non chargés</option>');
-    }
-}
-
-/* ---------- STATS GLOBALES ---------- */
-async function loadStats(){
-    try{
-        const data=await $.get(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/stats/`);
-        $('#total_memoires').text(data.total_memoires||0);
-        $('#total_downloads').text(data.total_telechargements||0);
-        $('#total_likes').text(data.total_likes||0);
-        $('#avg_rating').text(data.note_moyenne?data.note_moyenne.toFixed(1):'0.0');
-    }catch(e){console.error(e);}
-}
-/* ---------- SPEED COUNTER ---------- */
-function speedCounter($el,target,decimals=0,duration=800){
-  const start=0;
-  const increment=target/(duration/10);  // 10 ms/frame → très rapide
-  let current=start;
-
-  function step(){
-    current+=increment;
-    if(current<target){
-      $el.text(current.toFixed(decimals));
-      requestAnimationFrame(step);
-    }else{
-      $el.text(target.toFixed(decimals));
-    }
-  }
-  step();
-}
-
-/* ---------- LOAD & INJECT ---------- */
-async function loadHeroBadges(){
-  try{
-    const data=await $.get(`${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/stats/`);
-
-    const html=`
-      <div class="hero_badge" data-target="${data.total_memoires||0}">
-        <div class="hero_badge_icon"><i class="fas fa-file-alt"></i></div>
-        <div class="hero_badge_number">0</div>
-        <div class="hero_badge_label">Mémoires</div>
-      </div>
-      <div class="hero_badge" data-target="${data.total_telechargements||0}">
-        <div class="hero_badge_icon"><i class="fas fa-download"></i></div>
-        <div class="hero_badge_number">0</div>
-        <div class="hero_badge_label">Téléchargements</div>
-      </div>
-      <div class="hero_badge" data-target="${data.total_likes||0}">
-        <div class="hero_badge_icon"><i class="fas fa-heart"></i></div>
-        <div class="hero_badge_number">0</div>
-        <div class="hero_badge_label">Likes</div>
-      </div>
-      <div class="hero_badge" data-target="${data.note_moyenne||0}" data-decimals="1">
-        <div class="hero_badge_icon"><i class="fas fa-star"></i></div>
-        <div class="hero_badge_number">0.0</div>
-        <div class="hero_badge_label">Note</div>
-      </div>`;
-
-    $('#heroBadges').html(html);
-
-    /* lancement rapide */
-    $('.hero_badge').each(function(){
-      const $n=$(this).find('.hero_badge_number');
-      const target=parseFloat($(this).data('target'));
-      const dec=parseInt($(this).data('decimals'))||0;
-      speedCounter($n,target,dec,800);   // 800 ms même pour 1 000 000
-    });
-
-  }catch(e){console.error(e);}
-}
-
-/* appel après le hero */
-$(async ()=>{
-  await loadHeroBadges();
-});
-/* ---------- PAGINATION ---------- */
-function renderPagination(data) {
-    const total = Math.ceil(data.count / 10);
-    if (total <= 1) {
-        $('#pagination_container').html('');
-        return;
-    }
-    let html = '';
-    if (data.previous) html += `<button class="pagination_btn" onclick="loadMemoires(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
-    const start = Math.max(1, currentPage - 2);
-    const end = Math.min(total, currentPage + 2);
-    for (let i = start; i <= end; i++) html += `<button class="pagination_btn ${i === currentPage ? 'active' : ''}" onclick="loadMemoires(${i})">${i}</button>`;
-    if (data.next) html += `<button class="pagination_btn" onclick="loadMemoires(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
-    $('#pagination_container').html(html);
-}
-
-/* ---------- GRILLE PRINCIPALE ---------- */
-async function loadMemoires(page = 1) {
-    showSpin(true);
-    const search = $.trim($('#search_input').val());
-    const year = $('#year_select').val();
-    const domain = $('#domain_select').val();
-    const order = $('#sort_select').val() || '-created_at';
-
-    let url = `${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/?page=${page}`;
-    if (search) url += '&search=' + encodeURIComponent(search);
-    if (year) url += '&annee=' + year;
-    if (domain) url += '&domaine=' + encodeURIComponent(domain);
-    if (order) url += '&ordering=' + order;
-
-    try {
-        const data = await $.get({ url, headers: authHeaders() });
-        if (Array.isArray(data)) {
-            renderGrid(data);
-            renderPagination({ count: data.length, next: null, previous: null });
-        } else if (data && Array.isArray(data.results)) {
-            renderGrid(data.results);
-            renderPagination(data);
-        } else {
-            renderGrid([]);
-        }
-        currentPage = page;
-    } catch (e) {
-        errorMsg(e);
-    } finally {
-        showSpin(false);
-    }
-}
-window.openDetailModal = async function (id) {
-    const full = await loadMemoireComplet(id);
-    const m = full.memoire;
-    const isLogged = !!TOKEN;
-      
-    const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
-
-    let html = `
-    <div class="detail_section">
-        <h3><i class="fas fa-info-circle"></i> Informations</h3>
-        <div class="detail_info">
-            <div class="info_item"><div class="info_label">Auteur</div><div class="info_value">${m.auteur.nom}</div></div>
-            <div class="info_item"><div class="info_label">Année</div><div class="info_value">${m.annee}</div></div>
-            <div class="info_item"><div class="info_label">Note moyenne</div><div class="info_value">${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}/5</div></div>
-            <div class="info_item"><div class="info_label">Téléchargements</div><div class="info_value">${m.nb_telechargements}</div></div>
-            <div class="info_item"><div class="info_label">Likes</div><div class="info_value">${full.likes.count}</div></div>
-            <div class="info_item"><div class="info_label">Commentaires</div><div class="info_value">${m.nb_commentaires || 0}</div></div>
-            <div class="info_item"><div class="info_label">Date de création</div><div class="info_value">${new Date(m.created_at).toLocaleDateString('fr-FR')}</div></div>
-        </div>
-    </div>
- 
-    <div class="detail_section">
-        <h3><i class="fas fa-user"></i> Auteur</h3>
-        <div style="display:flex;align-items:center;gap:15px">
-            <img src="${fullMediaUrl(m.auteur.photo_profil)}"  style="width:80px;height:80px;border-radius:50%;object-fit:cover">
-            <div>
-                <div class="memoire_title">${m.auteur.nom}</div>
-                <button class="action_btn" onclick="window.open('${m.auteur.linkedin}')">
-                    <i class="fab fa-linkedin"></i> LinkedIn
-                </button>
-            </div>
-        </div>
-    </div>`;
-  
-    if (m.encadreurs.length) {
-        html += `
-        <div class="detail_section">
-            <h3><i class="fas fa-chalkboard-teacher"></i> Encadreurs</h3>
-            <div class="encadreurs_grid">` +
-            m.encadreurs.map(enc => `
-                <div class="encadreur_card" onclick="window.open('${enc.linkedin}', '_blank')">
-                    <img src="${enc.photo_profil}" alt="${enc.nom}" class="encadreur_photo">
-                    <div class="encadreur_name">${enc.nom}</div>
-                    <i class="fab fa-linkedin encadreur_linkedin"></i>
-                </div>`).join('') +
-            `</div>
-        </div>`;
-    }
-
-    if (m.images) {
-        html += `
-        <div class="detail_section">
-            <h3><i class="fas fa-image"></i> Image de couverture</h3>
-            <img src="${m.images}" style="width:100%;border-radius:8px;box-shadow:0 5px 15px rgba(0,0,0,.15)">
-        </div>`;
-    }
-
-    html += `
-    <div class="detail_section">
-        <h3><i class="fas fa-align-left"></i> Résumé</h3>
-        <p style="color:#666;line-height:1.8">${m.resume || 'Aucun résumé'}</p>
-    </div>
-
-    <div class="detail_section">
-        <h3><i class="fas fa-tags"></i> Domaines</h3>
-        <div class="memoire_domains">${(m.domaines_list || []).map(dom => `<span class="domain_badge">${dom}</span>`).join('')}</div>
-    </div>`;
-
-    if (m.universites_list.length) {
-        html += `
-        <div class="detail_section">
-            <h3><i class="fas fa-university"></i> Universités</h3>
-            <div class="memoire_domains">` +
-            m.universites_list.map(u => `<span class="domain_badge">${u}</span>`).join('') +
-            `</div>
-        </div>`;
-    }
-
-    // CHAT STYLE
-    html += `
-    <div class="detail_section">
-        <h3><i class="fas fa-comments"></i> Commentaires (${full.comments.count})</h3>
-        <div class="chat_container" id="chat_comments_${m.id}">
-            ${full.comments.list.map(c => renderChatMessage(c, isStaff)).join('')}
-        </div>
-    </div>`;
-
-    if (isLogged) {
-        html += `
-        <div class="detail_section">
-            <h3><i class="fas fa-pen"></i> Votre réponse</h3>
-            <div class="comment_form">
-                <textarea class="comment_textarea" id="comment_input_modal" placeholder="Tapez votre message…"></textarea>
-                <button class="btn_submit_comment" onclick="submitCommentModal(${m.id})"><i class="fas fa-paper-plane"></i> Envoyer</button>
-            </div>
-        </div>`;
-
-        html += `
-        <div class="detail_section">
-            <h3><i class="fas fa-star"></i> Noter ce mémoire</h3>
-            <div class="rating_form">
-                <div class="stars_container" id="stars_container">
-                    ${[5,4,3,2,1].map(i => `
-                        <i class="far fa-star star" data-value="${i}" onclick="submitRating(${m.id}, ${i})"></i>
-                    `).join('')}
-                </div>
-                <small>Cliquez sur une étoile pour valider</small>
-            </div>
-        </div>`;
-    }
-
-    if (isStaff && full.signalements.count > 0) {
-        html += `<div class="detail_section">
-            <h3><i class="fas fa-flag"></i> Signalements (${full.signalements.count})</h3>
-            <div class="comments_list">` +
-            full.signalements.list.map(s => `
-                <div class="comment_item">
-                    <div class="comment_header">
-                        <div class="comment_author">${s.utilisateur_nom}</div>
-                        <div class="comment_date">${new Date(s.date).toLocaleDateString('fr-FR')}</div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12 flex-grow max-w-[1400px]">
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            
+            <!-- Sidebar Filters -->
+            <aside class="w-full lg:w-[300px] flex-shrink-0 sticky top-[110px] z-30">
+                <div class="bg-white rounded-3xl shadow-lg shadow-gray-100/50 p-6 border border-gray-100 transition-all duration-300">
+                    <!-- Mobile Toggle -->
+                    <div id="mobile-filter-toggle" class="flex items-center justify-between lg:cursor-default cursor-pointer mb-0 lg:mb-6 pb-0 lg:pb-4 border-b border-transparent lg:border-gray-100">
+                        <div class="flex items-center gap-3 text-brand-black font-title font-extrabold text-sm uppercase tracking-wide">
+                            <div class="p-2 bg-brand-orange/10 rounded-lg text-brand-orange">
+                                <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                            </div>
+                            <h3>Filtres Avancés</h3>
+                        </div>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-brand-grey lg:hidden transition-transform duration-300" id="filter-chevron"></i>
                     </div>
-                    <div class="comment_text"><strong>Motif :</strong> ${s.motif}</div>
-                </div>`).join('') +
-            `</div></div>`;
-    }
+                    
+                    <!-- Filters Content -->
+                    <div id="filters-content" class="hidden lg:block space-y-5 pt-4 lg:pt-0 transition-all duration-300 ease-in-out mt-2 lg:mt-0">
+                        
+                        <!-- Search -->
+                        <div class="relative group">
+                            <input type="text" id="filter-search" class="w-full h-[45px] pl-10 pr-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white focus:ring-2 focus:ring-brand-orange/10 outline-none transition-all placeholder:text-gray-400" placeholder="Rechercher...">
+                            <i data-lucide="search" class="absolute left-3 top-3.5 text-gray-400 w-4 h-4 group-focus-within:text-brand-orange transition-colors"></i>
+                        </div>
 
-    if (isLogged) {
-        html += `<div class="detail_section" style="text-align:right">
-            <button class="action_btn" onclick="signalerMemoire(${m.id},'Contenu inapproprié')">
-                <i class="fas fa-flag"></i> Signaler ce mémoire
-            </button>
-        </div>`;
-    }
+                        <!-- Main Filters -->
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="relative">
+                                <select id="filter-year" class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                    <option value="">Toutes les années</option>
+                                    <!-- Options JS -->
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                            </div>
 
-    $('#modal_title').text(m.titre);
-    $('#modal_body').html(html);
-    openModal('detail_modal');
-};
-async function signalerMemoire(memoireId, motif = 'Contenu inapproprié') {
-    if (!TOKEN) { alerte('Connectez-vous pour signaler', 'info'); return; }
-    try {
-        await $.ajax({
-            url: `${baseAPI}/interactions/signalements/`,
-            method: 'POST',
-            data: JSON.stringify({ memoire: memoireId, motif }),
-            contentType: 'application/json',
-            headers: authHeaders()
-        });
-        alerte('Signalement envoyé. Merci.', 'success');
-    } catch (e) {
-        errorMsg(e);
-    }
-}
+                            <div class="relative">
+                                <select id="filter-domain" class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                    <option value="">Tous les domaines</option>
+                                    <!-- Options JS -->
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                            </div>
+                        </div>
 
-/* ---------- AFFICHAGE COMPLET (carte + modale) ---------- */
-/* ---------- AFFICHAGE COMPLET (carte + modale) ---------- */
-/* ---------- AFFICHAGE COMPLET (carte + modale) ---------- */
-function renderMemoireComplet(d) {
-    const m = d.memoire;
-    const isLogged = !!TOKEN;
-    const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
-  
-       // 1) CARTE
-    const cardHtml = `
-    <div class="memoire_card" data-id="${m.id}">
-  <!-- IMAGE DE COUVERTURE -->
-  <div class="memoire_header">
-    <img src="${fullMediaUrl(m.images) || 'https://via.placeholder.com/600x300?text=Memoire'}" class="memoire_cover" alt="Couverture">
-    <div class="memoire_header_overlay">
-      <div class="memoire_title">${m.titre}</div>
-      <div class="memoire_meta">
-        <span><img src="${fullMediaUrl(m.auteur.photo_profil)}" class="auteur_thumb" alt=""><a href="${m.auteur.linkedin}" target="_blank" class="auteur_link">${m.auteur.nom}</a></span>
-        <span><i class="fas fa-calendar"></i> ${m.annee}</span>
-      </div>
-    </div>
-  </div>
+                        <!-- 5 Nouveaux Filtres -->
+                        <div class="pt-4 border-t border-gray-100 space-y-4">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Critères spécifiques</p>
+                            
+                            <!-- 1. Université -->
+                            <div class="relative">
+                                <select id="filter-university" class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                    <option value="">Toutes les universités</option>
+                                    <option value="ENSTP">ENSTP uniquement</option>
+                                    <option value="Autre">Autres établissements</option>
+                                </select>
+                                <i data-lucide="school" class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                            </div>
 
-  <!-- CONTENU -->
-  <div class="memoire_body">
-    <div class="memoire_resume">${m.resume || 'Aucun résumé'}</div>
-    <div class="memoire_domains">${(m.domaines_list || []).map(dom => `<span class="domain_badge">${dom}</span>`).join('')}</div>
+                            <!-- 2. Note Minimale -->
+                            <div class="relative">
+                                <select id="filter-rating" class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                    <option value="">Note indifférente</option>
+                                    <option value="4">Mieux notés (4+)</option>
+                                    <option value="3">Bien notés (3+)</option>
+                                </select>
+                                <i data-lucide="star" class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                            </div>
 
-    <!-- BADGES COULEURS -->
-    <div class="memoire_badges">
-      <span class="quality_badge ${m.note_moyenne >= 4 ? 'gold' : m.note_moyenne >= 3 ? 'silver' : 'bronze'}" title="Note moyenne">
-        <i class="fas fa-star"></i> ${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}
-      </span>
-      <span class="stat_badge"><i class="fas fa-download"></i> ${m.nb_telechargements}</span>
-      <span class="stat_badge"><i class="fas fa-heart"></i> ${m.nb_likes}</span>
-      <span class="stat_badge"><i class="fas fa-comment"></i> ${m.nb_commentaires || 0}</span>
-    </div>
+                            <!-- Checkboxes pour 3, 4, 5 -->
+                            <div class="flex flex-col gap-3">
+                                <!-- 3. Avec Résumé -->
+                                <label class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-brand-black transition-colors p-2 hover:bg-gray-50 rounded-lg">
+                                    <input type="checkbox" id="filter-resume" class="w-4 h-4 rounded border-gray-300 text-brand-orange focus:ring-brand-orange">
+                                    <span>Avec résumé disponible</span>
+                                </label>
+                                
+                                <!-- 4. Populaire -->
+                                <label class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-brand-black transition-colors p-2 hover:bg-gray-50 rounded-lg">
+                                    <input type="checkbox" id="filter-popular" class="w-4 h-4 rounded border-gray-300 text-brand-orange focus:ring-brand-orange">
+                                    <span>Populaire (+10 downloads)</span>
+                                </label>
 
-    <!-- ACTIONS -->
-    <div class="memoire_actions">
-      ${isLogged ? `
-        <button class="action_btn ${m.is_liked ? 'liked' : ''}" onclick="toggleLike(${m.id},this)"><i class="fas fa-heart"></i> <span>${m.nb_likes}</span></button>
-        <button class="action_btn" onclick="openDetailModal(${m.id})"><i class="fas fa-eye"></i> Détails</button>
-        <button class="action_btn chat_opener" onclick="openChatBubble(${m.id}, '${m.titre.replace(/'/g, "\\'")}')" title="Discuter"><i class="fas fa-comments"></i><span class="chat_pastille">${m.nb_commentaires || 0}</span></button>
-        <button class="action_btn btn_download" onclick="downloadMemoire(${m.id},'${m.pdf_url}')"><i class="fas fa-download"></i></button>
-        ${isProf ? `<button class="action_btn" onclick="encadrerMemoire(${m.id})"><i class="fas fa-chalkboard-teacher"></i> Encadrer</button>` : ''}
-      ` : `<button class="action_btn" onclick="window.location.href='register.html'"><i class="fas fa-sign-in-alt"></i> Connexion</button>`}
-    </div>
-  </div>
-</div>`;
+                                <!-- 5. Très Commenté -->
+                                <label class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-brand-black transition-colors p-2 hover:bg-gray-50 rounded-lg">
+                                    <input type="checkbox" id="filter-commented" class="w-4 h-4 rounded border-gray-300 text-brand-orange focus:ring-brand-orange">
+                                    <span>Très commenté (+5 avis)</span>
+                                </label>
+                            </div>
+                        </div>
 
-    $('#memoires_grid').append(cardHtml);
-}
-/* ---------- MODALE DÉTAIL (GLOBALE) ---------- */
-/* ---------- MODALE DÉTAIL (GLOBALE) ---------- */
-
-/* ---------- SOUMISSION COMMENTAIRE MODALE ---------- */
-/* ---------- SOUMISSION COMMENTAIRE MODALE ---------- */
-async function submitCommentModal(memoireId) {
-    const txt = $.trim($('#comment_input_modal').val());
-    if (!txt) { alerte('Commentaire vide', 'error'); return; }
-    try {
-        await $.ajax({
-            url: `${baseAPI}/interactions/commentaires/`,
-            method: 'POST',
-            data: JSON.stringify({ memoire: memoireId, contenu: txt }),
-            contentType: 'application/json',
-            headers: authHeaders()
-        });
-        $('#comment_input_modal').val('');
-        alerte('Commentaire publié', 'success');
-        await loadMemoireComplet(memoireId);
-    } catch (e) {
-        const msg = e.responseJSON ? Object.values(e.responseJSON).flat().join(', ') : e.statusText || 'Erreur';
-        alerte(`❌ ${msg}`, 'error');
-    }
-}
-
-/* ---------- SOUMISSION NOTE (1-5 étoiles) ---------- */
-window.submitRating = async function (memoireId, note) {
-    if (!TOKEN) { alerte('Connectez-vous pour noter', 'info'); return; }
-    if (note < 1 || note > 5) return;
-
-    try {
-        await $.ajax({
-            url: `${baseAPI}/interactions/notations/`,
-            method: 'POST',
-            data: JSON.stringify({ memoire_id: memoireId, note: note }),
-            contentType: 'application/json',
-            headers: authHeaders()
-        });
-        alerte(`Note ${note}/5 enregistrée`, 'success');
-        openDetailModal(memoireId);
-    } catch (e) {
-        const msg = e.responseJSON ? Object.values(e.responseJSON).flat().join(', ') : e.statusText || 'Erreur';
-        alerte(`❌ ${msg}`, 'error');
-    }
-};
-/* ---------- BULLE CHAT ---------- */
-function renderChatMessage(c, isStaff) {
-    const isMine = c.utilisateur_id === USER_ID;
-    const time = moment(c.date).fromNow();
-    console.log(c.utilisateur)
-    return `
-    <div class="chat_msg ${isMine ? 'mine' : 'theirs'}">
-        <img src="${c.utilisateur.photo_profil || 'https://via.placeholder.com/32'}"  class="chat_msg_avatar">
-        <div class="chat_msg_content">
-            <div class="chat_msg_meta">
-               <a class="chat_msg_author" href="${c.utilisateur.realisation_linkedin}" target="_blank" rel="noopener">
-  ${c.utilisateur.nom}
-</a>
-                <span class="chat_msg_time">${time}</span>
-            </div>
-            <div class="chat_msg_text">${c.contenu}</div>
-            ${isStaff && !c.modere ? `<button class="btn btn-sm btn-warning mt-2" onclick="modererCommentaire(${c.id})">Modérer</button>` : ''}
-        </div>
-    </div>`;
-}
-
-
-
-/* ---------- RENDU GRILLE ---------- */
-function renderGrid(list) {
-    if (!list || !list.length) {
-        $grid.html(`<div class="empty_state col-12"><i class="fas fa-inbox"></i><h3>Aucun mémoire</h3></div>`);
-        return;
-    }
-
-    const isLogged = !!TOKEN;
-    const isProf = USER_ROLE === 'professeur';
-    const isStaff = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
-
-    const cards = list.map((m, i) => `
-        <div class="memoire_card ${compactView ? 'compact' : ''}" data-id="${m.id}">
-            <div class="memoire_header">
-                <div class="memoire_title">${m.titre}</div>
-                <div class="memoire_meta">
-
-                  
-                    <span> <a class="chat_msg_author" href="${m.auteur.realisation_linkedin}" target="_blank" rel="noopener">
-  ${m.auteur.nom}
-</a></span>
-                  
-                    <span><i class="fas fa-calendar"></i> ${m.annee}</span>
-                </div>
-            </div>
-            <div class="memoire_body">
-                <div class="memoire_resume">${m.resume || 'Aucun résumé'}</div>
-                <div class="memoire_domains">${(m.domaines_list || []).map(d => `<span class="domain_badge">${d}</span>`).join('')}</div>
-                <div class="memoire_stats">
-                    <span><i class="fas fa-download"></i> ${m.nb_telechargements}</span>
-                    <span><i class="fas fa-heart"></i> ${m.nb_likes}</span>
-                    <span><i class="fas fa-star"></i> ${m.note_moyenne ? m.note_moyenne.toFixed(1) : 'N/A'}</span>
-                </div>
-                <div class="memoire_actions">
-                    ${isLogged ? `
-                        <button class="action_btn ${m.is_liked ? 'liked' : ''}" onclick="toggleLike(${m.id},this)"><i class="fas fa-heart"></i> <span>${m.nb_likes}</span></button>
-                        <button class="action_btn" onclick="openDetailModal(${m.id})"><i class="fas fa-eye"></i> Détails</button>
-                        <button class="action_btn chat_opener" onclick="openChatBubble(${m.id}, '${m.titre.replace(/'/g, "\\'")}')" title="Discuter">
-    <i class="fas fa-comments"></i>
-    <span class="chat_pastille">${m.nb_commentaires || 0}</span>
-</button>
-                        <button class="action_btn btn_download" onclick="downloadMemoire(${m.id},'${m.pdf_url}')"><i class="fas fa-download"></i></button>
-                        ${isProf ? `<button class="action_btn" onclick="encadrerMemoire(${m.id})"><i class="fas fa-chalkboard-teacher"></i> Encadrer</button>` : ''}
-                    ` : `<button class="action_btn" onclick="window.location.href='register.html'">
-    <i class="fas fa-sign-in-alt"></i> Connexion
-</button>`}
-                </div>
-            </div>
-        </div>`).join('');
-
-    $grid.html(cards);
-}
-
-/* ---------- INTERACTIONS ---------- */
-async function toggleLike(id,btn){
-    if(!TOKEN){alerte('Connectez-vous pour liker','info');return;}
-    try{
-        const data=await $.ajax({url:`${baseAPI}/interactions/likes/toggle/`,method:'POST',data:JSON.stringify({memoire_id:id}),contentType:'application/json',headers:authHeaders()});
-        $(btn).toggleClass('liked',data.liked).find('span').text(data.count);
-        alerte(data.liked?'Ajouté aux favoris':'Retiré des favoris','success');
-    }catch(e){errorMsg(e);}
-}
-async function downloadMemoire(id,url){
-    if(!TOKEN){alerte('Connectez-vous pour télécharger','info');return;}
-    try{
-        await $.ajax({url:`${baseAPI}/interactions/telechargements/telecharger/`,method:'POST',data:JSON.stringify({memoire:id}),contentType:'application/json',headers:authHeaders()});
-        window.open(url,'_blank');
-        alerte('Téléchargement lancé','success');
-        loadStats();
-    }catch(e){errorMsg(e);}
-}
-async function encadrerMemoire(id){
-    if(!TOKEN){alerte('Connectez-vous','info');return;}
-    if(USER_ROLE!=='professeur'){alerte('Réservé aux professeurs','error');return;}
-    alerte('Fonctionnalité d’encadrement en cours','info');
-}
-
-/* ---------- MODALES ---------- */
-function openModal(id){$('#'+id).addClass('active');$('body').css('overflow','hidden');}
-function closeModal(id){$('#'+id).removeClass('active');$('body').css('overflow','auto');}
-$('.modal_overlay').on('click', function (e) {
-    if (e.target === this) closeModal(this.id);
-});
-
-/* ---------- USER ACTIONS ---------- */
-function buildUserBar() {
-    const bar = `
-
-    <button class="user_action_btn" id="btn_toggle_view" onclick="toggleView()" title="Vue compacte"><i class="fas fa-list"></i> Vue</button>`;
-    $('.user_actions').append(bar);
-}
-
-/* ---------- MES STATISTIQUES ---------- */
-async function openMesStats() {
-    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
-    try {
-        const d = await $.get({ url: `${baseAPI}/memoires/universites/${UNIV_SLUG}/memoires/mes-stats/`, headers: authHeaders() });
-        $('#generic_modal_title').html('<i class="fas fa-chart-line"></i> Mes Statistiques');
-        $('#generic_modal_body').html(`
-            <div class="detail_section">
-                <h3>Vue d'ensemble</h3>
-                <div class="detail_info">
-                    <div class="info_item"><div class="info_label">Mémoires publiés</div><div class="info_value">${d.total_memoires || 0}</div></div>
-                    <div class="info_item"><div class="info_label">Total téléchargements</div><div class="info_value">${d.total_telechargements || 0}</div></div>
-                    <div class="info_item"><div class="info_label">Note moyenne</div><div class="info_value">${d.note_moyenne ? d.note_moyenne.toFixed(1) : 'N/A'}</div></div>
-                </div>
-            </div>
-            ${d.classement?.length ? `<div class="detail_section"><h3>Top 5 de mes mémoires</h3>${d.classement.map((m, i) => `
-                <div class="comment_item">
-                    <div style="display:flex;justify-content:space-between">
-                        <div><strong>#${i + 1}</strong> ${m.titre}</div>
-                        <div style="color:#ffb606"><i class="fas fa-download"></i> ${m.dl}</div>
+                        <!-- Sort & Reset -->
+                        <div class="pt-4 border-t border-gray-100">
+                            <div class="relative mb-3">
+                                <select id="filter-sort" class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                    <option value="-created_at">Plus récents d'abord</option>
+                                    <option value="created_at">Plus anciens d'abord</option>
+                                    <option value="-nb_telechargements">Les plus téléchargés</option>
+                                    <option value="-note_moyenne">Les mieux notés</option>
+                                </select>
+                                <i data-lucide="arrow-up-down" class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                            </div>
+                            
+                            <button onclick="resetFilters()" class="w-full h-[45px] bg-white border border-gray-200 text-brand-black rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand-black hover:text-white hover:border-brand-black transition-all flex items-center justify-center gap-2 group">
+                                <i data-lucide="rotate-ccw" class="w-4 h-4 group-hover:-rotate-180 transition-transform duration-500"></i> Réinitialiser
+                            </button>
+                        </div>
                     </div>
-                </div>`).join('')}</div>` : ''}`);
-        openModal('generic_modal');
-    } catch (e) { errorMsg(e); }
-}
-
-/* ---------- MES TÉLÉCHARGEMENTS ---------- */
-async function openMesTelechargements() {
-    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
-    try {
-        const list = await $.get({ url: `${baseAPI}/interactions/telechargements/mes-telechargements/`, headers: authHeaders() });
-        const searchBox = `<div class="filter_group"><input class="filter_input" id="search_downloads" placeholder="Rechercher..." onkeyup="filterDownloads()"></div>`;
-        const html = list.length ? list.map(dl => `
-            <div class="comment_item download_item">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div><strong>${dl.memoire_titre}</strong><div style="font-size:12px;color:#a5a5a5">${new Date(dl.date).toLocaleDateString('fr-FR')}</div></div>
-                    <button class="action_btn btn_download" onclick="window.open('${dl.pdf_url}','_blank')"><i class="fas fa-download"></i></button>
                 </div>
-            </div>`).join('') : '<p style="text-align:center;color:#a5a5a5;padding:40px">Aucun téléchargement</p>';
-        $('#generic_modal_title').html('<i class="fas fa-download"></i> Mes Téléchargements');
-        $('#generic_modal_body').html(searchBox + '<div id="downloads_list">' + html + '</div>');
-        openModal('generic_modal');
-    } catch (e) { errorMsg(e); }
-}
+            </aside>
 
-function filterDownloads() {
-    const s = $('#search_downloads').val().toLowerCase();
-    $('.download_item').each(function () {
-        $(this).toggle($(this).text().toLowerCase().includes(s));
-    });
-}
-
-/* ---------- MES LIKES ---------- */
-async function openMesLikes() {
-    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
-    try {
-        const list = await $.get({ url: `${baseAPI}/interactions/universites/${UNIV_SLUG}/interactions/likes/`, headers: authHeaders() });
-        const html = list.length ? list.map(l => `
-            <div class="comment_item" style="cursor:pointer" onclick="openDetailModal(${l.memoire})">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                    <div><strong>${l.memoire_titre}</strong><div style="font-size:12px;color:#a5a5a5">Par ${l.utilisateur_nom}</div></div>
-                    <div style="color:#ff4757;font-size:24px"><i class="fas fa-heart"></i></div>
+            <!-- Grid & Pagination -->
+            <section class="flex-1 w-full min-w-0">
+                <!-- Loader -->
+                <div id="loader" class="flex flex-col items-center justify-center py-20 hidden">
+                    <div class="relative">
+                        <div class="w-16 h-16 border-4 border-brand-orange/20 border-t-brand-orange rounded-full animate-spin"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-2 h-2 bg-brand-black rounded-full"></div>
+                        </div>
+                    </div>
+                    <p class="text-brand-grey font-title font-bold uppercase tracking-widest text-xs mt-6 animate-pulse">Recherche en cours...</p>
                 </div>
-            </div>`).join('') : '<p style="text-align:center;color:#a5a5a5;padding:40px">Aucun like</p>';
-        $('#generic_modal_title').html('<i class="fas fa-heart"></i> Mes Likes');
-        $('#generic_modal_body').html(html);
-        openModal('generic_modal');
-    } catch (e) { errorMsg(e); }
-}
-
-/* ---------- MES COMMENTAIRES ---------- */
-async function openMesCommentaires() {
-    alerte('Fonctionnalité en cours', 'info');
-}
-
-/* ---------- ANNUAIRE ---------- */
-async function openAnnuaire() {
-    try {
-        const data = await $.get(`${baseAPI}/auth/${UNIV_SLUG}/users/annuaire/`);
-        const cards = data.results.map(u => `
-            <div class="memoire_card" style="padding:20px;display:flex;align-items:center;gap:15px">
-                <img src="${u.photo_profil || 'https://via.placeholder.com/60'}" style="width:60px;height:60px;border-radius:50%;object-fit:cover">
-                <div>
-                    <div class="memoire_title">${u.nom} ${u.prenom}</div>
-                    <div class="memoire_meta">${u.role_display || 'Membre'}</div>
-                    <div style="font-size:12px;color:#999">${u.total_memoires || 0} mémoire(s)</div>
+                
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden flex flex-col items-center justify-center h-96 bg-white rounded-3xl shadow-sm border border-gray-100 p-8 text-center mx-auto max-w-lg">
+                    <div class="bg-gray-50 p-6 rounded-full mb-6">
+                        <i data-lucide="search-x" class="w-12 h-12 text-gray-300"></i>
+                    </div>
+                    <h3 class="text-2xl font-title font-bold text-brand-black mb-3">Aucun résultat trouvé</h3>
+                    <p class="text-gray-500 font-body text-sm leading-relaxed mb-8">
+                        Nous n'avons trouvé aucun mémoire correspondant à vos critères. Essayez d'élargir votre recherche.
+                    </p>
+                    <button onclick="resetFilters()" class="px-8 py-3 bg-brand-orange text-brand-black rounded-full font-bold uppercase text-xs tracking-wide hover:shadow-lg hover:shadow-brand-orange/30 transition-all transform hover:-translate-y-1">
+                        Effacer tous les filtres
+                    </button>
                 </div>
-            </div>`).join('');
-        $('#generic_modal_title').html('<i class="fas fa-address-book"></i> Annuaire ENSTP');
-        $('#generic_modal_body').html(`<div class="memoires_grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">${cards}</div>`);
-        openModal('generic_modal');
-    } catch (e) { errorMsg(e); }
-}
 
-/* ---------- EXPORT CSV ---------- */
-function exportMyDownloads() {
-    if (!TOKEN) { alerte('Connectez-vous', 'info'); return; }
-    $.get({ url: `${baseAPI}/interactions/telechargements/mes-telechargements/`, headers: authHeaders() })
-        .done(list => {
-            const head = 'Titre,Auteur,Date\n';
-            const rows = list.map(d => `"${d.memoire_titre}","${d.utilisateur_nom}","${new Date(d.date).toLocaleDateString('fr-FR')}"`).join('\n');
-            const csv = '\uFEFF' + head + rows;
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'mes_telechargements_enstp.csv';
-            link.click();
-        })
-        .fail(e => errorMsg(e));
-}
-
-/* ---------- VUE COMPACTE ---------- */
-function toggleView() {
-    compactView = !compactView;
-    $('#memoires_grid').toggleClass('compact', compactView);
-    $('#btn_toggle_view i').attr('class', compactView ? 'fas fa-th-large' : 'fas fa-list');
-}
-
-$('<style>')
-.text(`.memoires_grid.compact .memoire_card{display:flex;align-items:center;padding:12px}
-.memoires_grid.compact .memoire_header{width:180px;padding:15px;margin-right:15px;border-radius:8px 0 0 8px}
-.memoires_grid.compact .memoire_body{flex:1;padding:10px 15px 10px 0}
-.memoires_grid.compact .memoire_resume{-webkit-line-clamp:2;margin-bottom:8px}
-.memoires_grid.compact .memoire_domains{margin-bottom:8px}
-.memoires_grid.compact .memoire_actions{padding-top:8px;margin-top:8px}`)
-.appendTo('head');
-
-/* ---------- TOP CONTRIBUTEURS ---------- */
-async function loadTopContrib() {
-    try {
-        const data = await $.get(`${baseAPI}/auth/${UNIV_SLUG}/users/top-contrib/`);
-        const html = data.map((u, i) => `
-            <div class="comment_item">
-                <div style="display:flex;justify-content:space-between">
-                    <div><strong>#${i + 1}</strong> ${u.nom} ${u.prenom}</div>
-                    <div style="color:#ffb606"><i class="fas fa-file-alt"></i> ${u.total_memoires || 0}</div>
+                <!-- Grid -->
+                <div id="memoires-grid" class="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-2 transition-all duration-300">
+                    <!-- Cards injected by JS -->
                 </div>
-            </div>`).join('');
-        $('#top_contrib_box').html(html);
-    } catch (e) { console.error(e); }
-}
 
-/* ---------- FILTRES ---------- */
-function applyFilters() { loadMemoires(1); }
-function resetFilters() {
-    $('#search_input').val('');
-    $('#year_select').val('');
-    $('#domain_select').val('');
-    $('#sort_select').val('-created_at');
-    applyFilters();
-}
-</script>
+                <!-- Pagination -->
+                <div id="pagination-container" class="flex justify-center mt-16 hidden">
+                    <button id="load-more-btn" class="group px-10 py-4 bg-white border border-gray-200 text-brand-black font-title font-bold uppercase text-xs tracking-widest rounded-full hover:bg-brand-orange hover:text-brand-black hover:border-brand-orange hover:shadow-xl hover:shadow-brand-orange/20 transition-all transform hover:-translate-y-1 flex items-center gap-3">
+                        <span class="group-hover:animate-pulse">Charger plus de résultats</span>
+                        <i data-lucide="arrow-down" class="w-4 h-4 group-hover:translate-y-1 transition-transform"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
 
+    <!-- Footer -->
+    <footer class="bg-brand-black text-white py-20 border-t border-white/10">
+        <div class="container mx-auto px-4 text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-brand-orange to-amber-600 flex items-center justify-center text-brand-black font-title font-extrabold text-2xl mx-auto mb-8 rounded-2xl shadow-glow">E</div>
+            <p class="text-brand-orange font-title font-bold text-xl mb-4 uppercase tracking-[0.2em]">Bibliothèque des Mémoires ENSTP</p>
+            <p class="text-gray-500 font-body text-sm mb-10 max-w-lg mx-auto leading-relaxed">
+                Plateforme officielle de consultation et d'archivage des travaux de fin d'études de l'École Nationale Supérieure des Travaux Publics.
+            </p>
+            <p class="text-gray-600 text-xs font-bold uppercase tracking-widest">© <span id="footer-year"></span> ENSTP. Tous droits réservés.</p>
+        </div>
+     </footer>
+
+    <!-- MODAL: Details (Split View with Actions) -->
+    <div id="modal-detail" class="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 hidden h-screen overflow-hidden">
+        <div class="absolute inset-0 bg-brand-black/90 backdrop-blur-md transition-opacity duration-300" onclick="closeModal('modal-detail')"></div>
+        <div class="relative bg-white w-full h-full md:max-h-[90vh] md:max-w-7xl md:rounded-[32px] shadow-2xl flex flex-col md:flex-row overflow-hidden animate-fade-in-up">
+            <button onclick="closeModal('modal-detail')" class="absolute top-4 right-4 z-[60] p-2 bg-black/20 hover:bg-black/50 text-white rounded-full backdrop-blur-md transition-colors border border-white/10 group">
+                <i data-lucide="x" class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300"></i>
+            </button>
+            <div id="modal-detail-content" class="flex flex-col md:flex-row w-full h-full">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Chat -->
+    <div id="modal-chat" class="fixed inset-0 z-[110] hidden flex items-end md:items-center justify-center p-0 md:p-4">
+        <div class="absolute inset-0 bg-brand-black/80 backdrop-blur-sm" onclick="closeModal('modal-chat')"></div>
+        <div class="relative bg-[#f0f2f5] w-full md:max-w-lg h-[90vh] md:h-[800px] rounded-t-[32px] md:rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-fade-in-up border border-white/20">
+            <!-- Header -->
+            <div class="bg-white p-5 flex justify-between items-center shadow-sm z-10 shrink-0 border-b border-gray-100">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-gradient-to-br from-brand-orange to-amber-500 rounded-xl text-white shadow-lg shadow-brand-orange/30">
+                        <i data-lucide="message-circle" class="w-6 h-6 fill-current"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <h3 class="font-title font-extrabold text-brand-black text-lg leading-tight">Discussion</h3>
+                        <p id="chat-title" class="text-xs text-gray-500 font-bold uppercase tracking-wider line-clamp-1 truncate max-w-[200px]">Titre du mémoire</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modal-chat')" class="p-2 hover:bg-gray-50 rounded-full transition-colors text-gray-400 hover:text-brand-black">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <!-- Messages -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#efeae2] custom-scrollbar" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px;"></div>
+            <!-- Input -->
+            <div class="p-4 bg-white border-t border-gray-100 shrink-0 pb-8 md:pb-4">
+                <div class="flex items-end gap-2 bg-gray-50 rounded-[24px] px-2 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-brand-orange/50 focus-within:bg-white transition-all shadow-inner">
+                    <textarea id="chat-input" class="flex-1 bg-transparent border-0 px-4 py-3 text-sm focus:ring-0 outline-none text-brand-black resize-none max-h-32 min-h-[48px]" placeholder="Votre message..." rows="1"></textarea>
+                    <button id="chat-send" class="mb-1 p-3 bg-brand-orange text-brand-black rounded-full hover:bg-amber-500 transition-all shadow-md transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Generic (Lists/Stats) -->
+    <div id="modal-generic" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand-black/80 backdrop-blur-sm" onclick="closeModal('modal-generic')"></div>
+        <div class="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl p-0 animate-fade-in-up overflow-hidden">
+            <div class="p-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                <h3 class="text-xl font-extrabold text-brand-black flex items-center gap-3" id="modal-generic-title">
+                    <!-- Title injected by JS -->
+                </h3>
+                <button onclick="closeModal('modal-generic')" class="p-2 hover:bg-white rounded-full transition-colors text-gray-400 shadow-sm border border-transparent hover:border-gray-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="modal-generic-content" class="max-h-[60vh] overflow-y-auto custom-scrollbar p-6">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="script.js"></script>
 </body>
 </html>
