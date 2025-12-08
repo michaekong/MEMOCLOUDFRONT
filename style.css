@@ -153,98 +153,77 @@ h1, h2, h3, h4, h5, h6, .font-title {
 /* Chat Messages */
 .chat-msg {
     display: flex;
-    gap: 12px;
+    gap: 8px;
+    align-items: flex-end;
     animation: fadeInUp 0.3s ease-out;
 }
 .chat-msg.mine {
     flex-direction: row-reverse;
 }
 .chat-bubble {
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-radius: 18px;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    max-width: 70%;
+    word-break: break-word;
+    font-size: 14px;
+    line-height: 1.4;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    max-width: 85%;
-    word-wrap: break-word;
 }
 .chat-bubble.mine {
-    background-color: #ffb606;
-    color: #1a1a1a;
-    border-top-right-radius: 2px;
+    background: #fde8e0;
+    color: #111;
+    border-bottom-right-radius: 4px;
 }
 .chat-bubble.theirs {
-    background-color: #ffffff;
-    color: #333;
-    border-top-left-radius: 2px;
+    background: #f3f4f6;
+    color: #111;
+    border-bottom-left-radius: 4px;
 }
 
-/* Compact Badge */
-.badge-gold { @apply bg-gradient-to-r from-yellow-400 to-amber-500 shadow-amber-500/30 text-white; }
-.badge-blue { @apply bg-gradient-to-r from-blue-400 to-blue-600 shadow-blue-500/30 text-white; }
-.chat-msg {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-}
-
-.chat-msg.mine {
-  flex-direction: row-reverse;
-}
-
-.chat-bubble {
-  padding: 10px 14px;
-  border-radius: 18px;
-  max-width: 70%;
-  word-break: break-word;
-  font-size: 14px;
-  line-height: 1.4;
-}
-
-.chat-bubble.mine {
-  background: #fde8e0;
-  color: #111;
-  border-bottom-right-radius: 4px;
-}
-
-.chat-bubble.theirs {
-  background: #f3f4f6;
-  color: #111;
-  border-bottom-left-radius: 4px;
-}
-/* conteneur des messages */
+/* Conteneur des messages */
 #chat-messages {
-    max-height: 55vh;          /* 55 % de l’écran : tu peux ajuster */
+    max-height: 55vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-/* bulles */
-.chat-bubble {
-    word-break: break-word;
-}
-
-/* quand on ouvre le modal, on force le scroll en bas */
+/* Quand on ouvre le modal, on force le scroll en bas */
 #modal-chat.opened #chat-messages {
     scroll-behavior: smooth;
 }
-/* ✅ Hauteur réelle (iOS Safari & Chrome mobile) */
-.h-safe {
-    height: 100vh;
-    height: -webkit-fill-available;
-    height: 100dvh; /* moderne */
+
+/* Compact Badge */
+.badge-gold { 
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0.3);
+    color: white;
+}
+.badge-blue { 
+    background: linear-gradient(to right, #60a5fa, #2563eb);
+    box-shadow: 0 0 0 rgba(37, 99, 235, 0.3);
+    color: white;
 }
 
-/* ✅ Scroll fluide sur mobile */
+/* ========== HAUTEUR RÉELLE (iOS Safari & Chrome mobile) ========== */
+.h-safe,
+#modal-detail,
+#modal-detail > div:nth-child(2) {
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: 100dvh;
+}
+
+/* ========== SCROLL FLUIDE SUR MOBILE ========== */
 .scroll-safe {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     max-height: 100dvh;
 }
 
-/* ✅ Empêche le scroll du body quand un modal est ouvert */
+/* ========== EMPÊCHE LE SCROLL DU BODY QUAND UN MODAL EST OUVERT ========== */
+body.modal-open,
 body.overflow-hidden {
     overflow: hidden;
     position: fixed;
@@ -252,209 +231,52 @@ body.overflow-hidden {
     height: 100%;
 }
 
-/* empêche tout débordement d’image */
+/* Empêche tout débordement d'image */
 img {
     max-width: 100%;
     height: auto;
     display: block;
 }
 
-/* scroll fluide */
+/* Scroll fluide */
 .custom-scrollbar {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
+
+/* ========== DARK MODE DÉSACTIVÉ ========== */
+/* Le dark mode automatique est désactivé pour garder le design clair */
+/*
 @media (prefers-color-scheme: dark) {
     body { background: #111; color: #eee; }
     .bg-white { background: #1f1f1f; }
     .text-gray-600 { color: #ccc; }
 }
 
-/* toggle manuel */
 body.dark {
     background: #111;
     color: #eee;
 }
 body.dark .bg-white { background: #1f1f1f; }
 body.dark .text-gray-600 { color: #ccc; }
-/* ---------  MODAL SAFE MOBILE  --------- */
-body.modal-open {
-  overflow: hidden;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-}
+*/
 
+/* ========== MODAL SAFE MOBILE ========== */
 .modal-mobile-safe {
-  height: 100vh;
-  height: -webkit-fill-available;   /* iOS Safari */
-  height: 100dvh;                   /* futur-proof */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* on masque la barre de scroll visuelle si tu veux la garder fine */
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 4px; }
 /* ========== NAVBAR UNIFIÉE ========== */
-/* Container global */
 .main_nav_container,
 .main_nav_container_mobile {
-  font-family: 'Open Sans', sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
-/* Liens desktop */
-.nav-link {
-  font-size: 12px;
-  font-weight: 800;
-  color: #3a3a3a;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  position: relative;
-  transition: color 0.2s;
-}
-.nav-link:hover,
-.nav-link.active {
-  color: #ffb606;
-}
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #ffb606;
-  transition: width 0.3s;
-}
-.nav-link:hover::after,
-.nav-link.active::after {
-  width: 100%;
-}
-
-/* ========== SIDEBAR MOBILE ========== */
-#mobile-sidebar {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-#mobile-sidebar.translate-x-full {
-  transform: translateX(100%);
-}
-#mobile-sidebar.translate-x-0 {
-  transform: translateX(0);
-}
-
-/* Liens mobile */
-.mobile-link {
-  display: flex;
-  align-items: center;
-  padding: 14px 20px;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #1a1a1a;
-  border-radius: 12px;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-}
-.mobile-link:hover,
-.mobile-link.active {
-  background-color: #fff8e1;
-  color: #ffb606;
-  border-color: #ffb606;
-  padding-left: 28px;
-}
-
-/* Bouton fermeture */
-#close-mobile-menu {
-  transition: transform 0.3s;
-}
-#close-mobile-menu:hover {
-  transform: rotate(90deg);
-}
-
-/* Fond flou derrière sidebar */
-#mobile-backdrop {
-  backdrop-filter: blur(6px);
-}
-
-/* ========== BOUTONS NAVBAR ========== */
-#login-btn,
-#mobile-login-btn {
-  transition: all 0.3s;
-}
-#login-btn:hover,
-#mobile-login-btn:hover {
-  background-color: #ffb606;
-  color: #1a1a1a;
-  transform: translateY(-2px);
-}
-
-/* ========== PETITS ÉCRANS ========== */
-@media (max-width: 1023px) {
-  /* Masquer la nav desktop */
-  .main_nav_container {
-    display: none !important;
-  }
-
-  /* Forcer la sidebar à prendre toute la hauteur */
-  #mobile-sidebar > div {
-    height: 100vh;
-  }
-
-  /* Espacement plus respiré dans la sidebar */
-  .main_nav_list {
-    gap: 6px;
-  }
-}
-
-/* ========== ANIMATIONS ========== */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.animate-fade-in-up {
-  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* ========== SCROLLBAR PERSONNALISÉE ========== */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* ========== COULEURS DE SURVOL UNIFIÉES ========== */
-.text-brand-orange {
-  color: #ffb606;
-}
-.bg-brand-orange {
-  background-color: #ffb606;
-}
-.border-brand-orange {
-  border-color: #ffb606;
-}
-.hover\:bg-brand-orange:hover {
-  background-color: #ffb606;
-}
-.hover\:text-brand-orange:hover {
-  color: #ffb606;
-}
-/* ======================================================
-   DESIGN UNIFIÉ NAVBAR & SIDEBAR – MOBILE & DESKTOP
-   ====================================================== */
-
-/* ---------- Navbar desktop : effet glass & ombre douce ---------- */
+/* Navbar desktop : effet glass & ombre douce */
 #navbar {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
@@ -463,7 +285,18 @@ body.modal-open {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
-/* ---------- Sidebar mobile : glass + arrondis + ombre ---------- */
+/* ========== SIDEBAR MOBILE ========== */
+#mobile-sidebar {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#mobile-sidebar.translate-x-full {
+    transform: translateX(100%);
+}
+#mobile-sidebar.translate-x-0 {
+    transform: translateX(0);
+}
+
+/* Sidebar mobile : glass + arrondis + ombre */
 #mobile-sidebar > div {
     background: linear-gradient(160deg, #ffffff 0%, #f9f9f9 100%);
     border-left: 1px solid rgba(0, 0, 0, 0.05);
@@ -471,24 +304,53 @@ body.modal-open {
     border-radius: 24px 0 0 24px;
 }
 
-/* ---------- Liens sidebar : style glass & animation ---------- */
-.mobile-link {
+/* Liens sidebar : style glass & animation */
+.mobile-link,
+.mobile-glass-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #1a1a1a;
     background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .mobile-link:hover,
-.mobile-link.active {
+.mobile-link.active,
+.mobile-glass-link:hover,
+.mobile-glass-link.active {
     background: rgba(255, 182, 6, 0.12);
     color: #ffb606;
-    border-color: rgba(255, 182, 6, 0.4);
+    border-color: rgba(255, 182, 6, 0.3);
     transform: translateX(6px);
-    box-shadow: 0 4px 12px rgba(255, 182, 6, 0.2);
+    box-shadow: 0 6px 20px rgba(255, 182, 6, 0.2);
+}
+.mobile-glass-link i {
+    width: 20px;
+    height: 20px;
 }
 
-/* ---------- Boutons_connexion : style glass & glow ---------- */
+/* Bouton fermeture */
+#close-mobile-menu {
+    transition: transform 0.3s;
+}
+#close-mobile-menu:hover {
+    transform: rotate(90deg);
+}
+
+/* Fond flou derrière sidebar */
+#mobile-backdrop {
+    backdrop-filter: blur(6px);
+}
+
+/* ========== BOUTONS NAVBAR ========== */
 #login-btn,
 #mobile-login-btn {
     background: rgba(26, 26, 26, 0.9);
@@ -506,14 +368,14 @@ body.modal-open {
     transform: translateY(-2px);
 }
 
-/* ---------- Icônes : rotation subtile au survol ---------- */
+/* Icônes : rotation subtile au survol */
 #mobile-menu-btn:hover i,
 #close-mobile-menu:hover i {
     transform: scale(1.15) rotate(6deg);
     transition: transform 0.2s;
 }
 
-/* ---------- Scrollbar mobile plus fine ---------- */
+/* Scrollbar mobile plus fine */
 #mobile-sidebar .custom-scrollbar::-webkit-scrollbar {
     width: 3px;
 }
@@ -522,54 +384,193 @@ body.modal-open {
     border-radius: 3px;
 }
 
-/* ---------- Responsive : ajustements fins ---------- */
+/* ========== COULEURS DE SURVOL UNIFIÉES ========== */
+.text-brand-orange {
+    color: #ffb606;
+}
+.bg-brand-orange {
+    background-color: #ffb606;
+}
+.border-brand-orange {
+    border-color: #ffb606;
+}
+
+/* ========================================
+   FIX MODAL DÉTAILS - VERSION MOBILE
+   ======================================== */
+
+/* 1. Modal conteneur principal */
+#modal-detail {
+    /* Prend toute la hauteur réelle du viewport */
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: 100dvh;
+}
+
+/* 2. Container blanc du modal */
+#modal-detail > div:nth-child(2) {
+    max-height: 100vh;
+    max-height: -webkit-fill-available;
+    max-height: 100dvh;
+}
+
+/* 3. Contenu scrollable */
+#modal-detail-content {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 4. Colonnes internes */
+#modal-detail-content > div {
+    min-height: 100%;
+}
+
+/* 5. Colonne gauche (image + infos) */
+#modal-detail-content > div > div:first-child {
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 6. Colonne droite (résumé + actions) */
+#modal-detail-content > div > div:last-child {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: 100vh;
+    max-height: -webkit-fill-available;
+    max-height: 100dvh;
+}
+
+/* 7. Scrollbar élégante pour le modal */
+#modal-detail-content::-webkit-scrollbar,
+#modal-detail-content > div > div::-webkit-scrollbar {
+    width: 4px;
+}
+
+#modal-detail-content::-webkit-scrollbar-thumb,
+#modal-detail-content > div > div::-webkit-scrollbar-thumb {
+    background: rgba(255, 182, 6, 0.3);
+    border-radius: 4px;
+}
+
+#modal-detail-content::-webkit-scrollbar-track,
+#modal-detail-content > div > div::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ========== RESPONSIVE : MOBILE & TABLET ========== */
+@media (max-width: 767px) {
+    /* Modal prend tout l'écran sur mobile */
+    #modal-detail > div:nth-child(2) {
+        border-radius: 0 !important;
+        max-height: 100vh;
+        max-height: -webkit-fill-available;
+        max-height: 100dvh;
+    }
+
+    /* Colonnes empilées verticalement */
+    #modal-detail-content > div {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    /* Colonne gauche : hauteur auto */
+    #modal-detail-content > div > div:first-child {
+        width: 100% !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+    }
+
+    /* Colonne droite : prend le reste */
+    #modal-detail-content > div > div:last-child {
+        flex: 1;
+        max-height: none !important;
+        overflow-y: visible !important;
+    }
+
+    /* Bouton sticky en bas */
+    #modal-detail-content .sticky {
+        position: sticky;
+        bottom: 0;
+        z-index: 20;
+    }
+
+    /* Bouton fermer plus visible sur mobile */
+    #modal-detail button[onclick*="closeModal"] {
+        top: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        padding: 10px;
+    }
+}
+
 @media (max-width: 1023px) {
+    /* Masquer la nav desktop */
+    .main_nav_container {
+        display: none !important;
+    }
+
+    /* Forcer la sidebar à prendre toute la hauteur */
+    #mobile-sidebar > div {
+        height: 100vh;
+    }
+
+    /* Espacement plus respiré dans la sidebar */
+    .main_nav_list {
+        gap: 8px;
+    }
+
     /* Titre de la sidebar plus visible */
     #mobile-sidebar .text-brand-orange {
         font-size: 1.1rem;
         letter-spacing: 0.1em;
     }
 
-    /* Espacement des liens un peu plus aéré */
-    .main_nav_list {
-        gap: 8px;
-    }
-
-    /* Bouton_connexion plus large */
+    /* Bouton connexion plus large */
     #mobile-login-btn {
         width: 100%;
         padding: 14px;
         font-size: 13px;
     }
 }
-/* ---------- Sidebar mobile : glass + vertical ---------- */
-.mobile-glass-link {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 20px;
-  font-size: 15px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #1a1a1a;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+/* ========== OPTIMISATIONS SUPPLÉMENTAIRES ========== */
+
+/* Prévention du bounce scroll sur iOS */
+body {
+    overscroll-behavior: none;
 }
-.mobile-glass-link:hover,
-.mobile-glass-link.active {
-  background: rgba(255, 182, 6, 0.12);
-  color: #ffb606;
-  border-color: rgba(255, 182, 6, 0.3);
-  transform: translateX(6px);
-  box-shadow: 0 6px 20px rgba(255, 182, 6, 0.2);
+
+/* Amélioration du rendu des polices */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-.mobile-glass-link i {
-  width: 20px;
-  height: 20px;
+
+/* Performance : accélération matérielle */
+#modal-detail,
+#modal-chat,
+.chat-msg,
+.hero-btn,
+.mobile-link {
+    transform: translateZ(0);
+    will-change: transform;
 }
-#close-mobile-menu:hover {
-  transform: rotate(90deg);
+
+/* Suppression du tap highlight sur mobile */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Focus visible pour l'accessibilité */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #ffb606;
+    outline-offset: 2px;
 }

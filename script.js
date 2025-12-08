@@ -171,9 +171,9 @@ async function fetchMemoires(reset = false) {
         }
         if(filters.university && filters.university !== "") {
             if(filters.university === "ENSTP") {
-                results = results.filter(m => !m.universites_list || m.universites_list.length === 0 || m.universites_list.includes('ENSTP'));
+                results = results.filter(m => !m.universites_list || m.universites_list.length === 0 || m.universites_list.includes('ecloe-des-travaux'));
             } else if(filters.university === "Autre") {
-                results = results.filter(m => m.universites_list && m.universites_list.length > 0 && !m.universites_list.includes('ENSTP'));
+                results = results.filter(m => m.universites_list && m.universites_list.length > 0 && !m.universites_list.includes('ecole-des-travaux'));
             }
         }
         if(filters.hasResume) {
