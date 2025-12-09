@@ -10,6 +10,139 @@
 <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="styles/news_post_styles.css">
 <link rel="stylesheet" type="text/css" href="styles/news_post_responsive.css">
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    overflow: auto;
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid #888;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  
+  .modal-content h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .modal-content label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .modal-content input[type="text"],
+  .modal-content input[type="file"],
+  .modal-content select,
+  .modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+  
+  .modal-content input:focus,
+  .modal-content select:focus,
+  .modal-content textarea:focus {
+    border-color: #667eea;
+    outline: none;
+  }
+  
+  .modal-content textarea {
+    min-height: 150px;
+    resize: vertical;
+    font-family: inherit;
+  }
+  
+  .modal-content input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+  }
+  
+  .error {
+    background: #fee;
+    color: #c33;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, white 0%, #f59e0b 100%);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  }
+  
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+  
+  .btn-warning {
+    background: #f59e0b;
+    color: white;
+    margin-right: 5px;
+  }
+  
+  .btn-danger {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  #adminPanel {
+    margin-top: 30px;
+    text-align: center;
+  }
+  
+  .news_post_actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+</style>
+<script>
+  const BASE_URL = 'http://127.0.0.1:8000/api';
+  const UNIV_SLUG = 'ecole-des-travaux';
+  let TOKEN = localStorage.getItem('authToken');
+  let USER_ROLE = null;
+</script>
 </head>
 <body>
 
@@ -94,15 +227,98 @@
 	
 	<!-- Home -->
 
-	<div class="home">
-		<div class="home_background_container prlx_parent">
-			<div class="home_background prlx" style="background-image:url(images/news_background.jpg)"></div>
-		</div>
-		<div class="home_content">
-			<h1>The News</h1>
-		</div>
-	</div>
+	<!-- ==========================================
+   PULSE HERO – TITRE SUR IMAGE
+   ========================================== -->
+<!-- PULSE HERO -->
+<section class="pulse-hero">
+    <div class="pulse-hero-bg" style="background-image:url(images/news_background.jpg)"></div>
+    <div class="pulse-hero-overlay">
+        <h1 class="pulse-hero-title">PulseNews</h1>
+        <p class="pulse-hero-subtitle">L’actualité du campus en un clin d’œil</p>
+        <button class="pulse-hero-cta" onclick="document.querySelector('.pulse-news').scrollIntoView({behavior:'smooth'})">
+            Découvrir
+        </button>
+    </div>
+</section>
+<!-- Bouton mémoire (admin uniquement) -->
+<button class="pulse-fab-admin" id="fabAddNews" onclick="openNewsModal()" style="display:none">
+    <i class="fas fa-plus"></i>
+</button>
+<!-- ==========================================
+   BARRE DE FILTRES NEWS
+   ========================================== -->
+<!-- ==========================================
+   FILTRES REPLIABLES + TEMPORELS
+   ========================================== -->
+<div class="filter-wrapper">
+    <button class="filter-toggle-btn" onclick="toggleFilterPanel()">
+        <i class="fas fa-filter"></i> Filtres
+        <i class="fas fa-chevron-down arrow"></i>
+    </button>
 
+    <div class="filter-panel" id="filterPanel">
+        <div class="filter-grid">
+
+            <!-- Catégorie -->
+            <div class="filter-group">
+                <label>Catégorie</label>
+                <select id="filterTopic" onchange="applyFilters()">
+                    <option value="">Toutes</option>
+                    <option value="general">Général</option>
+                    <option value="event">Événement</option>
+                    <option value="award">Récompense</option>
+                    <option value="research">Recherche</option>
+                    <option value="alumni">Alumni</option>
+                </select>
+            </div>
+
+            <!-- Statut -->
+            <div class="filter-group">
+                <label>Statut</label>
+                <select id="filterStatus" onchange="applyFilters()">
+                    <option value="">Tous</option>
+                    <option value="published">Publiées</option>
+                    <option value="draft">Brouillons</option>
+                </select>
+            </div>
+
+            <!-- Filtre temporel -->
+            <div class="filter-group">
+                <label>Période</label>
+                <select id="filterTime" onchange="applyFilters()">
+                    <option value="">Toute période</option>
+                    <option value="today">Aujourd’hui</option>
+                    <option value="week">Cette semaine</option>
+                    <option value="month">Ce mois-ci</option>
+                    <option value="custom">Personnalisée</option>
+                </select>
+            </div>
+
+            <!-- Dates personnalisées (affichées si "Personnalisée" sélectionnée) -->
+            <div class="filter-group custom-dates" id="customDates" style="display:none;">
+                <label>Du</label>
+                <input type="date" id="dateFrom" onchange="applyFilters()">
+                <label>Au</label>
+                <input type="date" id="dateTo" onchange="applyFilters()">
+            </div>
+
+            <!-- Recherche texte -->
+            <div class="filter-group full-width">
+                <label>Rechercher</label>
+                <input type="text" id="filterSearch" placeholder="Titre ou mot-clé..." onkeyup="applyFilters()">
+            </div>
+
+            <!-- Bouton réinitialiser -->
+            <div class="filter-group full-width reset-line">
+                <button class="btn btn-filter-reset" onclick="resetFilters()">
+                    <i class="fas fa-undo"></i> Réinitialiser
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 	<!-- News -->
 
 	<div class="news">
@@ -115,195 +331,67 @@
 					
 					<div class="news_post_container">
 						<!-- News Post -->
-						<div class="news_post">
-							<div class="news_post_image">
-								<img src="images/news_1.jpg" alt="https://unsplash.com/@dsmacinnes">
-							</div>
-							<div class="news_post_top d-flex flex-column flex-sm-row">
-								<div class="news_post_date_container">
-									<div class="news_post_date d-flex flex-column align-items-center justify-content-center">
-										<div>18</div>
-										<div>dec</div>
-									</div>
-								</div>
-								<div class="news_post_title_container">
-									<div class="news_post_title">
-										<a href="news_post.html">Why do you need a qualification?</a>
-									</div>
-									<div class="news_post_meta">
-										<span class="news_post_author"><a href="#">By Christian Smith</a></span>
-										<span>|</span>
-										<span class="news_post_comments"><a href="#">3 Comments</a></span>
-									</div>
-								</div>
-							</div>
-							<div class="news_post_text">
-								<p>In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum. Etiam eu purus nec eros varius luctus. Praesent finibus risus facilisis ultricies. Etiam eu purus nec eros varius luctus. Praesent finibus risus facilisis ultricies venenatis. Suspendisse fermentum sodales lacus, lacinia gravida elit dapibus sed. Cras in lectus elit. Maecenas tempus nunc vitae mi egestas venenatis. Aliquam rhoncus, purus in vehicula porttitor, lacus ante consequat purus, id elementum enim purus nec enim. In sed odio rhoncus, tristique ipsum id, pharetra neque. </p>
-							</div>
+						<div class="news_posts" id="newsContainer">
+    <div class="news_loading">
+        <p>Chargement des actualités...</p>
+    </div>
+</div>
+						<!-- Bouton ADMIN uniquement -->
+						
 
-							<div class="news_post_quote">
-								<p class="news_post_quote_text"><span>E</span>tiam eu purus nec eros varius luctus. Praesent finibus risus facilisis ultricies venena tis. Suspendisse fermentum sodales lacus, lacinia gravida elit.</p>
+						<!-- Modal Ajout / Édition -->
+						<div id="newsModal" class="modal">
+							<div class="modal-content">
+								<h2 id="modalTitle">Nouvelle news</h2>
+								<div id="newsError" style="display:none;"></div>
+								<form id="newsForm">
+									<input type="hidden" id="newsId">
+									
+									<label>Titre *</label>
+									<input type="text" name="title" required placeholder="Entrez le titre de la news">
+									
+									<label>Chapô (résumé court)</label>
+									<input type="text" name="headline" placeholder="Résumé en une ligne">
+									
+									<label>Contenu *</label>
+									<textarea name="body" required placeholder="Contenu complet de la news"></textarea>
+									
+									<label>Image de couverture</label>
+									<input type="file" name="cover" accept="image/*">
+									<small style="color: #999;">Formats acceptés: JPG, PNG, GIF</small>
+									
+									<label>Catégorie</label>
+									<select name="topics">
+										<option value="general">Général</option>
+										<option value="event">Événement</option>
+										<option value="award">Récompense</option>
+										<option value="research">Recherche</option>
+										<option value="alumni">Alumni</option>
+									</select>
+									
+									<label style="display: flex; align-items: center; margin-top: 15px;">
+										<input type="checkbox" name="is_published" checked>
+										<span>Publier immédiatement</span>
+									</label>
+									
+									<div style="margin-top: 25px; display: flex; gap: 10px; justify-content: flex-end;">
+										<button type="button" class="btn btn-secondary" onclick="closeNewsModal()">Annuler</button>
+										<button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+									</div>
+								</form>
 							</div>
-
-							<p class="news_post_text" style="margin-top: 59px;">In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum. Etiam eu purus nec eros varius luctus. Praesent finibus risus facilisis ultricies. Etiam eu purus nec eros varius luctus. Praesent finibus risus facilisis ultricies venenatis. Suspendisse fermentum sodales lacus, lacinia gravida elit dapibus sed. Cras in lectus elit. Maecenas tempus nunc vitae mi egestas venenatis. Aliquam rhoncus, purus in vehicula porttitor, lacus ante consequat purus, id elementum enim purus nec enim. In sed odio rhoncus, tristique ipsum id, pharetra neque. </p>
 						</div>
-
 					</div>
+
 					
-					<!-- Comments -->
-					<div class="news_post_comments">
-						<div class="comments_title">Comments</div>
-						<ul class="comments_list">
 							
-							<!-- Comment -->
-							<li class="comment">
-								<div class="comment_container d-flex flex-row">
-									<div>
-										<div class="comment_image">
-											<img src="images/comment_1.jpg" alt="">
-										</div>
-									</div>
-									<div class="comment_content">
-										<div class="comment_meta">
-											<span class="comment_name"><a href="#">Mark Smith</a></span>
-											<span class="comment_separator">|</span>
-											<span class="comment_date">Dec 18, 2017</span>
-											<span class="comment_separator">|</span>
-											<span class="comment_reply_link"><a href="#">Reply</a></span>
-										</div>
-										<p class="comment_text">Aliquam rhoncus, purus in vehicula porttitor, lacus ante consequat purus, id elementum enim purus nec enim. In sed odio rhoncus, tristique ipsum id, pharetra neque. </p>
-									</div>
-								</div>
-							</li>
-
-							<!-- Comment -->
-							<li class="comment">
-								<div class="comment_container d-flex flex-row">
-									<div>
-										<div class="comment_image">
-											<img src="images/comment_2.jpg" alt="">
-										</div>
-									</div>
-									<div class="comment_content">
-										<div class="comment_meta">
-											<span class="comment_name"><a href="#">Mark Smith</a></span>
-											<span class="comment_separator">|</span>
-											<span class="comment_date">Dec 18, 2017</span>
-											<span class="comment_separator">|</span>
-											<span class="comment_reply_link"><a href="#">Reply</a></span>
-										</div>
-										<p class="comment_text">Aliquam rhoncus, purus in vehicula porttitor, lacus ante consequat purus, id elementum enim purus nec enim. In sed odio rhoncus, tristique ipsum id, pharetra neque. </p>
-									</div>
-								</div>
-							</li>
-
-						</ul>
 
 					</div>
 
-					<!-- Leave Comment -->
+					
+				
 
-					<div class="leave_comment">
-						<div class="leave_comment_title">Leave a comment</div>
-
-						<div class="leave_comment_form_container">
-							<form action="post">
-								<input id="comment_form_name" class="input_field contact_form_name" type="text" placeholder="Name" required="required" data-error="Name is required.">
-								<input id="comment_form_email" class="input_field contact_form_email" type="email" placeholder="E-mail" required="required" data-error="Valid email is required.">
-								<textarea id="comment_form_message" class="text_field contact_form_message" name="message" placeholder="Message" required="required" data-error="Please, write us a message."></textarea>
-								<button id="comment_send_btn" type="submit" class="comment_send_btn trans_200" value="Submit">send message</button>
-							</form>
-						</div>
-					</div>
-
-				</div>
-
-				<!-- Sidebar Column -->
-
-				<div class="col-lg-4">
-					<div class="sidebar">
-
-						<!-- Archives -->
-						<div class="sidebar_section">
-							<div class="sidebar_section_title">
-								<h3>Archives</h3>
-							</div>
-							<ul class="sidebar_list">
-								<li class="sidebar_list_item"><a href="#">Design Courses</a></li>
-								<li class="sidebar_list_item"><a href="#">All you need to know</a></li>
-								<li class="sidebar_list_item"><a href="#">Uncategorized</a></li>
-								<li class="sidebar_list_item"><a href="#">About Our Departments</a></li>
-								<li class="sidebar_list_item"><a href="#">Choose the right course</a></li>
-							</ul>
-						</div>
-
-						<!-- Latest Posts -->
-
-						<div class="sidebar_section">
-							<div class="sidebar_section_title">
-								<h3>Latest posts</h3>
-							</div>
-
-							<div class="latest_posts">
-								
-								<!-- Latest Post -->
-								<div class="latest_post">
-									<div class="latest_post_image">
-										<img src="images/latest_1.jpg" alt="https://unsplash.com/@dsmacinnes">
-									</div>
-									<div class="latest_post_title"><a href="news_post.html">Why do you need a qualification?</a></div>
-									<div class="latest_post_meta">
-										<span class="latest_post_author"><a href="#">By Christian Smith</a></span>
-										<span>|</span>
-										<span class="latest_post_comments"><a href="#">3 Comments</a></span>
-									</div>
-								</div>
-
-								<!-- Latest Post -->
-								<div class="latest_post">
-									<div class="latest_post_image">
-										<img src="images/latest_2.jpg" alt="https://unsplash.com/@erothermel">
-									</div>
-									<div class="latest_post_title"><a href="news_post.html">Why do you need a qualification?</a></div>
-									<div class="latest_post_meta">
-										<span class="latest_post_author"><a href="#">By Christian Smith</a></span>
-										<span>|</span>
-										<span class="latest_post_comments"><a href="#">3 Comments</a></span>
-									</div>
-								</div>
-
-								<!-- Latest Post -->
-								<div class="latest_post">
-									<div class="latest_post_image">
-										<img src="images/latest_3.jpg" alt="https://unsplash.com/@element5digital">
-									</div>
-									<div class="latest_post_title"><a href="news_post.html">Why do you need a qualification?</a></div>
-									<div class="latest_post_meta">
-										<span class="latest_post_author"><a href="#">By Christian Smith</a></span>
-										<span>|</span>
-										<span class="latest_post_comments"><a href="#">3 Comments</a></span>
-									</div>
-								</div>
-
-							</div>
-
-						</div>
-
-						<!-- Tags -->
-
-						<div class="sidebar_section">
-							<div class="sidebar_section_title">
-								<h3>Tags</h3>
-							</div>
-							<div class="tags d-flex flex-row flex-wrap">
-								<div class="tag"><a href="#">Course</a></div>
-								<div class="tag"><a href="#">Design</a></div>
-								<div class="tag"><a href="#">FAQ</a></div>
-								<div class="tag"><a href="#">Teachers</a></div>
-								<div class="tag"><a href="#">School</a></div>
-								<div class="tag"><a href="#">Graduate</a></div>
-							</div>
-						</div>
+						
 
 					</div>
 				</div>
@@ -445,6 +533,555 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</footer>
 
 </div>
+
+<script>
+	if (['admin', 'superadmin', 'bigboss'].includes(USER_ROLE)) {
+    document.getElementById('fabAddNews').style.display = 'flex';
+}
+// ==========================================
+// 🔐 GESTION DE L'AUTHENTIFICATION
+// ==========================================
+async function loadUserRole() {
+  if (!TOKEN) {
+    console.log('⚠️ Pas de token, mode visiteur');
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${BASE_URL}/auth/me/`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    
+    if (!res.ok) {
+      console.error('❌ Erreur chargement utilisateur');
+      return;
+    }
+    
+    const user = await res.json();
+    console.log('✅ Utilisateur:', user.full_name);
+    
+    const roleRes = await fetch(`${BASE_URL}/universites/auth/${UNIV_SLUG}/my-role/`, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    
+    if (roleRes.ok) {
+      const roleData = await roleRes.json();
+      USER_ROLE = roleData.role;
+      console.log('✅ Rôle:', USER_ROLE);
+      
+      if (['admin', 'superadmin', 'bigboss'].includes(USER_ROLE)) {
+        document.getElementById('adminPanel').style.display = 'block';
+      }
+    }
+  } catch (e) {
+    console.error('❌ Erreur:', e);
+  }
+}
+
+// ==========================================
+// 📰 CHARGEMENT DES NEWS
+// ==========================================
+// ==========================================
+  
+
+let allNews = []; // ✅ Stocke toutes les news pour filtrer
+
+async function loadNews() {
+    try {
+        const headers = {};
+        if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
+
+        const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/`, { headers });
+        if (!res.ok) throw new Error('Erreur chargement des news');
+
+        allNews = await res.json();
+        applyFilters();
+
+    } catch (e) {
+        console.error('❌ Erreur chargement news:', e);
+        // ⬇️ MESSAGE DESIGN DANS LA CHARTE PULSE
+        document.getElementById('newsContainer').innerHTML = `
+            <div class="pulse-auth-card">
+                <div class="pulse-auth-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3 class="pulse-auth-title">Actualités protégées</h3>
+                <p class="pulse-auth-text">
+                    Veuillez vous connecter pour accéder aux actualités du campus.
+                </p>
+                <button class="pulse-auth-btn" onclick="window.location.href='register.html'">
+                    Se connecter
+                </button>
+            </div>
+        `;
+    }
+}
+
+function applyFilters() {
+    const topic = document.getElementById('filterTopic').value;
+    const status = document.getElementById('filterStatus').value;
+    const search = document.getElementById('filterSearch').value.toLowerCase();
+
+    const filtered = allNews.filter(n => {
+        const matchesTopic = !topic || n.topics === topic;
+        const matchesStatus = !status || (status === 'published' ? n.is_published : !n.is_published);
+        const matchesSearch = !search || n.title.toLowerCase().includes(search) || (n.headline && n.headline.toLowerCase().includes(search));
+        
+        return matchesTopic && matchesStatus && matchesSearch;
+    });
+
+    renderNews(filtered);
+}
+
+function renderNews(news) {
+    const container = document.getElementById('newsContainer');
+    const categoryLabels = {
+        'general': 'Général',
+        'event': 'Événement',
+        'award': 'Récompense',
+        'research': 'Recherche',
+        'alumni': 'Alumni'
+    };
+
+    if (news.length === 0) {
+        container.innerHTML = `
+            <div class="news_empty">
+                <h3>Aucune actualité trouvée</h3>
+                <p>Essayez d’ajuster vos filtres.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = '';
+    news.forEach(n => {
+        const publishDate = new Date(n.publish_at || n.created_at);
+        const day = String(publishDate.getDate()).padStart(2, '0');
+        const month = publishDate.toLocaleDateString('fr-FR', { month: 'short' });
+        const isAdmin = ['admin', 'superadmin', 'bigboss'].includes(USER_ROLE);
+
+        container.innerHTML += `
+            <div class="news_post" onclick="showNewsDetail(${n.id})" style="cursor: pointer;">
+                <div class="news_post_image">
+                    <img src="${n.cover_url || 'images/news_1.jpg'}" alt="${n.title}">
+                </div>
+                <div class="news_post_content">
+                    <div class="news_post_top">
+                        <div class="news_post_date_container">
+                            <div class="news_post_date">
+                                <div>${day}</div>
+                                <div>${month}</div>
+                            </div>
+                        </div>
+                        <div class="news_post_title_container">
+                            <div class="news_post_title">
+                                <a href="#">${n.title}</a>
+                            </div>
+                            <div class="news_post_meta">
+                                <span class="news_post_author">
+                                    <i class="fas fa-tag"></i> ${categoryLabels[n.topics] || n.topics}
+                                </span>
+                                ${!n.is_published ? '<span class="badge draft">Brouillon</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news_post_text">
+                        <p>${n.headline || n.body.substring(0, 200) + '...'}</p>
+                        <span class="news_post_read_more">Lire la suite</span>
+                    </div>
+                    ${isAdmin ? `
+                    <div class="news_post_actions">
+                        <button class="btn btn-warning btn-sm" onclick="editNews(event, ${n.id})">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteNews(${n.id}, '${n.title.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    });
+}
+
+function resetFilters() {
+    document.getElementById('filterTopic').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterSearch').value = '';
+    applyFilters();
+}
+// ✅ Fermer la modal avec la touche Échap
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('newsModal');
+        if (modal && modal.style.display === 'block') {
+            closeNewsModal();
+        }
+
+        const detailModal = document.getElementById('newsDetailModal');
+        if (detailModal) {
+            detailModal.style.display = 'none';
+            document.body.removeChild(detailModal);
+        }
+    }
+});
+// Add this function to show news details
+// Fixed showNewsDetail function
+function showNewsDetail(id) {
+    const modal = document.createElement('div');
+    modal.className = 'news_detail_modal';
+    modal.id = 'newsDetailModal';
+    
+    // Show loading state
+    modal.innerHTML = `
+        <div class="news_detail_content">
+            <div class="news_loading">
+                <p>Chargement...</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.style.display = 'block';
+    
+    // Prepare headers with authentication if available
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    
+    if (TOKEN) {
+        headers.Authorization = `Bearer ${TOKEN}`;
+    }
+    if (['admin', 'superadmin', 'bigboss'].includes(USER_ROLE)) {
+    document.getElementById('fabAddNews').style.display = 'flex';
+}
+    // Fetch news details
+    fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`, {
+        headers: headers
+    })
+    .then(res => {
+        if (!res.ok) {
+            if (res.status === 401) {
+                throw new Error('Non autorisé - Veuillez vous connecter');
+            }
+            throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+    })
+    .then(news => {
+        if (!news) {
+            throw new Error('Aucune donnée reçue');
+        }
+        
+        const publishDate = new Date(news.publish_at || news.created_at);
+        const categoryLabels = {
+            'general': 'Général',
+            'event': 'Événement',
+            'award': 'Récompense',
+            'research': 'Recherche',
+            'alumni': 'Alumni'
+        };
+        
+        // Safely handle body content
+        const bodyContent = news.body || '';
+        const formattedBody = bodyContent
+            .replace(/\n/g, '<br>')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        
+        modal.innerHTML = `
+            <div class="news_detail_content">
+                <div class="news_detail_header">
+                    <img src="${news.cover_url || 'images/news_1.jpg'}" alt="${news.title || 'News'}">
+                    <div class="news_detail_header_overlay">
+                        <h1 class="news_detail_title">${news.title || 'Sans titre'}</h1>
+                        <div class="news_detail_meta">
+                            <span><i class="fas fa-tag"></i> ${categoryLabels[news.topics] || news.topics || 'Non catégorisé'}</span>
+                            <span><i class="fas fa-calendar"></i> ${publishDate.toLocaleDateString('fr-FR')}</span>
+                            ${!news.is_published ? '<span class="badge draft"><i class="fas fa-eye-slash"></i> Brouillon</span>' : ''}
+                        </div>
+                    </div>
+                    <span class="news_detail_close">&times;</span>
+                </div>
+                <div class="news_detail_body">
+                    ${news.headline ? `<p style="font-size: 18px; font-style: italic; color: #666; margin-bottom: 20px;">${news.headline}</p>` : ''}
+                    <div>${formattedBody || '<p>Aucun contenu disponible</p>'}</div>
+                </div>
+            </div>
+        `;
+        
+        // Add close functionality
+        modal.querySelector('.news_detail_close').onclick = () => {
+            modal.style.display = 'none';
+            document.body.removeChild(modal);
+        };
+        
+        // Close on outside click
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.removeChild(modal);
+            }
+        };
+    })
+    .catch(error => {
+        console.error('Error loading news details:', error);
+        
+        let errorMessage = 'Impossible de charger les détails de l\'actualité.';
+        if (error.message.includes('401')) {
+            errorMessage = 'Veuillez vous connecter pour voir le contenu complet.';
+        } else if (error.message.includes('404')) {
+            errorMessage = 'Cette actualité n\'existe pas ou a été supprimée.';
+        }
+        
+        modal.innerHTML = `
+            <div class="news_detail_content">
+                <div class="error" style="padding: 30px; text-align: center;">
+                    <h3>❌ Erreur</h3>
+                    <p>${errorMessage}</p>
+                    <button onclick="document.body.removeChild(document.getElementById('newsDetailModal'))" class="btn btn-primary">Fermer</button>
+                </div>
+            </div>
+        `;
+    });
+}
+// ==========================================
+// ✏️ GESTION DU MODAL
+// ==========================================
+function openNewsModal(id = null) {
+  document.getElementById('newsModal').style.display = 'block';
+  document.getElementById('newsId').value = id || '';
+  document.getElementById('modalTitle').textContent = id ? 'Modifier la news' : 'Nouvelle news';
+  document.getElementById('newsError').style.display = 'none';
+  
+  if (!id) {
+    document.getElementById('newsForm').reset();
+  }
+}
+
+function closeNewsModal() {
+  document.getElementById('newsModal').style.display = 'none';
+  document.getElementById('newsForm').reset();
+  document.getElementById('newsError').style.display = 'none';
+}
+
+// Fermer le modal en cliquant en dehors
+window.onclick = function(event) {
+  const modal = document.getElementById('newsModal');
+  if (event.target == modal) {
+    closeNewsModal();
+  }
+}
+
+// ==========================================
+// ✏️ ÉDITION D'UNE NEWS
+// ==========================================
+// ✅ Ajoutez un paramètre `event` à la fonction
+async function editNews(event, id) {
+    event.stopPropagation(); // ✅ Empêche l’ouverture des détails
+
+    try {
+        const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`, {
+            headers: { Authorization: `Bearer ${TOKEN}` }
+        });
+
+        if (!res.ok) throw new Error('Erreur chargement de la news');
+
+        const n = await res.json();
+
+        // ✅ Ouvre la modal formulaire
+        openNewsModal(id);
+
+        // ✅ Remplit les champs
+        document.querySelector('[name="title"]').value = n.title;
+        document.querySelector('[name="headline"]').value = n.headline || '';
+        document.querySelector('[name="body"]').value = n.body;
+        document.querySelector('[name="topics"]').value = n.topics;
+        document.querySelector('[name="is_published"]').checked = n.is_published;
+
+    } catch (e) {
+        console.error('❌ Erreur:', e);
+        alert('❌ Impossible de charger la news');
+    }
+}
+
+// ==========================================
+// 🗑️ SUPPRESSION D'UNE NEWS
+// ==========================================
+async function deleteNews(id, title) {
+  if (!confirm(`🗑️ Voulez-vous vraiment supprimer cette news ?\n\n"${title}"\n\nCette action est irréversible.`)) {
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${TOKEN}` }
+    });
+    
+    if (res.ok || res.status === 204) {
+      alert('✅ News supprimée avec succès');
+      loadNews();
+    } else {
+      throw new Error('Erreur lors de la suppression');
+    }
+  } catch (e) {
+    console.error('❌ Erreur:', e);
+    alert('❌ Erreur lors de la suppression');
+  }
+}
+
+// ==========================================
+// 💾 SOUMISSION DU FORMULAIRE
+// ==========================================
+document.getElementById('newsForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const errorDiv = document.getElementById('newsError');
+  errorDiv.style.display = 'none';
+  
+  try {
+    // 📝 Récupération des données
+    const title = document.querySelector('[name="title"]').value.trim();
+    const headline = document.querySelector('[name="headline"]').value.trim();
+    const body = document.querySelector('[name="body"]').value.trim();
+    const topics = document.querySelector('[name="topics"]').value;
+    const isPublished = document.querySelector('[name="is_published"]').checked;
+    const coverFile = document.querySelector('[name="cover"]').files[0];
+    
+    // ⚠️ NE PAS ENVOYER LE SLUG - Le backend le génère automatiquement
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('headline', headline);
+    formData.append('body', body);
+    formData.append('topics', topics);
+    formData.append('is_published', isPublished);
+    formData.append('publish_at', new Date().toISOString());
+    
+    if (coverFile) {
+      formData.append('cover', coverFile);
+    }
+    
+    // 🔍 Debug
+    console.log('📤 Envoi des données:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`  ${key}:`, value instanceof File ? value.name : value);
+    }
+    
+    const id = document.getElementById('newsId').value;
+    const url = id 
+      ? `${BASE_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`
+      : `${BASE_URL}/universites/universities/${UNIV_SLUG}/news/`;
+    const method = id ? 'PATCH' : 'POST';
+    
+    console.log(`🚀 ${method} ${url}`);
+    
+    const res = await fetch(url, {
+      method,
+      headers: { 
+        Authorization: `Bearer ${TOKEN}`
+        // ⚠️ NE PAS mettre Content-Type avec FormData
+      },
+      body: formData
+    });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('❌ Erreur serveur:', errorText);
+      
+      let errorMsg = 'Erreur lors de l\'enregistrement';
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMsg = Object.entries(errorJson)
+          .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(', ') : val}`)
+          .join('\n');
+      } catch {
+        errorMsg = errorText;
+      }
+      
+      throw new Error(errorMsg);
+    }
+    
+    const result = await res.json();
+    console.log('✅ Succès:', result);
+    
+    alert(`✅ News ${id ? 'modifiée' : 'créée'} avec succès !`);
+    closeNewsModal();
+    loadNews();
+    
+  } catch (err) {
+
+    console.error('❌ Erreur:', err);
+    errorDiv.textContent = `❌ ${err.message}`;
+    errorDiv.style.display = 'block';
+  }
+});
+function toggleFilterPanel() {
+    const panel = document.getElementById('filterPanel');
+    const btn = document.querySelector('.filter-toggle-btn');
+    panel.classList.toggle('open');
+    btn.classList.toggle('active');
+}
+
+function applyFilters() {
+    const topic = document.getElementById('filterTopic').value;
+    const status = document.getElementById('filterStatus').value;
+    const time = document.getElementById('filterTime').value;
+    const search = document.getElementById('filterSearch').value.toLowerCase();
+
+    // ✅ Affiche/masque les dates personnalisées
+    const customDates = document.getElementById('customDates');
+    customDates.style.display = time === 'custom' ? 'flex' : 'none';
+
+    const now = new Date();
+    const filtered = allNews.filter(n => {
+        const date = new Date(n.publish_at || n.created_at);
+        const matchesTopic = !topic || n.topics === topic;
+        const matchesStatus = !status || (status === 'published' ? n.is_published : !n.is_published);
+        const matchesSearch = !search || n.title.toLowerCase().includes(search) || (n.headline && n.headline.toLowerCase().includes(search));
+
+        let matchesTime = true;
+        if (time === 'today') {
+            matchesTime = date.toDateString() === now.toDateString();
+        } else if (time === 'week') {
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            matchesTime = date >= weekAgo;
+        } else if (time === 'month') {
+            const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+            matchesTime = date >= monthAgo;
+        } else if (time === 'custom') {
+            const from = document.getElementById('dateFrom').value ? new Date(document.getElementById('dateFrom').value) : null;
+            const to = document.getElementById('dateTo').value ? new Date(document.getElementById('dateTo').value) : null;
+            if (from) matchesTime = matchesTime && date >= from;
+            if (to) matchesTime = matchesTime && date <= to;
+        }
+
+        return matchesTopic && matchesStatus && matchesSearch && matchesTime;
+    });
+
+    renderNews(filtered);
+}
+
+function resetFilters() {
+    document.getElementById('filterTopic').value = '';
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterTime').value = '';
+    document.getElementById('filterSearch').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    document.getElementById('customDates').style.display = 'none';
+    applyFilters();
+}
+// ==========================================
+// 🚀 INITIALISATION
+// ==========================================
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 Initialisation de la page news');
+  await loadUserRole();
+  await loadNews();
+});
+</script>
 
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="styles/bootstrap4/popper.js"></script>

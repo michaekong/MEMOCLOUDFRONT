@@ -1,6 +1,6 @@
 // --- Config ---
 // --- Config ---
-const BASE_URL = 'https://memocloudbackend.onrender.com/api';
+const BASE_URL = 'http://127.0.0.1:8000/api';
 const UNIV_SLUG = 'ecole-des-travaux';
 
 // ⚡ on déclare les variables avant tout
@@ -65,13 +65,14 @@ async function loadCurrentUser() {
             // on affiche le vrai message du serveur
             throw new Error(data.detail || `Erreur ${res.status}`);
         }
-
+  
         // succès
         localStorage.setItem('userId', data.id);
         localStorage.setItem('userName', data.nom || data.username || 'Moi');
         CURRENT_USER_ID   = data.id;
         CURRENT_USER_NAME = data.nom || data.username || 'Moi';
         console.log('[AUTH] User connecté :', CURRENT_USER_NAME, '(id:', CURRENT_USER_ID, ')');
+       
 
     } catch (e) {
         console.warn('[AUTH] ❌ Erreur réseau ou token invalide :', e.message);
@@ -128,7 +129,7 @@ function initSlideshow() {
 function getFullUrl(path) {
     if (!path) return 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80';
     if (path.startsWith('http')) return path;
-    return `https://memocloudbackend.onrender.com${path}`;
+    return `http://127.0.0.1:8000${path}`;
 }
 
 // --- Data Loading ---
@@ -211,11 +212,13 @@ async function fetchMemoires(reset = false) {
 
 async function loadStats() {
     try {
-        const res = await fetch(`${BASE_URL}/interactions/universites/${UNIV_SLUG}/interactions/stats/`);
+        const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/stats/`);
         const stats = await res.json();
+        console.log("Stats loaded:", stats);
         
         const items = [
-            { l: 'Mémoires', v: stats.total_memoires || 0, i: 'book' },
+       
+            { l: 'Memoires', v: stats.total_memoires || 0, i: 'book' },
             { l: 'Téléchargements', v: stats.total_telechargements || 0, i: 'download' },
             { l: 'Likes', v: stats.total_likes || 0, i: 'heart' },
             { l: 'Note Moyenne', v: stats.note_moyenne || 0, i: 'star', gold: true, isFloat: true }
@@ -661,12 +664,14 @@ function openChat(e, id) {
 
 function renderComments(comments) {
     const container = document.getElementById('chat-messages');
+    console.log('[CHAT] Réponse brute reçue :', comments);
     container.innerHTML = comments.map(c => {
-        const userObj   = typeof c.utilisateur === 'object' ? c.utilisateur : {};
-        const userName  = userObj.nom || c.utilisateur || 'Anonyme';
-        const userPhoto = getFullUrl(userObj.photo_profil);
-        const isMe      = userObj.id === CURRENT_USER_ID; // ✅ comparaison par ID
+       const userObj   = c.utilisateur || {};
+const userName  = userObj.nom || 'Anonyme';
+const userPhoto = getFullUrl(userObj.photo_profil);
+const isMe      = CURRENT_USER_ID && userObj.id === CURRENT_USER_ID;
 
+console.log('[CHAT] userObj complet :', userObj);
         return `
         <div class="chat-msg ${isMe ? 'mine' : 'theirs'} mb-4">
             ${!isMe ? `
@@ -681,6 +686,7 @@ function renderComments(comments) {
             </div>
         </div>`;
     }).join('');
+    
     initIcons();
     container.scrollTop = container.scrollHeight;
 }

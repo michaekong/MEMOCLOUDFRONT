@@ -13,6 +13,8 @@
 <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
 <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
 <link rel="stylesheet" type="text/css" href="styles/responsive.css">
+<script src="path/to/lucide.js"></script> <!-- Incluez ceci si vous utilisez Lucide -->
+<script src="path/to/your-main-script.js"></script>
 </head>
 <body>
 
@@ -114,6 +116,10 @@
 					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
 						<div class="hero_slide_content text-center">
 							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
+						<div id="hero-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <!-- Injecté via JS -->
+            </div>
+
 						</div>
 					</div>
 				</div>
@@ -124,7 +130,10 @@
 					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
 						<div class="hero_slide_content text-center">
 							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
-						</div>
+						<div id="hero-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <!-- Injecté via JS -->
+            </div>
+</div>
 					</div>
 				</div>
 				
@@ -134,7 +143,10 @@
 					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
 						<div class="hero_slide_content text-center">
 							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
-						</div>
+						<div id="hero-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <!-- Injecté via JS -->
+            </div>
+</div>
 					</div>
 				</div>
 
@@ -691,7 +703,50 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</footer>
 
 </div>
+<script>
+	const BASE_URL = 'http://127.0.0.1:8000/api';
+const UNIV_SLUG = 'ecole-des-travaux';
+async function loadStats() {
+    try {
+        const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/stats/`);
+        const stats = await res.json();
+        console.log("Stats loaded:", stats);
+        
+        const items = [
+            { l: 'Mémoires', v: stats.total_memoires || 0, i: 'book' },
+            { l: 'Téléchargements', v: stats.total_telechargements || 0, i: 'download' },
+            { l: 'Likes', v: stats.total_likes || 0, i: 'heart' },
+            { l: 'Note Moyenne', v: stats.note_moyenne || 0, i: 'star', gold: true, isFloat: true }
+        ];
 
+        const heroStatsContainer = document.getElementById('hero-stats');
+
+        heroStatsContainer.innerHTML = items.map((item, idx) => `
+            <div class="px-5 py-4 rounded-2xl border ${item.gold ? 'bg-brand-orange/20 border-brand-orange text-brand-orange shadow-glow' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'} backdrop-blur-md flex flex-col items-center justify-center transition-transform hover:-translate-y-1 cursor-default group min-w-[140px]">
+                <div class="mb-2 opacity-80"><i data-lucide="${item.i}" class="w-6 h-6"></i></div>
+                <div class="text-3xl font-extrabold font-title mb-1 group-hover:scale-110 transition-transform" id="stat-${idx}">0</div>
+                <div class="text-[10px] md:text-xs uppercase tracking-widest opacity-70 mt-1 font-bold">${item.l}</div>
+            </div>
+        `).join('');
+        
+        // Considérez de commenter ou supprimer l'appel à initIcons
+        // initIcons();
+
+        items.forEach((item, idx) => {
+            const el = document.getElementById(`stat-${idx}`);
+            const target = item.v;
+            if(item.isFloat) {
+                el.innerText = parseFloat(target).toFixed(1);
+            } else {
+                animateValue(el, 0, target, 1500);
+            }
+        });
+
+    } catch (e) { console.warn("Stats error", e); }
+}
+document.addEventListener("DOMContentLoaded", function() {
+    loadStats(); // Appelle la fonction pour charger les statistiques
+});</script>
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="styles/bootstrap4/popper.js"></script>
 <script src="styles/bootstrap4/bootstrap.min.js"></script>
