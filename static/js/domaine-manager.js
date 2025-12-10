@@ -39,7 +39,7 @@ class DomaineManager {
       addForm      : document.getElementById('add-domaine-form'),
       addInput     : document.getElementById('new-domaine-nom'),
       slugPreview  : document.getElementById('slug-preview'),
-      emptyTpl     : document.getElementById('empty-domaine-tpl')?.innerHTML || '<p>Aucun domaine</p>'
+      emptyTpl     : document.getElementById('empty-domaine-tpl')?.innerHTML || '<p>Aucun dodfwdfdgmaine</p>'
     };
   }
 
@@ -78,7 +78,7 @@ console.log(jsonData); // Cela affichera les données JSON
 this.domaines = jsonData;
  this.renderList();
     } catch (e) {
-      showToast('Impossible de charger les domaines', 'error');
+      showToast('Impossible de sdsdcharger les domaines', 'error');
     }
   }
 
