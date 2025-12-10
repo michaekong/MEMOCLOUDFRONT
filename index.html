@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-<title>Course</title>
+<title>ENSTP - École Nationale Supérieure des Travaux Publics</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="Course Project">
+<meta name="description" content="ENSTP - Excellence in Engineering Education">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
 <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
@@ -13,26 +13,619 @@
 <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
 <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
 <link rel="stylesheet" type="text/css" href="styles/responsive.css">
-<script src="path/to/lucide.js"></script> <!-- Incluez ceci si vous utilisez Lucide -->
-<script src="path/to/your-main-script.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Stats modernisés - Position fixe en bas du hero */
+.stats-overlay {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    max-width: 1000px;
+    width: 90%;
+    padding: 0 1rem;
+    z-index: 10;
+}
+
+.stat-card-modern {
+    background: rgba(26, 26, 26, 0.85);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 182, 6, 0.3);
+    border-radius: 12px;
+    padding: 1.2rem 0.8rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 182, 6, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.stat-card-modern:hover::before {
+    left: 100%;
+}
+
+.stat-card-modern:hover {
+    transform: translateY(-5px);
+    border-color: #ffb606;
+    box-shadow: 0 10px 30px rgba(255, 182, 6, 0.3);
+}
+
+.stat-card-modern.gold {
+    background: rgba(255, 182, 6, 0.2);
+    border-color: #ffb606;
+}
+
+.stat-card-modern.gold::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ffb606, #ffa000);
+    border-radius: 12px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.stat-card-modern.gold:hover::after {
+    opacity: 0.3;
+}
+
+.stat-icon-modern {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #ffb606;
+    opacity: 0.9;
+}
+
+.stat-value-modern {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.3rem;
+    transition: transform 0.3s;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1;
+}
+
+.stat-card-modern:hover .stat-value-modern {
+    transform: scale(1.15);
+    color: #ffb606;
+}
+
+.stat-label-modern {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.85;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+}
+
+/* Testimonials améliorés */
+.testimonials-modern {
+    background: #1a1a1a;
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 0;
+}
+
+.testimonials-background-modern {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.25;
+    transition: background-image 0.5s ease;
+}
+
+.testimonials-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(255, 182, 6, 0.2));
+}
+
+.testimonials-content-modern {
+    position: relative;
+    z-index: 2;
+}
+
+.testimonial-card-modern {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    margin: 0 1rem;
+    transition: all 0.4s ease;
+}
+
+.testimonial-card-modern:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.quote-icon-modern {
+    font-size: 4rem;
+    color: #ffb606;
+    margin-bottom: 1.5rem;
+    line-height: 1;
+}
+
+.testimonial-text-modern {
+    font-size: 1.2rem;
+    color: white;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    font-style: italic;
+    text-align: center;
+}
+
+.testimonial-author-modern {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.testimonial-avatar-modern {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #ffb606;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.testimonial-avatar-modern img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.testimonial-info-modern h4 {
+    color: #ffb606;
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+}
+
+.testimonial-info-modern p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Owl Carousel personnalisé */
+.owl-carousel .owl-nav button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 182, 6, 0.3) !important;
+    color: white !important;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 2rem !important;
+    line-height: 50px !important;
+    transition: all 0.3s ease;
+}
+
+.owl-carousel .owl-nav button:hover {
+    background: #ffb606 !important;
+}
+
+.owl-carousel .owl-nav button.owl-prev {
+    left: -60px;
+}
+
+.owl-carousel .owl-nav button.owl-next {
+    right: -60px;
+}
+
+.owl-carousel .owl-dots {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.owl-carousel .owl-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 5px;
+    transition: all 0.3s ease;
+}
+
+.owl-carousel .owl-dot.active,
+.owl-carousel .owl-dot:hover {
+    background: #ffb606;
+    transform: scale(1.3);
+}
+
+/* News Section */
+.news-section-modern {
+    padding: 5rem 0;
+}
+
+.news-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.news-card-modern {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.news-card-modern:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.news-image-modern {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+}
+
+.news-image-modern img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.news-card-modern:hover .news-image-modern img {
+    transform: scale(1.1);
+}
+
+.news-date-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #ffb606;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.news-content-modern {
+    padding: 1.5rem;
+}
+
+.news-title-modern {
+    color: #1a1a1a;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.news-excerpt-modern {
+    color: #a5a5a5;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.news-link-modern {
+    color: #ffb606;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: gap 0.3s ease;
+}
+
+.news-link-modern:hover {
+    gap: 1rem;
+}
+
+/* Responsive amélioré */
+@media (max-width: 1199px) {
+    .owl-carousel .owl-nav button.owl-prev {
+        left: 10px;
+    }
+    .owl-carousel .owl-nav button.owl-next {
+        right: 10px;
+    }
+    
+    .stats-overlay {
+        max-width: 900px;
+        gap: 0.8rem;
+    }
+    
+    .stat-card-modern {
+        padding: 1rem 0.6rem;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .stats-overlay {
+        grid-template-columns: repeat(2, 1fr);
+        bottom: 60px;
+        gap: 0.8rem;
+        width: 85%;
+    }
+    
+    .stat-card-modern {
+        padding: 1rem 0.8rem;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.8rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 1.3rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .stats-overlay {
+        grid-template-columns: repeat(2, 1fr);
+        bottom: 40px;
+        gap: 0.6rem;
+        width: 92%;
+    }
+    
+    .stat-card-modern {
+        padding: 0.8rem 0.5rem;
+        border-radius: 10px;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.5rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.55rem;
+        letter-spacing: 1px;
+    }
+    
+    .testimonial-card-modern {
+        padding: 2rem 1.5rem;
+    }
+    
+    .testimonial-text-modern {
+        font-size: 1rem;
+    }
+    
+    .testimonial-author-modern {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .news-grid-modern {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575px) {
+    .stats-overlay {
+        grid-template-columns: 1fr 1fr;
+        bottom: 30px;
+        gap: 0.5rem;
+        width: 95%;
+        padding: 0 0.5rem;
+    }
+    
+    .stat-card-modern {
+        padding: 0.7rem 0.4rem;
+        border-radius: 8px;
+        border-width: 1px;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.3rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.5rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .hero_slide_content h1 {
+        font-size: 2rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .stats-overlay {
+        bottom: 20px;
+        gap: 0.4rem;
+    }
+    
+    .stat-card-modern {
+        padding: 0.6rem 0.3rem;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.1rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 0.9rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.45rem;
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    text-align: center;
+    padding: 3rem;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 182, 6, 0.2);
+    border-top: 4px solid #ffb606;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.owl-nav {
+background-color: #ffb606 !important;
+  padding: 10px;
+  border-radius: 8px;
+}/* Carte témoignage modernisée */
+.testimonial-card-modern {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  margin: 0 1rem;
+  transition: all 0.4s ease;
+  text-align: center;
+}
+
+.testimonial-card-modern:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* Image avatar = image de fond (même source) */
+.testimonial-avatar-modern img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ffb606;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-avatar-modern img:hover {
+  transform: scale(1.05);
+}
+
+/* Citation */
+.quote-icon-modern {
+  font-size: 4rem;
+  color: #ffb606;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+
+/* Texte */
+.testimonial-text-modern {
+  font-size: 1.2rem;
+  color: white;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+/* Auteur */
+.testimonial-author-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.testimonial-info-modern h4 {
+  color: #ffb606;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+}
+
+.testimonial-info-modern p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .testimonial-card-modern {
+    padding: 2rem 1.5rem;
+  }
+  .testimonial-text-modern {
+    font-size: 1rem;
+  }
+  .testimonial-author-modern {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+</style>
 </head>
 <body>
 
 <div class="super_container">
 
 	<!-- Header -->
-
 	<header class="header d-flex flex-row">
 		<div class="header_content d-flex flex-row align-items-center">
-			<!-- Logo -->
 			<div class="logo_container">
 				<div class="logo">
-					<img src="images/logo.png" alt="">
-					
+					<img src="images/logo.png" alt="ENSTP">
 				</div>
 			</div>
 
-			<!-- Main Navigation -->
 			<nav class="main_nav_container">
 				<div class="main_nav">
 					<ul class="main_nav_list">
@@ -53,22 +646,17 @@
 			<span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
 		</div>
 
-		<!-- Hamburger -->
 		<div class="hamburger_container">
 			<i class="fas fa-bars trans_200"></i>
 		</div>
-
 	</header>
 	
 	<!-- Menu -->
 	<div class="menu_container menu_mm">
-
-		<!-- Menu Close Button -->
 		<div class="menu_close_container">
 			<div class="menu_close"></div>
 		</div>
 
-		<!-- Menu Items -->
 		<div class="menu_inner menu_mm">
 			<div class="menu menu_mm">
 				<ul class="menu_list menu_mm">
@@ -82,8 +670,6 @@
 					<li class="menu_item menu_mm"><a href="memoire.html">Memoire</a></li>
 				</ul>
 
-				<!-- Menu Social -->
-				
 				<div class="menu_social_container menu_mm">
 					<ul class="menu_social menu_mm">
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
@@ -91,62 +677,52 @@
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-twitter"></i></a></li>
-
 					</ul>
 				</div>
 
 				<div class="menu_copyright menu_mm">Colorlib All rights reserved</div>
 			</div>
-
 		</div>
-
 	</div>
 	
 	<!-- Home -->
-
 	<div class="home">
-
-		<!-- Hero Slider -->
 		<div class="hero_slider_container">
 			<div class="hero_slider owl-carousel">
 				
-				<!-- Hero Slide -->
 				<div class="hero_slide">
 					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
 					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
 						<div class="hero_slide_content text-center">
 							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
-						<div id="hero-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
-                <!-- Injecté via JS -->
-            </div>
-
+							<div id="stats-container" class="stats-overlay">
+								<div class="loading-spinner">
+									<div class="spinner"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				
-				<!-- Hero Slide -->
 				<div class="hero_slide">
 					<div class="hero_slide_background" style="background-image:url(images/travaux2.jpeg)"></div>
 					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
 						<div class="hero_slide_content text-center">
 							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
-						<div id="hero-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
-                <!-- Injecté via JS -->
-            </div>
-</div>
+							<div id="stats-container-2" class="stats-overlay">
+							</div>
+						</div>
 					</div>
 				</div>
 				
-				<!-- Hero Slide -->
 				<div class="hero_slide">
 					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
 					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
 						<div class="hero_slide_content text-center">
 							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
-						<div id="hero-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
-                <!-- Injecté via JS -->
-            </div>
-</div>
+							<div id="stats-container-3" class="stats-overlay">
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -155,9 +731,9 @@
 			<div class="hero_slider_left hero_slider_nav trans_200"><span class="trans_200">prev</span></div>
 			<div class="hero_slider_right hero_slider_nav trans_200"><span class="trans_200">next</span></div>
 		</div>
-
 	</div>
 
+	<!-- Hero Boxes -->
 	<div class="hero_boxes">
 		<div class="hero_boxes_inner">
 			<div class="container">
@@ -199,7 +775,6 @@
 	</div>
 
 	<!-- Popular -->
-
 	<div class="popular page_section">
 		<div class="container">
 			<div class="row">
@@ -212,17 +787,16 @@
 
 			<div class="row course_boxes">
 				
-				<!-- Popular Course Item -->
 				<div class="col-lg-4 course_box">
 					<div class="card">
-						<img class="card-img-top" src="images/course_1.jpg" alt="https://unsplash.com/@kellybrito">
+						<img class="card-img-top" src="images/course_1.jpg" alt="">
 						<div class="card-body text-center">
 							<div class="card-title"><a href="courses.html">A complete guide to design</a></div>
 							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
 						</div>
 						<div class="price_box d-flex flex-row align-items-center">
 							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
+								<img src="images/author.jpg" alt="">
 							</div>
 							<div class="course_author_name">Michael Smith, <span>Author</span></div>
 							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
@@ -230,17 +804,16 @@
 					</div>
 				</div>
 
-				<!-- Popular Course Item -->
 				<div class="col-lg-4 course_box">
 					<div class="card">
-						<img class="card-img-top" src="images/course_2.jpg" alt="https://unsplash.com/@cikstefan">
+						<img class="card-img-top" src="images/course_2.jpg" alt="">
 						<div class="card-body text-center">
 							<div class="card-title"><a href="courses.html">Beginners guide to HTML</a></div>
 							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
 						</div>
 						<div class="price_box d-flex flex-row align-items-center">
 							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
+								<img src="images/author.jpg" alt="">
 							</div>
 							<div class="course_author_name">Michael Smith, <span>Author</span></div>
 							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
@@ -248,17 +821,16 @@
 					</div>
 				</div>
 
-				<!-- Popular Course Item -->
 				<div class="col-lg-4 course_box">
 					<div class="card">
-						<img class="card-img-top" src="images/course_3.jpg" alt="https://unsplash.com/@dsmacinnes">
+						<img class="card-img-top" src="images/course_3.jpg" alt="">
 						<div class="card-body text-center">
 							<div class="card-title"><a href="courses.html">Advanced Photoshop</a></div>
 							<div class="card-text">Adobe Guide, Layes, Smart Objects etc...</div>
 						</div>
 						<div class="price_box d-flex flex-row align-items-center">
 							<div class="course_author_image">
-								<img src="images/author.jpg" alt="https://unsplash.com/@mehdizadeh">
+								<img src="images/author.jpg" alt="">
 							</div>
 							<div class="course_author_name">Michael Smith, <span>Author</span></div>
 							<div class="course_price d-flex flex-column align-items-center justify-content-center"><span>$29</span></div>
@@ -270,16 +842,10 @@
 	</div>
 
 	<!-- Register -->
-
 	<div class="register">
-
 		<div class="container-fluid">
-			
 			<div class="row row-eq-height">
 				<div class="col-lg-6 nopadding">
-					
-					<!-- Register -->
-
 					<div class="register_section d-flex flex-column align-items-center justify-content-center">
 						<div class="register_content text-center">
 							<h1 class="register_title">Register now and get a discount <span>50%</span> discount until 1 January</h1>
@@ -287,13 +853,9 @@
 							<div class="button button_1 register_button mx-auto trans_200"><a href="#">register now</a></div>
 						</div>
 					</div>
-
 				</div>
 
 				<div class="col-lg-6 nopadding">
-					
-					<!-- Search -->
-
 					<div class="search_section d-flex flex-column align-items-center justify-content-center">
 						<div class="search_background" style="background-image:url(images/search_background.jpg);"></div>
 						<div class="search_content text-center">
@@ -306,16 +868,13 @@
 							</form>
 						</div> 
 					</div>
-
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<!-- Services -->
-
 	<div class="services page_section">
-		
 		<div class="container">
 			<div class="row">
 				<div class="col">
@@ -380,86 +939,54 @@
 	</div>
 
 	<!-- Testimonials -->
-
-	<div class="testimonials page_section">
-		<!-- <div class="testimonials_background" style="background-image:url(images/testimonials_background.jpg)"></div> -->
-		<div class="testimonials_background_container prlx_parent">
-			<div class="testimonials_background prlx" style="background-image:url(images/testimonials_background.jpg)"></div>
+	<div class="testimonials-modern">
+		<div id="testimonials-background-dynamic" class="testimonials-background-modern"></div>
+		<div class="testimonials-overlay"></div>
+		<div class="testimonials-content-modern">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="section_title text-center">
+							<h1 style="color: white;">What Our Students Say</h1>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-10 offset-lg-1">
+						<div id="testimonials-slider-container">
+							<div class="loading-spinner">
+								<div class="spinner"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div class="container">
+	</div>
 
+	<!-- News Section -->
+	<div class="news-section-modern">
+		<div class="container">
 			<div class="row">
 				<div class="col">
 					<div class="section_title text-center">
-						<h1>What our students say</h1>
+						<h1>Latest News</h1>
 					</div>
 				</div>
 			</div>
-
 			<div class="row">
-				<div class="col-lg-10 offset-lg-1">
-					
-					<div class="testimonials_slider_container">
-
-						<!-- Testimonials Slider -->
-						<div class="owl-carousel owl-theme testimonials_slider">
-							
-							<!-- Testimonials Item -->
-							<div class="owl-item">
-								<div class="testimonials_item text-center">
-									<div class="quote">“</div>
-									<p class="testimonials_text">In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum.In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum.</p>
-									<div class="testimonial_user">
-										<div class="testimonial_image mx-auto">
-											<img src="images/testimonials_user.jpg" alt="">
-										</div>
-										<div class="testimonial_name">james cooper</div>
-										<div class="testimonial_title">Graduate Student</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- Testimonials Item -->
-							<div class="owl-item">
-								<div class="testimonials_item text-center">
-									<div class="quote">“</div>
-									<p class="testimonials_text">In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum.In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum.</p>
-									<div class="testimonial_user">
-										<div class="testimonial_image mx-auto">
-											<img src="images/testimonials_user.jpg" alt="">
-										</div>
-										<div class="testimonial_name">james cooper</div>
-										<div class="testimonial_title">Graduate Student</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- Testimonials Item -->
-							<div class="owl-item">
-								<div class="testimonials_item text-center">
-									<div class="quote">“</div>
-									<p class="testimonials_text">In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum.In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum.</p>
-									<div class="testimonial_user">
-										<div class="testimonial_image mx-auto">
-											<img src="images/testimonials_user.jpg" alt="">
-										</div>
-										<div class="testimonial_name">james cooper</div>
-										<div class="testimonial_title">Graduate Student</div>
-									</div>
-								</div>
-							</div>
-
+				<div class="col">
+					<div id="news-grid-container" class="news-grid-modern">
+						<div class="loading-spinner">
+							<div class="spinner"></div>
 						</div>
-
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 
 	<!-- Events -->
-
 	<div class="events page_section">
 		<div class="container">
 			
@@ -473,7 +1000,6 @@
 			
 			<div class="event_items">
 
-				<!-- Event Item -->
 				<div class="row event_item">
 					<div class="col">
 						<div class="row d-flex flex-row align-items-end">
@@ -495,7 +1021,7 @@
 
 							<div class="col-lg-4 order-lg-3 order-1">
 								<div class="event_image">
-									<img src="images/event_1.jpg" alt="https://unsplash.com/@theunsteady5">
+									<img src="images/event_1.jpg" alt="">
 								</div>
 							</div>
 
@@ -503,7 +1029,6 @@
 					</div>
 				</div>
 
-				<!-- Event Item -->
 				<div class="row event_item">
 					<div class="col">
 						<div class="row d-flex flex-row align-items-end">
@@ -517,7 +1042,7 @@
 
 							<div class="col-lg-6 order-lg-2 order-3">
 								<div class="event_content">
-									<div class="event_name"><a class="trans_200" href="#">Open day in the Univesrsity campus</a></div>
+									<div class="event_name"><a class="trans_200" href="#">Open day in the University campus</a></div>
 									<div class="event_location">Grand Central Park</div>
 									<p>In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor.</p>
 								</div>
@@ -525,7 +1050,7 @@
 
 							<div class="col-lg-4 order-lg-3 order-1">
 								<div class="event_image">
-									<img src="images/event_2.jpg" alt="https://unsplash.com/@claybanks1989">
+									<img src="images/event_2.jpg" alt="">
 								</div>
 							</div>
 
@@ -533,7 +1058,6 @@
 					</div>
 				</div>
 
-				<!-- Event Item -->
 				<div class="row event_item">
 					<div class="col">
 						<div class="row d-flex flex-row align-items-end">
@@ -555,7 +1079,7 @@
 
 							<div class="col-lg-4 order-lg-3 order-1">
 								<div class="event_image">
-									<img src="images/event_3.jpg" alt="https://unsplash.com/@juanmramosjr">
+									<img src="images/event_3.jpg" alt="">
 								</div>
 							</div>
 
@@ -569,12 +1093,10 @@
 	</div>
 
 	<!-- Footer -->
-
 	<footer class="footer">
 		<div class="container">
 			
 			<!-- Newsletter -->
-
 			<div class="newsletter">
 				<div class="row">
 					<div class="col">
@@ -596,30 +1118,20 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
 
 			<!-- Footer Content -->
-
 			<div class="footer_content">
 				<div class="row">
 
-					<!-- Footer Column - About -->
 					<div class="col-lg-3 footer_col">
-
-						<!-- Logo -->
 						<div class="logo_container">
 							<div class="logo">
 								<img src="images/logo.png" alt="">
-										
 							</div>
 						</div>
-
 						<p class="footer_about_text">In aliquam, augue a gravida rutrum, ante nisl fermentum nulla, vitae tempor nisl ligula vel nunc. Proin quis mi malesuada, finibus tortor fermentum, tempor lacus.</p>
-
 					</div>
-
-					<!-- Footer Column - Menu -->
 
 					<div class="col-lg-3 footer_col">
 						<div class="footer_column_title">Menu</div>
@@ -630,12 +1142,10 @@
 								<li class="footer_list_item"><a href="courses.html">Courses</a></li>
 								<li class="footer_list_item"><a href="news_post.html">News</a></li>
 								<li class="footer_list_item"><a href="contact.html">Contact</a></li>
-								<li class="main_nav_item"><a href="register.html">register</a></li>
+								<li class="footer_list_item"><a href="register.html">Register</a></li>
 							</ul>
 						</div>
 					</div>
-
-					<!-- Footer Column - Usefull Links -->
 
 					<div class="col-lg-3 footer_col">
 						<div class="footer_column_title">Usefull Links</div>
@@ -650,27 +1160,25 @@
 						</div>
 					</div>
 
-					<!-- Footer Column - Contact -->
-
 					<div class="col-lg-3 footer_col">
 						<div class="footer_column_title">Contact</div>
 						<div class="footer_column_content">
 							<ul>
 								<li class="footer_contact_item">
 									<div class="footer_contact_icon">
-										<img src="images/placeholder.svg" alt="https://www.flaticon.com/authors/lucy-g">
+										<img src="images/placeholder.svg" alt="">
 									</div>
 									Rue Elig-Effa Yaoundé-Cameroun
 								</li>
 								<li class="footer_contact_item">
 									<div class="footer_contact_icon">
-										<img src="images/smartphone.svg" alt="https://www.flaticon.com/authors/lucy-g">
+										<img src="images/smartphone.svg" alt="">
 									</div>
 									(237) 222 23 09 44 / (237) 222 22 18 16
 								</li>
 								<li class="footer_contact_item">
 									<div class="footer_contact_icon">
-										<img src="images/envelope.svg" alt="https://www.flaticon.com/authors/lucy-g">
+										<img src="images/envelope.svg" alt="">
 									</div>contact@enstp.cm
 								</li>
 							</ul>
@@ -681,12 +1189,9 @@
 			</div>
 
 			<!-- Footer Copyright -->
-
 			<div class="footer_bar d-flex flex-column flex-sm-row align-items-center">
 				<div class="footer_copyright">
-					<span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span>
+					<span>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></span>
 				</div>
 				<div class="footer_social ml-sm-auto">
 					<ul class="menu_social">
@@ -703,50 +1208,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</footer>
 
 </div>
-<script>
-	const BASE_URL = 'https://memocloudbackend.onrender.com/api';
-const UNIV_SLUG = 'ecole-des-travaux';
-async function loadStats() {
-    try {
-        const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/stats/`);
-        const stats = await res.json();
-        console.log("Stats loaded:", stats);
-        
-        const items = [
-            { l: 'Mémoires', v: stats.total_memoires || 0, i: 'book' },
-            { l: 'Téléchargements', v: stats.total_telechargements || 0, i: 'download' },
-            { l: 'Likes', v: stats.total_likes || 0, i: 'heart' },
-            { l: 'Note Moyenne', v: stats.note_moyenne || 0, i: 'star', gold: true, isFloat: true }
-        ];
 
-        const heroStatsContainer = document.getElementById('hero-stats');
-
-        heroStatsContainer.innerHTML = items.map((item, idx) => `
-            <div class="px-5 py-4 rounded-2xl border ${item.gold ? 'bg-brand-orange/20 border-brand-orange text-brand-orange shadow-glow' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'} backdrop-blur-md flex flex-col items-center justify-center transition-transform hover:-translate-y-1 cursor-default group min-w-[140px]">
-                <div class="mb-2 opacity-80"><i data-lucide="${item.i}" class="w-6 h-6"></i></div>
-                <div class="text-3xl font-extrabold font-title mb-1 group-hover:scale-110 transition-transform" id="stat-${idx}">0</div>
-                <div class="text-[10px] md:text-xs uppercase tracking-widest opacity-70 mt-1 font-bold">${item.l}</div>
-            </div>
-        `).join('');
-        
-        // Considérez de commenter ou supprimer l'appel à initIcons
-        // initIcons();
-
-        items.forEach((item, idx) => {
-            const el = document.getElementById(`stat-${idx}`);
-            const target = item.v;
-            if(item.isFloat) {
-                el.innerText = parseFloat(target).toFixed(1);
-            } else {
-                animateValue(el, 0, target, 1500);
-            }
-        });
-
-    } catch (e) { console.warn("Stats error", e); }
-}
-document.addEventListener("DOMContentLoaded", function() {
-    loadStats(); // Appelle la fonction pour charger les statistiques
-});</script>
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="styles/bootstrap4/popper.js"></script>
 <script src="styles/bootstrap4/bootstrap.min.js"></script>
@@ -759,6 +1221,211 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
 <script src="plugins/easing/easing.js"></script>
 <script src="js/custom.js"></script>
+
+<script>
+const BASE_URL = 'http://127.0.0.1:8000/api';
+const UNIV_SLUG = 'ecole-des-travaux';
+
+// Animation des valeurs
+function animateValue(element, start, end, duration) {
+    let startTimestamp = null;
+    const range = end - start;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        element.textContent = Math.floor(start + range * progress);
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+// Charger les statistiques
+async function loadStats() {
+    try {
+        const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/stats/`);
+        const stats = await res.json();
+        
+        const items = [
+            { label: 'Mémoires', value: stats.total_memoires || 0, icon: 'fas fa-book' },
+            { label: 'Téléchargements', value: stats.total_telechargements || 0, icon: 'fas fa-download' },
+            { label: 'Likes', value: stats.total_likes || 0, icon: 'fas fa-heart' },
+            { label: 'Note Moyenne', value: stats.note_moyenne || 0, icon: 'fas fa-star', isFloat: true, gold: true }
+        ];
+
+        const statsHTML = items.map((item, idx) => `
+            <div class="stat-card-modern ${item.gold ? 'gold' : ''}">
+                <div class="stat-icon-modern">
+                    <i class="${item.icon}"></i>
+                </div>
+                <div class="stat-value-modern" id="stat-${idx}">0</div>
+                <div class="stat-label-modern">${item.label}</div>
+            </div>
+        `).join('');
+
+        // Injecter dans tous les containers de stats
+        document.getElementById('stats-container').innerHTML = statsHTML;
+        document.getElementById('stats-container-2').innerHTML = statsHTML;
+        document.getElementById('stats-container-3').innerHTML = statsHTML;
+
+        // Animer les valeurs
+        items.forEach((item, idx) => {
+            const elements = document.querySelectorAll(`#stat-${idx}`);
+            elements.forEach(el => {
+                if (item.isFloat) {
+                    el.textContent = parseFloat(item.value).toFixed(1);
+                } else {
+                    setTimeout(() => animateValue(el, 0, item.value, 2000), idx * 200);
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Stats error:', error);
+        const errorMsg = '<p style="color: white; text-align: center;">Stats unavailable</p>';
+        document.getElementById('stats-container').innerHTML = errorMsg;
+        document.getElementById('stats-container-2').innerHTML = errorMsg;
+        document.getElementById('stats-container-3').innerHTML = errorMsg;
+    }
+}
+
+// Témoignances modernisées & réactives
+async function loadTestimonials() {
+  try {
+    const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/oldstudent/`);
+    const testimonials = await res.json();
+    if (!testimonials.length) {
+      document.getElementById('testimonials-slider-container').innerHTML =
+        '<p style="color:#fff;text-align:center;">Aucun témoignage</p>';
+      return;
+    }
+
+    const bgElement = document.getElementById('testimonials-background-dynamic');
+
+    const cardsHTML = testimonials.map((t, idx) => `
+      <div class="testimonial-card-modern" data-real-index="${idx}">
+        <div class="quote-icon-modern">"</div>
+        <p class="testimonial-text-modern">${t.body || 'Aucun contenu'}</p>
+        <div class="testimonial-author-modern">
+          <div class="testimonial-avatar-modern">
+            <img class="avatar-img" src="${t.cover_url || 'images/default-testimonial.jpg'}"
+                 alt="${t.title || 'Anonyme'}"
+                 onerror="this.src='images/default-testimonial.jpg'">
+          </div>
+          <div class="testimonial-info-modern">
+            <h4>${t.title || 'Anonyme'}</h4>
+            <p>Étudiant diplômé</p>
+          </div>
+        </div>
+      </div>`).join('');
+
+    document.getElementById('testimonials-slider-container').innerHTML =
+      `<div class="owl-carousel owl-theme testimonials-carousel">${cardsHTML}</div>`;
+
+    function syncBackground(event) {
+      if (!event || !event.item) return; // évite l’erreur
+      const currentSlide = event.item.index;
+      const realIndex = parseInt(
+        $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.testimonial-card-modern').data('real-index')
+      ) % testimonials.length;
+      const t = testimonials[realIndex];
+      if (!t) return;
+      const url = t.cover_url || 'images/default-testimonial.jpg';
+      bgElement.style.backgroundImage = `url(${url})`;
+      $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.avatar-img').attr('src', url);
+    }
+
+    $('.testimonials-carousel').owlCarousel({
+      items: 1,
+      loop: true,
+      margin: 30,
+      nav: true,
+      dots: true,
+      autoplay: true,
+      autoplayTimeout: 6000,
+      smartSpeed: 800,
+      navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+      responsive: { 0: { nav: false }, 768: { nav: true } },
+      onInitialized: syncBackground,
+      onChanged: syncBackground
+    });
+
+  } catch (error) {
+    console.error('Erreur chargement témoignages :', error);
+    document.getElementById('testimonials-slider-container').innerHTML =
+      '<p style="color:#fff;text-align:center;">Témoignages indisponibles</p>';
+  }
+}
+function syncBackground(event) {
+  if (!event || !event.item) return; // ⚠️ sécurité
+
+  const currentSlide = event.item.index;
+  const realIndex = parseInt(
+    $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.testimonial-card-modern').data('real-index')
+  ) % testimonials.length;
+
+  const t = testimonials[realIndex];
+  if (!t) return; // extra sécurité
+
+  const url = t.cover_url || 'images/default-testimonial.jpg';
+  const bgElement = document.getElementById('testimonials-background-dynamic');
+
+  bgElement.style.backgroundImage = `url(${url})`;
+  // Optionnel : forcer l’avatar aussi au cas où
+  $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.avatar-img').attr('src', url);
+}
+// Charger les actualités
+async function loadNews() {
+    try {
+        const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/`);
+        const news = await res.json();
+        
+        const container = document.getElementById('news-grid-container');
+        
+        if (news.length === 0) {
+            container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No news available</p>';
+            return;
+        }
+
+        container.innerHTML = news.slice(0, 6).map(item => {
+            const date = new Date(item.created_at || Date.now());
+            const formattedDate = date.toLocaleDateString('fr-FR', { 
+                day: '2-digit', 
+                month: 'short', 
+                year: 'numeric' 
+            });
+            
+            return `
+                <div class="news-card-modern">
+                    <div class="news-image-modern">
+                        <img src="${item.cover_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'}" 
+                             alt="${item.title || 'News'}"
+                             onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'">
+                        <div class="news-date-badge">${formattedDate}</div>
+                    </div>
+                    <div class="news-content-modern">
+                        <h3 class="news-title-modern">${item.title || 'Untitled'}</h3>
+                        <p class="news-excerpt-modern">${(item.body || 'No description available').substring(0, 120)}...</p>
+                        <a href="#" class="news-link-modern">
+                            Lire plus <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (error) {
+        console.error('News error:', error);
+        document.getElementById('news-grid-container').innerHTML = '<p style="text-align: center; grid-column: 1/-1;">News unavailable</p>';
+    }
+}
+
+// Initialisation au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    loadStats();
+    loadTestimonials();
+    loadNews();
+});
+</script>
 
 </body>
 </html>

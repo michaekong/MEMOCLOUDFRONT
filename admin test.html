@@ -6,10 +6,14 @@
     <title>Administration - MemoCloud</title>
     <script>
   /* variables attendues par le module ES6 */
-  window.UNIV_SLUG = 'ecole-des-travaux';   // même valeur que tu avais en Django
+  window.UNIV_SLUG = 'ecole-des-travaux';
+     // même valeur que tu avais en Django
+    
   window.UNIV_ID   = 1;                     // si jamais tu bascules sur l'ID
-  window.API_BASE  = 'https://memocloudbackend.onrender.com/api'; // URL racine de ton API Django
+  window.API_BASE  = 'http://127.0.0.1:8000/api'; // URL racine de ton API Django
   window.TOKEN     = localStorage.getItem('authToken') || '';
+  
+
   
 </script>
 <script type="module" src="./static/js/domaine-manager.js"></script>
@@ -839,7 +843,7 @@
 <div id="toast-container"></div>
 
     <script>
-        const API_URL = 'https://memocloudbackend.onrender.com/api';
+        const API_URL = 'http://127.0.0.1:8000/api';
         const UNIV_SLUG = 'ecole-des-travaux';
         const TOKEN = localStorage.getItem('authToken');
 
@@ -1285,6 +1289,7 @@
             }
         }
 
+
         function renderMemoiresTable(memoiresList) {
             const tbody = document.getElementById('memoiresTableBody');
             
@@ -1330,6 +1335,7 @@
             localStorage.removeItem('authToken');
             window.location.href = 'login.html';
         }
+        
 
         // Initialisation
         init();

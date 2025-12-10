@@ -39,7 +39,7 @@ class DomaineManager {
       addForm      : document.getElementById('add-domaine-form'),
       addInput     : document.getElementById('new-domaine-nom'),
       slugPreview  : document.getElementById('slug-preview'),
-      emptyTpl     : document.getElementById('empty-domaine-tpl')?.innerHTML || '<p>Aucun dodfwdfdgmaine</p>'
+      emptyTpl     : document.getElementById('empty-domaine-tpl')?.innerHTML || '<p>Aucun domaine</p>'
     };
   }
 
@@ -74,18 +74,25 @@ class DomaineManager {
       });
       if (!res.ok) throw new Error(res.status);
       const jsonData = await res.json();
-console.log(jsonData); // Cela affichera les données JSON
+      const res1 = await fetch(`${API_URL}/universites/auth/${UNIV_SLUG}/my-role/`, {
+                 headers: getAuthHeaders()
+            });
+            if (!res1.ok) throw new Error('Erreur chargement rôle');
+            const user_role = await res1.json();
+
 this.domaines = jsonData;
- this.renderList();
-    } catch (e) {
-      showToast('Impossible de sdsdcharger les domaines', 'error');
+
+ this.renderList(user_role);
+    }
+     catch (e) {
+      showToast('Impossible de charger les domaines', 'error');
     }
   }
 
-  renderList() {
+  renderList(USER_ROLE) {
     const box = this.DOM.listBox;
     if (!this.domaines.length) { box.innerHTML = this.DOM.emptyTpl; return; }
-
+    
     box.innerHTML = this.domaines.map(d => `
       <div class="domaine-card" data-id="${d.id}">
         <div class="domaine-main">
@@ -96,7 +103,7 @@ this.domaines = jsonData;
             ).join('')}
           </div>
         </div>
-        ${window.USER_ROLE?.match(/"admin"|"superadmin"|"bigboss"/) ? `
+        ${USER_ROLE.role?.match(/admin|superadmin|bigboss/) ? `
         <button class="btn-icon-danger" data-action="delete"
                 data-slug="${d.slug}" data-nom="${escapeHtml(d.nom)}"
                 title="Supprimer"><i class="fas fa-trash"></i></button>
@@ -220,6 +227,7 @@ this.domaines = jsonData;
   /* ---------- helpers ---------- */
   getCurrentUnivId()  { return window.UNIV_ID   || null; }
   getCurrentUnivSlug(){ return window.UNIV_SLUG || null; }
+ 
 }
 
 /* ---------- petite lib utilitaire (si vous ne l’avez pas) ---------- */
