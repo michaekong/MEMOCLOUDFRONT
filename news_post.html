@@ -138,7 +138,7 @@
   }
 </style>
 <script>
-  const BASE_URL = 'https://memocloudbackend.onrender.com/api';
+  const BASE_URL = 'http://127.0.0.1:8000/api';
   const UNIV_SLUG = 'ecole-des-travaux';
   let TOKEN = localStorage.getItem('authToken');
   let USER_ROLE = null;
@@ -168,7 +168,7 @@
 						<li class="main_nav_item"><a href="#">about us</a></li>
 						<li class="main_nav_item"><a href="courses.html">courses</a></li>
 						<li class="main_nav_item"><a href="elements.html">elements</a></li>
-						<li class="main_nav_item"><a href="news.html">news</a></li>
+						<li class="main_nav_item"><a href="news_post.html">news</a></li>
 						<li class="main_nav_item"><a href="contact.html">contact</a></li>
 					</ul>
 				</div>
@@ -202,8 +202,10 @@
 					<li class="menu_item menu_mm"><a href="#">About us</a></li>
 					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
 					<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
-					<li class="menu_item menu_mm"><a href="news.html">News</a></li>
+					<li class="menu_item menu_mm"><a href="news_post.html">News</a></li>
 					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
+					<li class="menu_item menu_mm"><a href="memoire.html">Memoires</a></li>
+					<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
 				</ul>
 
 				<!-- Menu Social -->
@@ -236,21 +238,16 @@
     <div class="pulse-hero-overlay">
         <h1 class="pulse-hero-title">PulseNews</h1>
         <p class="pulse-hero-subtitle">L’actualité du campus en un clin d’œil</p>
-        <button class="pulse-hero-cta" onclick="document.querySelector('.pulse-news').scrollIntoView({behavior:'smooth'})">
-            Découvrir
-        </button>
-    </div>
+       <button class="pulse-hero-cta" id="discoverBtn">
+  <span class="btn-txt">Découvrir</span>
+  <span class="btn-ico"></span>
+</button>
 </section>
 <!-- Bouton mémoire (admin uniquement) -->
 <button class="pulse-fab-admin" id="fabAddNews" onclick="openNewsModal()" style="display:none">
     <i class="fas fa-plus"></i>
 </button>
-<!-- ==========================================
-   BARRE DE FILTRES NEWS
-   ========================================== -->
-<!-- ==========================================
-   FILTRES REPLIABLES + TEMPORELS
-   ========================================== -->
+
 <div class="filter-wrapper">
     <button class="filter-toggle-btn" onclick="toggleFilterPanel()">
         <i class="fas fa-filter"></i> Filtres
@@ -406,29 +403,6 @@
 			
 			<!-- Newsletter -->
 
-			<div class="newsletter">
-				<div class="row">
-					<div class="col">
-						<div class="section_title text-center">
-							<h1>Subscribe to newsletter</h1>
-						</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col text-center">
-						<div class="newsletter_form_container mx-auto">
-							<form action="post">
-								<div class="newsletter_form d-flex flex-md-row flex-column flex-xs-column align-items-center justify-content-center">
-									<input id="newsletter_email" class="newsletter_email" type="email" placeholder="Email Address" required="required" data-error="Valid email is required.">
-									<button id="newsletter_submit" type="submit" class="newsletter_submit_btn trans_300" value="Submit">Subscribe</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-
-			</div>
 
 			<!-- Footer Content -->
 
@@ -459,7 +433,7 @@
 								<li class="footer_list_item"><a href="index.html">Home</a></li>
 								<li class="footer_list_item"><a href="#">About Us</a></li>
 								<li class="footer_list_item"><a href="courses.html">Courses</a></li>
-								<li class="footer_list_item"><a href="news.html">News</a></li>
+								<li class="footer_list_item"><a href="news_post.html">News</a></li>
 								<li class="footer_list_item"><a href="contact.html">Contact</a></li>
 							</ul>
 						</div>
@@ -533,11 +507,12 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</footer>
 
 </div>
+<button class="pulse-fab-admin" id="fabAddNews" onclick="openNewsModal()" style="display:none">
+    <i class="fas fa-plus"></i>
+</button>
 
 <script>
-	if (['admin', 'superadmin', 'bigboss'].includes(USER_ROLE)) {
-    document.getElementById('fabAddNews').style.display = 'flex';
-}
+
 // ==========================================
 // 🔐 GESTION DE L'AUTHENTIFICATION
 // ==========================================
@@ -569,9 +544,10 @@ async function loadUserRole() {
       USER_ROLE = roleData.role;
       console.log('✅ Rôle:', USER_ROLE);
       
-      if (['admin', 'superadmin', 'bigboss'].includes(USER_ROLE)) {
-        document.getElementById('adminPanel').style.display = 'block';
-      }
+     
+	  	if (['admin', 'superadmin', 'bigboss'].includes(USER_ROLE)) {
+    document.getElementById('fabAddNews').style.display = 'flex';
+}
     }
   } catch (e) {
     console.error('❌ Erreur:', e);
@@ -616,7 +592,11 @@ async function loadNews() {
         `;
     }
 }
-
+document.getElementById('discoverBtn')
+        .addEventListener('click', () =>
+           document.getElementById('newsContainer')
+                   .scrollIntoView({behavior:'smooth'})
+        );
 function applyFilters() {
     const topic = document.getElementById('filterTopic').value;
     const status = document.getElementById('filterStatus').value;
@@ -654,7 +634,7 @@ function renderNews(news) {
     }
 
     container.innerHTML = '';
-    news.forEach(n => {
+    news.reverse().forEach(n => {
         const publishDate = new Date(n.publish_at || n.created_at);
         const day = String(publishDate.getDate()).padStart(2, '0');
         const month = publishDate.toLocaleDateString('fr-FR', { month: 'short' });
@@ -752,9 +732,7 @@ function showNewsDetail(id) {
     if (TOKEN) {
         headers.Authorization = `Bearer ${TOKEN}`;
     }
-    if (['admin', 'superadmin', 'bigboss'].includes(USER_ROLE)) {
-    document.getElementById('fabAddNews').style.display = 'flex';
-}
+ 
     // Fetch news details
     fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`, {
         headers: headers

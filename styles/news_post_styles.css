@@ -2924,3 +2924,58 @@ section
         transform: translateY(0);
     }
 }
+/* ----- bouton global ----- */
+#discoverBtn{
+  --h: 54px;
+  position: relative;
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  height:var(--h);
+  padding:0 32px 0 28px;
+  background:#ffb606;
+  color:#1a1a1a;
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:.4px;
+  text-transform:uppercase;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  overflow:hidden;
+  transition:all .35s cubic-bezier(.25,.8,.25,1);
+}
+#discoverBtn:hover{              /* légère élévation */
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(255,182,6,.35);
+}
+
+/* ----- flèche / ligne ----- */
+#discoverBtn .btn-ico{
+  position:relative;
+  width:24px;
+  height:2px;
+  background:#1a1a1a;
+  transition:width .35s;
+}
+#discoverBtn .btn-ico::before,
+#discoverBtn .btn-ico::after{    /* pointe de flèche */
+  content:'';
+  position:absolute;
+  right:0;
+  width:8px;
+  height:2px;
+  background:#1a1a1a;
+  transform-origin:right center;
+  transition:transform .35s;
+}
+#discoverBtn .btn-ico::before{ transform:rotate(-40deg) translateY(-1px); }
+#discoverBtn .btn-ico::after{  transform:rotate(40deg)  translateY(1px);  }
+
+/* ----- animation au survol ----- */
+#discoverBtn:hover .btn-ico{ width:38px; }                 /* ligne qui s’allonge */
+#discoverBtn:hover .btn-ico::before{ transform:rotate(-35deg) translateY(-2px); }
+#discoverBtn:hover .btn-ico::after{  transform:rotate(35deg)  translateY(2px);  }
+
+/* ----- clic ----- */
+#discoverBtn:active{ transform:translateY(-1px) scale(.97); }
