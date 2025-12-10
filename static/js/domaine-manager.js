@@ -96,7 +96,7 @@ this.domaines = jsonData;
             ).join('')}
           </div>
         </div>
-        ${window.USER_ROLE?.match(/admin|superadmin|bigboss/) ? `
+        ${window.USER_ROLE?.match(/"admin"|"superadmin"|"bigboss"/) ? `
         <button class="btn-icon-danger" data-action="delete"
                 data-slug="${d.slug}" data-nom="${escapeHtml(d.nom)}"
                 title="Supprimer"><i class="fas fa-trash"></i></button>
