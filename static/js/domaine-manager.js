@@ -42,7 +42,17 @@ class DomaineManager {
       emptyTpl     : document.getElementById('empty-domaine-tpl')?.innerHTML || '<p>Aucun domaine</p>'
     };
   }
-
+  /* ✅ onEdit à l’intérieur de la classe */
+  async onEdit(slug) {
+    const domaine = this.domaines.find(d => d.slug === slug);
+    if (!domaine) return;
+    this.editingSlug = slug;
+    this.openAddModal(true);
+    this.DOM.addInput.value = domaine.nom;
+    this.previewSlug();
+    this.DOM.addModal.querySelector('h3').textContent = 'Modifier le domaine';
+    this.DOM.addForm.querySelector('button[type="submit"]').textContent = 'Enregistrer';
+  }
   /* ---------- events ---------- */
   bindEvents() {
     /* search */
@@ -64,7 +74,24 @@ class DomaineManager {
     /* modal close */
     this.DOM.addModal?.querySelector('.modal-close')
             .addEventListener('click', () => this.openAddModal(false));
+            this.DOM.listBox.addEventListener('click', e => {
+  const editBtn = e.target.closest('[data-action="edit"]');
+  if (editBtn) {
+    e.stopPropagation();
+    this.onEdit(editBtn.dataset.slug);
+    return;
   }
+  const delBtn = e.target.closest('[data-action="delete"]');
+  if (delBtn) this.onDelete(delBtn.dataset.slug, delBtn.dataset.nom);
+});
+  }
+async init() {
+  if (!this.universiteSlug) { console.warn('[DM] no UNIV_SLUG'); return; }
+  this.cacheDom();
+  this.bindEvents();
+  await this.loadUserRole(); // ← on attend le rôle
+  await this.loadDomaines(); // puis on affiche
+}
 
   /* ---------- load / render ---------- */
   async loadDomaines() {
@@ -89,10 +116,10 @@ this.domaines = jsonData;
     }
   }
 
-  renderList(USER_ROLE) {
+  renderList(UROLE) {
     const box = this.DOM.listBox;
     if (!this.domaines.length) { box.innerHTML = this.DOM.emptyTpl; return; }
-    
+   
     box.innerHTML = this.domaines.map(d => `
       <div class="domaine-card" data-id="${d.id}">
         <div class="domaine-main">
@@ -103,10 +130,14 @@ this.domaines = jsonData;
             ).join('')}
           </div>
         </div>
-        ${USER_ROLE.role?.match(/admin|superadmin|bigboss/) ? `
+        
+        ${UROLE?.role?.match(/admin|superadmin|bigboss/) ? `
         <button class="btn-icon-danger" data-action="delete"
                 data-slug="${d.slug}" data-nom="${escapeHtml(d.nom)}"
                 title="Supprimer"><i class="fas fa-trash"></i></button>
+                <button class="btn-icon-warning" data-action="edit"
+        data-slug="${d.slug}" data-nom="${escapeHtml(d.nom)}"
+        title="Modifier"><i class="fas fa-edit"></i></button>
         ` : ''}
       </div>`).join('');
   }
@@ -171,12 +202,18 @@ this.domaines = jsonData;
   }
 
   /* ---------- add ---------- */
-  openAddModal(show) {
-    this.DOM.addModal.classList.toggle('active', show);
-    if (show) this.DOM.addInput.focus();
-    else this.DOM.addForm.reset();
+ openAddModal(show) {
+  this.DOM.addModal.classList.toggle('active', show);
+  if (show) {
+    this.DOM.addInput.focus();
+  } else {
+    this.DOM.addForm.reset();
+    this.editingSlug = null;
+    // Remet le titre & bouton à l’état « créer »
+    this.DOM.addModal.querySelector('h3').textContent = 'Nouveau domaine';
+    this.DOM.addForm.querySelector('button[type="submit"]').textContent = 'Créer';
   }
-
+}
   previewSlug() {
     const nom = this.DOM.addInput.value.trim();
     const slug = nom.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\W+/g,'-').toLowerCase();
@@ -184,28 +221,57 @@ this.domaines = jsonData;
   }
 
   async onAdd(e) {
-    e.preventDefault();
-    const nom = this.DOM.addInput.value.trim();
-    if (!nom) return showToast('Nom requis', 'warning');
-    if (this.domaines.some(d => d.nom.toLowerCase() === nom.toLowerCase()))
-      return showToast('Ce domaine existe déjà', 'warning');
+  e.preventDefault();
+  const nom = this.DOM.addInput.value.trim();
+  if (!nom) return showToast('Nom requis', 'warning');
 
-    try {
-      const res = await fetch(`${API_BASE}/universites/universites/${this.universiteSlug}/domaines/`, {
-        method : 'POST',
-        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
-        body   : JSON.stringify({ nom })
-      });
-      if (!res.ok) throw new Error((await res.json()).detail || 'Erreur');
-      const created = await res.json();
-      this.domaines.push(created);
-      this.renderList();
-      this.openAddModal(false);
-      showToast('Domaine ajouté', 'success');
-    } catch (e) {
-      showToast(e.message||'Création impossible', 'error');
-    }
+  // Mode édition
+  // ---------- MODE ÉDITION ----------
+if (this.editingSlug) {
+  if (this.domaines.some(d => d.slug !== this.editingSlug && d.nom.toLowerCase() === nom.toLowerCase()))
+    return showToast('Ce nom existe déjà', 'warning');
+
+  try {
+   // dans onAdd (mode édition)
+const res = await fetch(`${API_BASE}/universites/universites/${this.universiteSlug}/domaines/${this.editingSlug}/update/`, {
+  method: 'PATCH',
+  headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+  body: JSON.stringify({ nom })
+});
+    const updated = await res.json();
+    const idx = this.domaines.findIndex(d => d.slug === this.editingSlug);
+    this.domaines[idx] = updated;
+    this.renderList();
+    this.openAddModal(false);
+    showToast('Domaine modifié', 'success');
+    this.editingSlug = null;
+    return; // ← on sort pour ne pas faire la création
+  } catch (e) {
+    showToast(e.message || 'Modification impossible', 'error');
+    return;
   }
+}
+
+  // --- Sinon : création (code déjà présent) ---
+  if (this.domaines.some(d => d.nom.toLowerCase() === nom.toLowerCase()))
+    return showToast('Ce domaine existe déjà', 'warning');
+
+  try {
+    const res = await fetch(`${API_BASE}/universites/universites/${this.universiteSlug}/domaines/create/`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nom })
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || 'Erreur');
+    const created = await res.json();
+    this.domaines.push(created);
+    this.renderList();
+    this.openAddModal(false);
+    showToast('Domaine créé', 'success');
+  } catch (e) {
+    showToast(e.message || 'Création impossible', 'error');
+  }
+}
 
   /* ---------- delete ---------- */
   async onDelete(slug, nom) {

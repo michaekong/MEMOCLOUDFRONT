@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - MemoCloud</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuration Tailwind -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                yellow: '#ffb606',
+                dark: '#3a3a3a',
+                light: '#f5f7fa',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out',
+              'slide-up': 'slideUp 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <script>
+      /* Variables globales */
+      window.UNIV_SLUG = 'ecole-des-travaux';
+      window.UNIV_ID   = 1;
+      window.API_BASE  = 'http://127.0.0.1:8000/api';
+      window.TOKEN     = localStorage.getItem('authToken') || '';
+      window.USER_ROLE = null;
+    </script>
+    
+    <!-- Module Domaines (existant) -->
+    <script type="module" src="./static/js/domaine-manager.js"></script>
+
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+      }
+      
+      /* Scrollbar personnalisée */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+
+      /* Sidebar transition */
+      .sidebar { transition: width 0.3s ease; }
+      .sidebar-collapsed { width: 80px; }
+      .main-expanded { margin-left: 80px; }
+
+      /* Iframe Container */
+      .iframe-container {
+        height: calc(100vh - 140px);
+        width: 100%;
+        border: none;
+        border-radius: 0.75rem;
+        background: white;
+      }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden bg-brand-light text-brand-dark">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="w-72 bg-brand-dark text-white flex flex-col shadow-2xl z-50 transition-all duration-300 relative">
+        <!-- Logo -->
+        <div class="h-20 flex items-center px-6 border-b border-white/10 gap-3">
+            <div class="w-10 h-10 rounded-lg bg-brand-yellow flex items-center justify-center text-brand-dark font-bold text-xl shadow-lg shrink-0">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight whitespace-nowrap overflow-hidden sidebar-text">
+                Memo<span class="text-brand-yellow">Cloud</span>
+            </h1>
+        </div>
+
+        <!-- Menu -->
+        <nav class="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+            <button onclick="showSection('dashboard')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group active-nav">
+                <i class="fas fa-chart-pie w-6 text-center text-gray-400 group-hover:text-brand-yellow transition-colors"></i>
+                <span class="font-medium sidebar-text">Tableau de bord</span>
+            </button>
+            
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-500 uppercase sidebar-text">Gestion</div>
+            
+            <button onclick="showSection('users')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group">
+                <i class="fas fa-users w-6 text-center text-gray-400 group-hover:text-brand-yellow transition-colors"></i>
+                <span class="font-medium sidebar-text">Utilisateurs</span>
+            </button>
+            
+            <button onclick="showSection('memoires')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group">
+                <i class="fas fa-book w-6 text-center text-gray-400 group-hover:text-brand-yellow transition-colors"></i>
+                <span class="font-medium sidebar-text">Mémoires</span>
+            </button>
+
+            <button onclick="showSection('domaines')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group">
+                <i class="fas fa-tags w-6 text-center text-gray-400 group-hover:text-brand-yellow transition-colors"></i>
+                <span class="font-medium sidebar-text">Domaines</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-500 uppercase sidebar-text">Communication</div>
+
+            <button onclick="showSection('news')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group">
+                <i class="fas fa-newspaper w-6 text-center text-gray-400 group-hover:text-brand-yellow transition-colors"></i>
+                <span class="font-medium sidebar-text">Actualités</span>
+            </button>
+        </nav>
+
+        <!-- User Footer -->
+        <div class="p-4 border-t border-white/10">
+            <div class="flex items-center gap-3">
+                <div id="userAvatar" class="w-10 h-10 rounded-full bg-brand-yellow text-brand-dark flex items-center justify-center font-bold text-lg shrink-0">
+                    U
+                </div>
+                <div class="flex-1 overflow-hidden sidebar-text">
+                    <p id="userName" class="font-bold text-sm truncate">Chargement...</p>
+                    <p id="userRole" class="text-xs text-gray-400 truncate">...</p>
+                </div>
+                <button onclick="logout()" class="text-gray-400 hover:text-white transition-colors" title="Déconnexion">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Toggle Button -->
+        <button onclick="toggleSidebar()" class="absolute -right-3 top-24 w-6 h-6 bg-brand-yellow text-brand-dark rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+            <i class="fas fa-chevron-left text-xs" id="toggleIcon"></i>
+        </button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <!-- Top Bar -->
+        <header class="h-20 bg-white shadow-sm flex items-center justify-between px-8 z-40 shrink-0">
+            <div>
+                <h2 id="pageTitle" class="text-2xl font-bold text-brand-dark">Tableau de bord</h2>
+                <p id="pageSubtitle" class="text-sm text-gray-500">Vue d'ensemble de l'université</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="bg-brand-light px-4 py-2 rounded-full text-sm font-medium text-gray-600">
+                    <i class="fas fa-university mr-2 text-brand-yellow"></i>
+                    <span id="univName">École des Travaux</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Scrollable Area -->
+        <main class="flex-1 overflow-y-auto p-8 bg-brand-light relative">
+            
+            <!-- DASHBOARD -->
+            <div id="section-dashboard" class="section-content animate-fade-in space-y-8">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+                        <div class="w-16 h-16 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-3xl">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Utilisateurs</p>
+                            <h3 id="statUsers" class="text-3xl font-bold text-brand-dark">0</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+                        <div class="w-16 h-16 rounded-xl bg-brand-yellow/10 text-brand-yellow flex items-center justify-center text-3xl">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Mémoires</p>
+                            <h3 id="statMemoires" class="text-3xl font-bold text-brand-dark">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+                        <div class="w-16 h-16 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-3xl">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Domaines</p>
+                            <h3 id="statDomaines" class="text-3xl font-bold text-brand-dark">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
+                        <div class="w-16 h-16 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-3xl">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Actualités</p>
+                            <h3 id="statNews" class="text-3xl font-bold text-brand-dark">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity (Placeholder) -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <h3 class="text-lg font-bold mb-4">Aperçu rapide</h3>
+                    <div class="h-40 flex items-center justify-center text-gray-400 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                        Graphiques et activités récentes à venir...
+                    </div>
+                </div>
+            </div>
+
+            <!-- USERS (Iframe) -->
+            <div id="section-users" class="section-content hidden h-full">
+                <iframe src="admin.html" class="iframe-container shadow-sm border border-gray-200"></iframe>
+            </div>
+
+            <!-- MEMOIRES (Iframe) -->
+            <div id="section-memoires" class="section-content hidden h-full">
+                <iframe src="admin-memoires.html" class="iframe-container shadow-sm border border-gray-200"></iframe>
+            </div>
+
+            <!-- ACTUALITES -->
+            <div id="section-news" class="section-content hidden animate-fade-in">
+                <!-- Toolbar -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <div class="relative w-full md:w-96 group">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-yellow transition-colors"></i>
+                        <input type="text" id="searchNews" placeholder="Rechercher une actualité..." 
+                               class="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:bg-white focus:border-brand-yellow/50 focus:ring-0 transition-all outline-none"
+                               onkeyup="filterNews()">
+                    </div>
+                    <button onclick="openNewsModal()" 
+                            class="w-full md:w-auto px-6 py-3 bg-brand-yellow text-brand-dark font-bold rounded-lg shadow-md hover:bg-yellow-400 hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i> <span>Ajouter Actualité</span>
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-bold tracking-wider border-b border-gray-100">
+                            <tr>
+                                <th class="px-6 py-4">Titre</th>
+                                <th class="px-6 py-4">Catégorie</th>
+                                <th class="px-6 py-4">Statut</th>
+                                <th class="px-6 py-4">Date</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newsTableBody" class="divide-y divide-gray-100">
+                            <tr><td colspan="5" class="text-center py-8 text-gray-400">Chargement...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DOMAINES -->
+            <div id="section-domaines" class="section-content hidden animate-fade-in">
+                <!-- Toolbar Domaines -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <div class="relative w-full md:w-96 group">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-yellow transition-colors"></i>
+                        <input id="domaine-search" type="text" placeholder="Rechercher un domaine..." 
+                               class="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:bg-white focus:border-brand-yellow/50 focus:ring-0 transition-all outline-none">
+                        <ul id="suggestions-box" class="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-lg hidden z-10 max-h-60 overflow-y-auto"></ul>
+                    </div>
+                    <button data-action="open-add-modal" 
+                            class="w-full md:w-auto px-6 py-3 bg-brand-yellow text-brand-dark font-bold rounded-lg shadow-md hover:bg-yellow-400 hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i> <span>Nouveau Domaine</span>
+                    </button>
+                </div>
+
+                <!-- Grid Domaines -->
+                <div id="domaines-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Cards injected by domaine-manager.js -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL NEWS -->
+    <div id="newsModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-slide-up">
+            <div class="bg-brand-dark text-white p-6 flex justify-between items-center shrink-0">
+                <h2 id="newsModalTitle" class="text-xl font-bold">Nouvelle actualité</h2>
+                <button onclick="closeNewsModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="newsError" class="hidden m-6 mb-0 p-3 bg-red-100 text-red-700 rounded-lg text-sm"></div>
+
+            <div class="p-6 overflow-y-auto flex-1">
+                <form id="newsForm" class="space-y-5" onsubmit="return false;">
+                    <input type="hidden" id="newsId">
+                    <div>
+                        <label class="block text-sm font-bold text-brand-dark mb-1">Titre <span class="text-red-500">*</span></label>
+                        <input type="text" name="title" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-brand-dark mb-1">Résumé</label>
+                        <input type="text" name="headline" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-brand-dark mb-1">Contenu <span class="text-red-500">*</span></label>
+                        <textarea name="body" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none h-32"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                         <div>
+                            <label class="block text-sm font-bold text-brand-dark mb-1">Catégorie</label>
+                            <select name="topics" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none bg-white">
+                                <option value="general">Général</option>
+                                <option value="event">Événement</option>
+                                <option value="award">Récompense</option>
+                                <option value="research">Recherche</option>
+                                <option value="alumni">Alumni</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-brand-dark mb-1">Image</label>
+                            <input type="file" name="cover" accept="image/*" class="w-full p-2 border-2 border-gray-200 rounded-lg text-sm">
+                        </div>
+                    </div>
+                    <label class="flex items-center gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <input type="checkbox" name="is_published" checked class="w-5 h-5 text-brand-yellow rounded focus:ring-brand-yellow">
+                        <span class="font-bold text-brand-dark">Publier immédiatement</span>
+                    </label>
+                </form>
+            </div>
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                <button onclick="closeNewsModal()" class="px-5 py-2.5 rounded-lg text-gray-600 font-bold hover:bg-gray-200 transition-colors">Annuler</button>
+                <button onclick="submitNews()" class="px-6 py-2.5 rounded-lg bg-brand-yellow text-brand-dark font-bold hover:bg-yellow-400 shadow-md transition-colors flex items-center gap-2">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DOMAINE (pour domaine-manager.js) -->
+    <div id="add-domaine-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-slide-up">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-brand-dark">Nouveau domaine</h3>
+                <span class="modal-close cursor-pointer text-gray-400 hover:text-red-500 text-2xl">&times;</span>
+            </div>
+            <form id="add-domaine-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-brand-dark mb-1">Nom du domaine</label>
+                    <input id="new-domaine-nom" type="text" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow outline-none">
+                    <small id="slug-preview" class="text-xs text-gray-500 mt-1 block"></small>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" class="modal-close px-4 py-2 text-gray-600 font-bold hover:bg-gray-100 rounded-lg">Annuler</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-yellow text-brand-dark font-bold rounded-lg shadow hover:bg-yellow-400">Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[70] flex flex-col gap-2"></div>
+
+    <script>
+        const API_URL = window.API_BASE;
+        const UNIV_SLUG = window.UNIV_SLUG;
+        const TOKEN = window.TOKEN;
+
+        let currentUser = null;
+        let allNews = [];
+
+        async function init() {
+            if (!TOKEN) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                await loadCurrentUser();
+                await checkAccess();
+                await loadDashboardStats();
+                
+                // Show dashboard by default
+                showSection('dashboard');
+                
+            } catch (err) {
+                console.error(err);
+                if(err.message === 'Forbidden') return;
+            }
+        }
+
+        async function loadCurrentUser() {
+            const res = await fetch(`${API_URL}/auth/me/`, { headers: { 'Authorization': `Bearer ${TOKEN}` } });
+            if (!res.ok) throw new Error('Auth failed');
+            currentUser = await res.json();
+            
+            document.getElementById('userName').textContent = currentUser.full_name || 'Utilisateur';
+            document.getElementById('userAvatar').textContent = (currentUser.prenom || 'U')[0].toUpperCase();
+
+            // Role
+            const rRes = await fetch(`${API_URL}/universites/auth/${UNIV_SLUG}/my-role/`, { headers: { 'Authorization': `Bearer ${TOKEN}` } });
+            if(rRes.ok) {
+                const data = await rRes.json();
+                window.USER_ROLE = data;
+                document.getElementById('userRole').textContent = getRoleLabel(data.role);
+            }
+        }
+
+        async function checkAccess() {
+            const role = window.USER_ROLE?.role || 'standard';
+            if (!['admin', 'superadmin', 'bigboss'].includes(role)) {
+                document.body.innerHTML = `
+                    <div class="h-screen flex flex-col items-center justify-center bg-brand-light text-center p-4">
+                        <i class="fas fa-lock text-red-500 text-6xl mb-4"></i>
+                        <h1 class="text-2xl font-bold text-brand-dark">Accès Restreint</h1>
+                        <button onclick="logout()" class="mt-4 px-6 py-2 bg-brand-dark text-white rounded-lg">Déconnexion</button>
+                    </div>`;
+                throw new Error('Forbidden');
+            }
+        }
+
+        function getRoleLabel(r) {
+            const map = { 'admin':'Administrateur', 'superadmin':'Super Admin', 'professeur':'Professeur', 'standard':'Étudiant' };
+            return map[r] || r;
+        }
+
+        // --- Navigation ---
+        
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const icon = document.getElementById('toggleIcon');
+            const texts = document.querySelectorAll('.sidebar-text');
+            
+            if (sb.classList.contains('w-72')) {
+                sb.classList.remove('w-72');
+                sb.classList.add('w-20');
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+                texts.forEach(t => t.classList.add('hidden'));
+            } else {
+                sb.classList.add('w-72');
+                sb.classList.remove('w-20');
+                icon.classList.add('fa-chevron-left');
+                icon.classList.remove('fa-chevron-right');
+                texts.forEach(t => t.classList.remove('hidden'));
+            }
+        }
+
+        async function showSection(id) {
+            // Update Menu Active State
+            document.querySelectorAll('.menu-item').forEach(btn => {
+                btn.classList.remove('bg-white/10', 'text-white', 'border-l-4', 'border-brand-yellow');
+                btn.classList.add('text-gray-300', 'hover:bg-white/5');
+            });
+            
+            // Highlight clicked item logic would be here, but simpler to rely on onclick for now
+            // Or better:
+            const targetBtn = document.querySelector(`button[onclick="showSection('${id}')"]`);
+            if(targetBtn) {
+                 targetBtn.classList.remove('text-gray-300', 'hover:bg-white/5');
+                 targetBtn.classList.add('bg-white/10', 'text-white');
+            }
+
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(el => el.classList.add('hidden'));
+            
+            // Show target
+            const target = document.getElementById(`section-${id}`);
+            target.classList.remove('hidden');
+
+            // Header Update
+            const titles = {
+                'dashboard': 'Tableau de bord',
+                'users': 'Gestion des Utilisateurs',
+                'memoires': 'Gestion des Mémoires',
+                'news': 'Actualités Campus',
+                'domaines': 'Domaines d\'études'
+            };
+            document.getElementById('pageTitle').textContent = titles[id] || 'Administration';
+
+            // Load Data
+            if(id === 'news') loadNews();
+            // User/Memoire are iframes, they load themselves. Domaines handled by module.
+        }
+
+        // --- Dashboard ---
+
+        async function loadDashboardStats() {
+            // Generic fetch wrapper
+            const getCount = async (url) => {
+                try {
+                    const r = await fetch(url, { headers: { 'Authorization': `Bearer ${TOKEN}` } });
+                    if(r.ok) { const d = await r.json(); return d.length || 0; }
+                } catch(e){}
+                return 0;
+            };
+
+            const [nUsers, nMemoires, nDomaines, nNews] = await Promise.all([
+                getCount(`${API_URL}/auth/${UNIV_SLUG}/users/`),
+                getCount(`${API_URL}/memoires/universites/${UNIV_SLUG}/memoires/`),
+                getCount(`${API_URL}/universites/domaines/`),
+                getCount(`${API_URL}/universites/universities/${UNIV_SLUG}/news/`)
+            ]);
+
+            document.getElementById('statUsers').innerText = nUsers;
+            document.getElementById('statMemoires').innerText = nMemoires;
+            document.getElementById('statDomaines').innerText = nDomaines;
+            document.getElementById('statNews').innerText = nNews;
+        }
+
+        // --- News Logic ---
+
+        async function loadNews() {
+            const tbody = document.getElementById('newsTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8"><i class="fas fa-spinner fa-spin text-brand-yellow text-2xl"></i></td></tr>';
+
+            try {
+                const res = await fetch(`${API_URL}/universites/universities/${UNIV_SLUG}/news/`, {
+                    headers: { 'Authorization': `Bearer ${TOKEN}` }
+                });
+                if(!res.ok) throw new Error("Erreur");
+                allNews = await res.json();
+                renderNewsTable(allNews);
+            } catch(e) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-red-500">Erreur de chargement</td></tr>';
+            }
+        }
+
+        function renderNewsTable(list) {
+            const tbody = document.getElementById('newsTableBody');
+            if(list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-400">Aucune actualité</td></tr>';
+                return;
+            }
+
+            const mapCat = { 'general':'Général', 'event':'Événement', 'award':'Récompense', 'research':'Recherche' };
+
+            tbody.innerHTML = list.map(n => `
+                <tr class="hover:bg-gray-50 transition-colors group border-b border-gray-50 last:border-0">
+                    <td class="px-6 py-4 font-bold text-brand-dark">${n.title}</td>
+                    <td class="px-6 py-4 text-gray-600">${mapCat[n.topics] || n.topics}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded text-xs font-bold ${n.is_published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+                            ${n.is_published ? 'Publié' : 'Brouillon'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-500 font-mono text-xs">${new Date(n.publish_at || n.created_at).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editNews(${n.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteNews(${n.id})" class="p-2 text-red-600 hover:bg-red-50 rounded"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterNews() {
+            const q = document.getElementById('searchNews').value.toLowerCase();
+            const filtered = allNews.filter(n => n.title.toLowerCase().includes(q));
+            renderNewsTable(filtered);
+        }
+
+        function openNewsModal(id = null) {
+            document.getElementById('newsModal').classList.remove('hidden');
+            document.getElementById('newsModal').classList.add('flex');
+            document.getElementById('newsError').classList.add('hidden');
+            document.getElementById('newsForm').reset();
+            document.getElementById('newsId').value = id || '';
+            document.getElementById('newsModalTitle').textContent = id ? 'Modifier Actualité' : 'Nouvelle Actualité';
+        }
+
+        function closeNewsModal() {
+            document.getElementById('newsModal').classList.add('hidden');
+            document.getElementById('newsModal').classList.remove('flex');
+        }
+
+        async function editNews(id) {
+            const n = allNews.find(x => x.id === id);
+            if(!n) return;
+            openNewsModal(id);
+            const f = document.getElementById('newsForm');
+            f.title.value = n.title;
+            f.headline.value = n.headline || '';
+            f.body.value = n.body;
+            f.topics.value = n.topics;
+            f.is_published.checked = n.is_published;
+        }
+
+        async function submitNews() {
+            const f = document.getElementById('newsForm');
+            const fd = new FormData(f);
+            const id = document.getElementById('newsId').value;
+            
+            // Manual append for checkbox if unchecked/checked logic needs it (native FormData handles checked)
+            if(!f.is_published.checked) fd.set('is_published', 'false'); // API might expect explicit false
+            else fd.set('is_published', 'true');
+            
+            if(!id) fd.append('publish_at', new Date().toISOString());
+
+            const url = id 
+                ? `${API_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`
+                : `${API_URL}/universites/universities/${UNIV_SLUG}/news/`;
+            
+            try {
+                const r = await fetch(url, {
+                    method: id ? 'PATCH' : 'POST',
+                    headers: { 'Authorization': `Bearer ${TOKEN}` },
+                    body: fd
+                });
+                if(!r.ok) throw new Error(await r.text());
+                
+                closeNewsModal();
+                loadNews();
+                loadDashboardStats(); // update count
+            } catch(e) {
+                const err = document.getElementById('newsError');
+                err.textContent = e.message;
+                err.classList.remove('hidden');
+            }
+        }
+
+        async function deleteNews(id) {
+            if(!confirm("Supprimer cette actualité ?")) return;
+            try {
+                await fetch(`${API_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${TOKEN}` }
+                });
+                loadNews();
+                loadDashboardStats();
+            } catch(e) { alert(e); }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login.html';
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>

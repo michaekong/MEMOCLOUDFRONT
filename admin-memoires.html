@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemoCloud Admin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Configuration Tailwind -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                yellow: '#ffb606',
+                dark: '#3a3a3a',
+                light: '#f5f7fa',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out',
+              'slide-up': 'slideUp 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        background-color: #f5f7fa;
+        color: #3a3a3a;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: #f1f1f1; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+      }
+      
+      .step-dot.active { @apply bg-brand-yellow ring-4 ring-brand-yellow/20; }
+      .step-dot.completed { @apply bg-green-500; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.1",
+    "react/": "https://esm.sh/react@^19.2.1/"
+  }
+}
+</script>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- APP CONTAINER -->
+    <div id="app" class="flex-1 flex flex-col">
+        <!-- Loading Spinner Initial -->
+        <div class="fixed inset-0 flex items-center justify-center bg-brand-light z-50" id="initialLoader">
+            <div class="flex flex-col items-center gap-4">
+                <i class="fas fa-circle-notch fa-spin text-5xl text-brand-yellow"></i>
+                <p class="text-brand-dark font-bold animate-pulse">Chargement de l'administration...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEMPLATES -->
+    
+    <!-- Header Template -->
+    <template id="header-template">
+        <header class="bg-brand-dark text-white shadow-lg sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brand-yellow flex items-center justify-center text-brand-dark font-bold text-xl shadow-lg">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">Admin<span class="text-brand-yellow">Mémoires</span></h1>
+                </div>
+                <div class="flex items-center gap-4 bg-white/10 px-4 py-2 rounded-full border border-white/5">
+                    <div class="flex flex-col items-end">
+                        <span class="text-sm font-bold text-brand-yellow" id="header-username">User</span>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-wider bg-black/20 px-2 rounded" id="header-role">Role</span>
+                    </div>
+                    <button onclick="app.logout()" class="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+    </template>
+
+    <!-- Main Content Template -->
+    <template id="main-template">
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 animate-fade-in">
+            <!-- Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div class="relative w-full md:w-96 group">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-yellow transition-colors"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher un mémoire..." 
+                           class="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:bg-white focus:border-brand-yellow/50 focus:ring-0 transition-all outline-none"
+                           onkeyup="app.handleSearch(this.value)">
+                </div>
+                <button onclick="app.openFormModal()" 
+                        class="w-full md:w-auto px-6 py-3 bg-brand-yellow text-brand-dark font-bold rounded-lg shadow-md hover:bg-yellow-400 hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-plus"></i> <span>Nouveau Mémoire</span>
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-gray-400">
+                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-folder-open text-4xl opacity-20 text-brand-dark"></i>
+                </div>
+                <p class="text-lg font-medium">Aucun mémoire trouvé</p>
+                <p class="text-sm">Essayez de modifier votre recherche</p>
+            </div>
+
+            <!-- Table (Desktop) -->
+            <div id="desktopTable" class="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-bold tracking-wider border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-4">Titre</th>
+                            <th class="px-6 py-4">Auteur</th>
+                            <th class="px-6 py-4">Année</th>
+                            <th class="px-6 py-4">Statut</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+
+            <!-- Cards (Mobile) -->
+            <div id="mobileCards" class="md:hidden grid grid-cols-1 gap-4"></div>
+        </main>
+    </template>
+
+    <!-- Modal Form Template -->
+    <div id="formModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-slide-up">
+            <!-- Modal Header -->
+            <div class="bg-brand-dark text-white p-6 flex justify-between items-center shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold" id="formTitle">Nouveau mémoire</h2>
+                    <div class="flex gap-2 mt-3">
+                        <div class="step-dot w-8 h-1.5 rounded-full bg-gray-600 transition-all" id="step-dot-1"></div>
+                        <div class="step-dot w-8 h-1.5 rounded-full bg-gray-600 transition-all" id="step-dot-2"></div>
+                        <div class="step-dot w-8 h-1.5 rounded-full bg-gray-600 transition-all" id="step-dot-3"></div>
+                    </div>
+                </div>
+                <button onclick="app.closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto flex-1 relative">
+                <form id="memoireForm" onsubmit="return false;">
+                    
+                    <!-- STEP 1: Basic Info -->
+                    <div id="step-1" class="space-y-5">
+                        <div class="form-group">
+                            <label class="block text-sm font-bold text-brand-dark mb-1 uppercase tracking-wide">Titre du mémoire <span class="text-red-500">*</span></label>
+                            <input type="text" name="titre" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none transition-colors" placeholder="Titre complet">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-bold text-brand-dark mb-1 uppercase tracking-wide">Résumé <span class="text-red-500">*</span></label>
+                            <textarea name="resume" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none transition-colors h-32" placeholder="Description courte du mémoire..."></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="block text-sm font-bold text-brand-dark mb-1 uppercase tracking-wide">Année <span class="text-red-500">*</span></label>
+                                <input type="number" name="annee" required min="2000" max="2100" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none transition-colors">
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" name="auteur_id" id="auteurIdInput">
+                                <div id="author-select-container"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Relations (Multi-selects) -->
+                    <div id="step-2" class="hidden space-y-6">
+                        <!-- Custom MultiSelect for Encadreurs -->
+                        <div id="encadreurs-multiselect-container"></div>
+                        <hr class="border-gray-100">
+                        <!-- Custom MultiSelect for Domaines -->
+                        <div id="domaines-multiselect-container"></div>
+                    </div>
+
+                    <!-- STEP 3: Files -->
+                    <div id="step-3" class="hidden space-y-6 text-center py-4">
+                        <div class="p-8 border-2 border-dashed border-gray-300 rounded-xl hover:border-brand-yellow hover:bg-brand-yellow/5 transition-all group relative cursor-pointer">
+                            <input type="file" name="fichier_pdf" id="pdfInput" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="app.handleFileSelect(this, 'pdfLabel')">
+                            <i class="fas fa-file-pdf text-4xl text-gray-300 group-hover:text-brand-yellow mb-3 transition-colors"></i>
+                            <p class="font-bold text-brand-dark">Fichier PDF</p>
+                            <p class="text-xs text-gray-500 mt-1" id="pdfLabel">Glisser ou cliquer pour ajouter</p>
+                        </div>
+
+                        <div class="p-8 border-2 border-dashed border-gray-300 rounded-xl hover:border-brand-yellow hover:bg-brand-yellow/5 transition-all group relative cursor-pointer">
+                            <input type="file" name="images" id="imgInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="app.handleFileSelect(this, 'imgLabel')">
+                            <i class="fas fa-image text-4xl text-gray-300 group-hover:text-brand-yellow mb-3 transition-colors"></i>
+                            <p class="font-bold text-brand-dark">Image de couverture</p>
+                            <p class="text-xs text-gray-500 mt-1" id="imgLabel">Optionnel</p>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-between shrink-0">
+                <button id="btnPrev" onclick="app.prevStep()" class="px-5 py-2.5 rounded-lg text-gray-600 font-bold hover:bg-gray-200 disabled:opacity-50 transition-colors" disabled>
+                    Précédent
+                </button>
+                <button id="btnNext" onclick="app.nextStep()" class="px-6 py-2.5 rounded-lg bg-brand-yellow text-brand-dark font-bold hover:bg-yellow-400 shadow-md transition-colors flex items-center gap-2">
+                    Suivant <i class="fas fa-arrow-right text-sm"></i>
+                </button>
+                <button id="btnSave" onclick="app.submitForm()" class="hidden px-6 py-2.5 rounded-lg bg-brand-dark text-white font-bold hover:bg-black shadow-lg transition-colors flex items-center gap-2">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/90 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto flex flex-col relative animate-slide-up">
+            <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <div id="detailContent" class="p-0">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /**
+         * GLOBAL CONFIGURATION & STATE
+         */
+        const CONFIG = {
+            API_URL: 'http://127.0.0.1:8000/api',
+            UNIV_SLUG: 'ecole-des-travaux',
+            ALLOWED_ROLES: ['admin', 'superadmin', 'bigboss']
+        };
+
+        const state = {
+            currentUser: null,
+            users: [],
+            domaines: [],
+            memoires: [],
+            filteredMemoires: [],
+            currentStep: 1,
+            editingId: null,
+            initialData: null,
+            form: {
+                encadreurs: [], // ids
+                domaines: []    // slugs
+            }
+        };
+
+        /**
+         * MULTI-SELECT COMPONENT (Vanilla JS)
+         */
+        class MultiSelect {
+            constructor(containerId, label, items, selectedValues, onChange, valueKey = 'id', labelKey = 'nom') {
+                this.container = document.getElementById(containerId);
+                this.items = items;
+                this.selected = new Set(selectedValues);
+                this.onChange = onChange;
+                this.valueKey = valueKey;
+                this.labelKey = labelKey;
+                this.label = label; // FIX: Assign label to instance
+                this.filter = '';
+                this.render();
+            }
+
+            render() {
+                const filtered = this.items.filter(item => 
+                    (item[this.labelKey] || item.full_name || '').toLowerCase().includes(this.filter.toLowerCase())
+                );
+
+                this.container.innerHTML = `
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-bold text-brand-dark uppercase tracking-wide">${this.label}</label>
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" placeholder="Chercher..." class="ms-search w-full pl-10 pr-4 py-2 rounded-lg border-2 border-gray-200 focus:border-brand-yellow outline-none" value="${this.filter}">
+                        </div>
+                        <div class="h-40 overflow-y-auto border-2 border-gray-100 rounded-lg p-2 space-y-1 bg-white">
+                            ${filtered.map(item => {
+                                const val = item[this.valueKey];
+                                const isActive = this.selected.has(val);
+                                const label = item.full_name || item[this.labelKey];
+                                return `
+                                    <div class="ms-option cursor-pointer px-3 py-2 rounded-md flex items-center justify-between transition-colors ${isActive ? 'bg-brand-yellow/10 border border-brand-yellow/50' : 'hover:bg-gray-50'}" data-val="${val}">
+                                        <span class="text-sm ${isActive ? 'font-bold text-brand-dark' : 'text-gray-600'}">${label}</span>
+                                        ${isActive ? '<i class="fas fa-check text-brand-yellow"></i>' : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                            ${filtered.length === 0 ? '<div class="text-center text-gray-400 text-xs py-4">Aucun résultat</div>' : ''}
+                        </div>
+                        <div class="flex flex-wrap gap-2 min-h-[24px]">
+                            ${Array.from(this.selected).map(val => {
+                                const item = this.items.find(i => i[this.valueKey] == val);
+                                if(!item) return '';
+                                return `
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-brand-dark text-white text-xs rounded-full animate-fade-in">
+                                        ${item.full_name || item[this.labelKey]}
+                                        <button type="button" class="ms-remove hover:text-brand-yellow ml-1" data-val="${val}">&times;</button>
+                                    </span>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Bind Events
+                const searchInput = this.container.querySelector('.ms-search');
+                searchInput.addEventListener('input', (e) => {
+                    this.filter = e.target.value;
+                    this.render(); 
+                    this.container.querySelector('.ms-search').focus();
+                });
+
+                this.container.querySelectorAll('.ms-option').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const val = el.dataset.val;
+                        const parsedVal = isNaN(val) ? val : Number(val);
+                        
+                        if(this.selected.has(parsedVal)) this.selected.delete(parsedVal);
+                        else this.selected.add(parsedVal);
+                        this.onChange(Array.from(this.selected));
+                        this.render();
+                        this.container.querySelector('.ms-search').focus();
+                    });
+                });
+
+                this.container.querySelectorAll('.ms-remove').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        e.stopPropagation(); 
+                        const val = el.dataset.val;
+                        const parsedVal = isNaN(val) ? val : Number(val);
+                        this.selected.delete(parsedVal);
+                        this.onChange(Array.from(this.selected));
+                        this.render();
+                        this.container.querySelector('.ms-search').focus();
+                    });
+                });
+            }
+        }
+
+        /**
+         * SINGLE SELECT SEARCHABLE COMPONENT
+         */
+        class SearchableSelect {
+            constructor(containerId, label, items, selectedValue, onChange) {
+                this.container = document.getElementById(containerId);
+                this.label = label;
+                this.items = items || [];
+                this.value = selectedValue; 
+                this.onChange = onChange;
+                this.filter = '';
+                this.isOpen = false;
+                this.render();
+                
+                document.addEventListener('click', (e) => {
+                    // Avoid ghost listeners from destroyed components
+                    if (!document.body.contains(this.container)) return;
+
+                    if (this.container && !this.container.contains(e.target)) {
+                        if(this.isOpen) {
+                            this.isOpen = false;
+                            this.render();
+                        }
+                    }
+                });
+            }
+
+            render() {
+                const selectedItem = this.items.find(i => String(i.id) === String(this.value));
+                
+                const filtered = this.items.filter(i => {
+                    const txt = (i.label || i.nom || i.full_name || '').toLowerCase();
+                    return txt.includes(this.filter.toLowerCase());
+                });
+
+                this.container.innerHTML = `
+                    <label class="block text-sm font-bold text-brand-dark mb-1 uppercase tracking-wide">${this.label} <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <div class="ss-trigger w-full p-3 border-2 ${this.isOpen ? 'border-brand-yellow' : 'border-gray-200'} rounded-lg bg-white flex items-center justify-between cursor-pointer transition-colors">
+                            <span class="${selectedItem ? 'text-brand-dark font-bold' : 'text-gray-400'}">
+                                ${selectedItem ? (selectedItem.label || selectedItem.full_name || selectedItem.nom) : 'Sélectionner un auteur...'}
+                            </span>
+                            <i class="fas fa-chevron-${this.isOpen ? 'up' : 'down'} text-gray-400"></i>
+                        </div>
+
+                        ${this.isOpen ? `
+                        <div class="absolute z-20 w-full mt-1 bg-white border-2 border-brand-yellow rounded-lg shadow-xl max-h-60 overflow-hidden flex flex-col animate-fade-in">
+                            <div class="p-2 border-b border-gray-100 bg-yellow-50">
+                                <input type="text" class="ss-search w-full p-2 bg-white rounded border border-gray-200 focus:border-brand-yellow outline-none text-sm" placeholder="Rechercher..." value="${this.filter}">
+                            </div>
+                            <div class="overflow-y-auto flex-1">
+                                ${filtered.map(item => `
+                                    <div class="ss-option px-4 py-2 hover:bg-brand-light cursor-pointer text-sm ${String(item.id) === String(this.value) ? 'bg-brand-yellow/10 font-bold text-brand-dark' : 'text-gray-600'}" data-val="${item.id}">
+                                        ${item.label || item.full_name || item.nom}
+                                    </div>
+                                `).join('')}
+                                ${filtered.length === 0 ? '<div class="p-4 text-center text-gray-400 text-xs italic">Aucun résultat</div>' : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                const trigger = this.container.querySelector('.ss-trigger');
+                if (trigger) trigger.addEventListener('click', (e) => {
+                    e.stopPropagation(); // CRITICAL FIX: Prevent document listener from immediately closing dropdown
+                    this.isOpen = !this.isOpen;
+                    this.filter = ''; 
+                    this.render();
+                    if (this.isOpen) {
+                        const inp = this.container.querySelector('.ss-search');
+                        if(inp) inp.focus();
+                    }
+                });
+
+                if (this.isOpen) {
+                    const inp = this.container.querySelector('.ss-search');
+                    if (inp) {
+                        inp.focus();
+                        inp.addEventListener('input', (e) => {
+                            this.filter = e.target.value;
+                            this.render();
+                            this.container.querySelector('.ss-search').focus(); 
+                        });
+                        inp.addEventListener('click', e => e.stopPropagation());
+                    }
+
+                    this.container.querySelectorAll('.ss-option').forEach(opt => {
+                        opt.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.value = opt.dataset.val;
+                            this.isOpen = false;
+                            this.onChange(this.value);
+                            this.render();
+                        });
+                    });
+                }
+            }
+        }
+
+        /**
+         * MAIN APP LOGIC
+         */
+        const app = {
+            async init() {
+                const token = localStorage.getItem('authToken');
+                if (!token) return this.redirectLogin();
+
+                try {
+                    await this.loadCurrentUser(token);
+                    await this.loadData(token);
+                    this.renderApp();
+                } catch (e) {
+                    console.error(e);
+                    alert("Erreur d'authentification ou de connexion");
+                    this.redirectLogin();
+                }
+            },
+
+            redirectLogin() {
+                window.location.href = '/login.html';
+            },
+
+            async loadCurrentUser(token) {
+                // Get User
+                const resMe = await fetch(`${CONFIG.API_URL}/auth/me/`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!resMe.ok) throw new Error('User fetch failed');
+                state.currentUser = await resMe.json();
+
+                // Get Role
+                const resRole = await fetch(`${CONFIG.API_URL}/universites/auth/${CONFIG.UNIV_SLUG}/my-role/`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!resRole.ok) throw new Error('Role fetch failed');
+                const roleData = await resRole.json();
+
+                if (!CONFIG.ALLOWED_ROLES.includes(roleData.role)) {
+                    document.body.innerHTML = `
+                        <div class="h-screen flex flex-col items-center justify-center bg-brand-light text-center p-4">
+                            <i class="fas fa-ban text-red-500 text-6xl mb-4"></i>
+                            <h1 class="text-2xl font-bold text-brand-dark">Accès Interdit</h1>
+                            <p class="text-gray-600 mt-2">Vous n'avez pas les droits administrateur requis.</p>
+                            <button onclick="app.logout()" class="mt-4 px-4 py-2 bg-brand-dark text-white rounded">Déconnexion</button>
+                        </div>
+                    `;
+                    throw new Error('Forbidden');
+                }
+                state.currentUser.role = roleData.role;
+            },
+
+            async loadData(token) {
+                const headers = { 'Authorization': `Bearer ${token}` };
+                
+                const [usersRes, domainesRes, memoiresRes] = await Promise.all([
+                    fetch(`${CONFIG.API_URL}/auth/${CONFIG.UNIV_SLUG}/users/?ordering=-id`, { headers }),
+                    fetch(`${CONFIG.API_URL}/universites/domaines/`, { headers }),
+                    fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/`, { headers })
+                ]);
+
+                // Normalisation
+                const rawUsers = await usersRes.json();
+                state.users = rawUsers.map(u => ({
+                    ...u,
+                    label: u.full_name || `${u.prenom} ${u.nom}` || u.email
+                }));
+
+                const rawDomaines = await domainesRes.json();
+                state.domaines = rawDomaines.map(d => ({
+                    ...d,
+                    label: d.nom || d.name || d.label || d.slug
+                }));
+
+                state.memoires = await memoiresRes.json();
+                state.filteredMemoires = state.memoires;
+            },
+
+            renderApp() {
+                document.getElementById('initialLoader').remove();
+                
+                // Inject Header
+                const headerTmpl = document.getElementById('header-template').content.cloneNode(true);
+                headerTmpl.querySelector('#header-username').textContent = state.currentUser.full_name || state.currentUser.nom;
+                headerTmpl.querySelector('#header-role').textContent = state.currentUser.role;
+                document.getElementById('app').appendChild(headerTmpl);
+
+                // Inject Main
+                const mainTmpl = document.getElementById('main-template').content.cloneNode(true);
+                document.getElementById('app').appendChild(mainTmpl);
+
+                this.renderMemoiresList();
+            },
+
+            renderMemoiresList() {
+                const tbody = document.getElementById('tableBody');
+                const mobileContainer = document.getElementById('mobileCards');
+                const emptyState = document.getElementById('emptyState');
+                const desktopTable = document.getElementById('desktopTable');
+
+                tbody.innerHTML = '';
+                mobileContainer.innerHTML = '';
+
+                if (state.filteredMemoires.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    desktopTable.classList.add('hidden');
+                    return;
+                } else {
+                    emptyState.classList.add('hidden');
+                    desktopTable.classList.remove('hidden');
+                }
+
+                state.filteredMemoires.forEach(m => {
+                    const statusClass = m.est_confidentiel ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+                    const statusText = m.est_confidentiel ? 'Confidentiel' : 'Public';
+                    const authorName = m.auteur ? (m.auteur.nom || m.auteur.full_name) : 'Inconnu';
+                    
+                    // Desktop Row
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-yellow-50/30 transition-colors border-b border-gray-50 last:border-0 group';
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 font-bold text-brand-dark">${m.titre}</td>
+                        <td class="px-6 py-4 text-gray-600">${authorName}</td>
+                        <td class="px-6 py-4 font-mono text-gray-500">${m.annee}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 rounded text-xs font-bold ${statusClass}">${statusText}</span></td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2 opacity-100">
+                                <button onclick="app.viewDetails(${m.id})" class="w-8 h-8 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-colors"><i class="fas fa-eye"></i></button>
+                                <button onclick="app.editMemoire(${m.id})" class="w-8 h-8 rounded bg-brand-yellow/10 text-brand-dark hover:bg-brand-yellow hover:text-white flex items-center justify-center transition-colors"><i class="fas fa-edit"></i></button>
+                                <button onclick="app.deleteMemoire(${m.id})" class="w-8 h-8 rounded bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+
+                    // Mobile Card
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-5 rounded-xl shadow-sm border border-gray-100';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-2 py-1 rounded text-xs font-bold ${statusClass}">${statusText}</span>
+                            <span class="font-mono text-xs text-gray-400">${m.annee}</span>
+                        </div>
+                        <h3 class="font-bold text-brand-dark mb-1">${m.titre}</h3>
+                        <p class="text-sm text-gray-500 mb-3">Par ${authorName}</p>
+                        <div class="flex justify-end gap-2 border-t border-gray-100 pt-3">
+                            <button onclick="app.viewDetails(${m.id})" class="p-2 text-blue-600 bg-blue-50 rounded"><i class="fas fa-eye"></i></button>
+                            <button onclick="app.editMemoire(${m.id})" class="p-2 text-brand-dark bg-brand-yellow/20 rounded"><i class="fas fa-edit"></i></button>
+                            <button onclick="app.deleteMemoire(${m.id})" class="p-2 text-red-600 bg-red-50 rounded"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    mobileContainer.appendChild(card);
+                });
+            },
+
+            handleSearch(query) {
+                const lower = query.toLowerCase();
+                state.filteredMemoires = state.memoires.filter(m => 
+                    m.titre.toLowerCase().includes(lower) || 
+                    (m.auteur?.nom || '').toLowerCase().includes(lower)
+                );
+                this.renderMemoiresList();
+            },
+
+            logout() {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
+                window.location.reload();
+            },
+
+            /* --- MODAL FORM LOGIC --- */
+            
+            openFormModal(id = null) {
+                state.editingId = id;
+                state.currentStep = 1;
+                state.form = { encadreurs: [], domaines: [] };
+                
+                // Reset Form
+                const form = document.getElementById('memoireForm');
+                form.reset();
+                document.getElementById('auteurIdInput').value = ""; // Clear Author Input
+
+                let selectedAuthorId = "";
+
+                if (id) {
+                    document.getElementById('formTitle').textContent = 'Modifier le mémoire';
+                    const m = state.memoires.find(i => i.id === id);
+                    if(!m) return;
+                    
+                    state.initialData = m; // Store for change detection
+                    
+                    // Fill Fields
+                    form.titre.value = m.titre;
+                    form.resume.value = m.resume;
+                    form.annee.value = m.annee;
+                    
+                    if (m.auteur) {
+                        selectedAuthorId = m.auteur.id;
+                        document.getElementById('auteurIdInput').value = selectedAuthorId;
+                    }
+                    
+                    state.form.encadreurs = m.encadreurs.map(e => e.id);
+                    state.form.domaines = m.domaines_list; // assuming API returns list of slugs
+                } else {
+                    document.getElementById('formTitle').textContent = 'Nouveau mémoire';
+                    form.annee.value = new Date().getFullYear();
+                    state.initialData = null;
+                }
+
+                // Render Searchable Select for Author
+                new SearchableSelect('author-select-container', 'Auteur', state.users, selectedAuthorId, (val) => {
+                    document.getElementById('auteurIdInput').value = val;
+                });
+
+                // Render MultiSelects
+                new MultiSelect('encadreurs-multiselect-container', "Encadreurs", state.users, state.form.encadreurs, (vals) => state.form.encadreurs = vals);
+                new MultiSelect('domaines-multiselect-container', "Domaines", state.domaines, state.form.domaines, (vals) => state.form.domaines = vals, 'slug', 'nom');
+
+                this.updateStepUI();
+                document.getElementById('formModal').classList.remove('hidden');
+                document.getElementById('formModal').classList.add('flex');
+            },
+
+            closeModal() {
+                document.getElementById('formModal').classList.add('hidden');
+                document.getElementById('formModal').classList.remove('flex');
+            },
+
+            updateStepUI() {
+                // Hide all steps
+                [1, 2, 3].forEach(s => {
+                    document.getElementById(`step-${s}`).classList.add('hidden');
+                    const dot = document.getElementById(`step-dot-${s}`);
+                    dot.classList.remove('active', 'completed', 'bg-brand-yellow', 'bg-green-500');
+                    dot.classList.add('bg-gray-600');
+                });
+
+                // Show current
+                document.getElementById(`step-${state.currentStep}`).classList.remove('hidden');
+
+                // Update dots
+                for(let i=1; i<=3; i++) {
+                    const dot = document.getElementById(`step-dot-${i}`);
+                    if(i < state.currentStep) {
+                        dot.classList.remove('bg-gray-600');
+                        dot.classList.add('completed');
+                    } else if (i === state.currentStep) {
+                        dot.classList.remove('bg-gray-600');
+                        dot.classList.add('active');
+                    }
+                }
+
+                // Buttons
+                const btnPrev = document.getElementById('btnPrev');
+                const btnNext = document.getElementById('btnNext');
+                const btnSave = document.getElementById('btnSave');
+
+                btnPrev.disabled = state.currentStep === 1;
+                
+                if (state.currentStep === 3) {
+                    btnNext.classList.add('hidden');
+                    btnSave.classList.remove('hidden');
+                } else {
+                    btnNext.classList.remove('hidden');
+                    btnSave.classList.add('hidden');
+                }
+            },
+
+            nextStep() {
+                // Simple validation
+                const form = document.getElementById('memoireForm');
+                if (state.currentStep === 1) {
+                    // Fix: Check hidden author input
+                    const authId = document.getElementById('auteurIdInput').value;
+                    if (!form.titre.value || !form.resume.value || !form.annee.value || !authId) {
+                        alert("Veuillez remplir tous les champs obligatoires");
+                        return;
+                    }
+                }
+                if (state.currentStep < 3) {
+                    state.currentStep++;
+                    this.updateStepUI();
+                }
+            },
+
+            prevStep() {
+                if (state.currentStep > 1) {
+                    state.currentStep--;
+                    this.updateStepUI();
+                }
+            },
+
+            handleFileSelect(input, labelId) {
+                const label = document.getElementById(labelId);
+                if (input.files && input.files[0]) {
+                    label.textContent = input.files[0].name;
+                    label.classList.add('text-brand-dark', 'font-bold');
+                }
+            },
+
+            async submitForm() {
+                const btn = document.getElementById('btnSave');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+                try {
+                    const form = document.getElementById('memoireForm');
+                    const formData = new FormData(form);
+                    
+                    // Arrays
+                    state.form.encadreurs.forEach(id => formData.append('encadreurs_ids', id));
+                    state.form.domaines.forEach(slug => formData.append('domaines_slugs', slug));
+
+                    const token = localStorage.getItem('authToken');
+                    const headers = { 'Authorization': `Bearer ${token}` };
+
+                    // Logic: Keep only changes if editing (Optimization from original code)
+                    if (state.editingId && state.initialData) {
+                        // Compare and clean FormData
+                        const init = state.initialData;
+                        const eq = (a, b) => String(a).trim() === String(b).trim();
+                        
+                        if (eq(formData.get('titre'), init.titre)) formData.delete('titre');
+                        if (eq(formData.get('resume'), init.resume)) formData.delete('resume');
+                        if (eq(formData.get('annee'), init.annee)) formData.delete('annee');
+                        if (eq(formData.get('auteur_id'), init.auteur.id)) formData.delete('auteur_id');
+                        
+                        // Lists comparison (simplified)
+                        const initEnc = init.encadreurs.map(e=>e.id).sort().join(',');
+                        const newEnc = state.form.encadreurs.sort().join(',');
+                        if (initEnc === newEnc) formData.delete('encadreurs_ids');
+
+                        const initDom = init.domaines_list.sort().join(',');
+                        const newDom = state.form.domaines.sort().join(',');
+                        if (initDom === newDom) formData.delete('domaines_slugs');
+
+                        // Files: Only send if present (browser handles this naturally in FormData usually, but API might fail on empty strings)
+                        if (!formData.get('fichier_pdf').size) formData.delete('fichier_pdf');
+                        if (!formData.get('images').size) formData.delete('images');
+                        
+                        // UPDATE
+                        const res = await fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/${state.editingId}/`, {
+                            method: 'PATCH',
+                            headers: headers,
+                            body: formData
+                        });
+                        if (!res.ok) throw new Error(await res.text());
+
+                    } else {
+                        // CREATE
+                        const res = await fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/`, {
+                            method: 'POST',
+                            headers: headers,
+                            body: formData
+                        });
+                        if (!res.ok) throw new Error(await res.text());
+                    }
+
+                    // Success
+                    await this.loadData(token);
+                    this.renderMemoiresList();
+                    this.closeModal();
+                    
+                } catch (e) {
+                    alert("Erreur: " + e.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            },
+
+            /* --- DELETE & VIEW --- */
+            
+            async deleteMemoire(id) {
+                if(!confirm("Supprimer définitivement ce mémoire ?")) return;
+                
+                try {
+                    const token = localStorage.getItem('authToken');
+                    const res = await fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/${id}/suppression-totale/`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if(!res.ok) throw new Error(await res.text());
+                    
+                    state.memoires = state.memoires.filter(m => m.id !== id);
+                    state.filteredMemoires = state.filteredMemoires.filter(m => m.id !== id);
+                    this.renderMemoiresList();
+                } catch(e) {
+                    alert("Erreur: " + e.message);
+                }
+            },
+
+            async viewDetails(id) {
+                // Find local or fetch fresh? Local is faster
+                const m = state.memoires.find(i => i.id === id);
+                if(!m) return;
+                
+                const container = document.getElementById('detailContent');
+                
+                // Fetch full details if needed (for analytics stats that might not be in list)
+                // Assuming list data is enough for now, but let's emulate the fetch for robustness
+                try {
+                    const token = localStorage.getItem('authToken');
+                    const res = await fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/${id}/`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const fullM = await res.json();
+                    
+                    container.innerHTML = `
+                        <!-- Cover Image Header -->
+                        <div class="h-48 bg-gray-100 w-full overflow-hidden relative">
+                             ${fullM.images ? `<img src="${fullM.images}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center bg-brand-dark text-white/20"><i class="fas fa-book text-6xl"></i></div>'}
+                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                                <h2 class="text-white text-2xl font-bold shadow-black drop-shadow-lg">${fullM.titre}</h2>
+                             </div>
+                        </div>
+
+                        <div class="p-8 space-y-8">
+                            <!-- Stats Grid -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                                    <p class="text-xs text-gray-500 uppercase">Année</p>
+                                    <p class="font-mono font-bold text-xl text-brand-dark">${fullM.annee}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                                    <p class="text-xs text-gray-500 uppercase">Note</p>
+                                    <p class="font-bold text-xl text-brand-yellow">${fullM.note_moyenne || '-'}/5</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                                    <p class="text-xs text-gray-500 uppercase">Téléchargements</p>
+                                    <p class="font-bold text-xl text-brand-dark">${fullM.nb_telechargements || 0}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                                    <p class="text-xs text-gray-500 uppercase">Likes</p>
+                                    <p class="font-bold text-xl text-brand-dark">${fullM.nb_likes || 0}</p>
+                                </div>
+                            </div>
+
+                            <!-- Resume -->
+                            <div class="prose max-w-none">
+                                <h3 class="text-sm font-bold text-gray-400 uppercase mb-2">Résumé</h3>
+                                <div class="bg-yellow-50/50 p-6 rounded-xl border-l-4 border-brand-yellow text-gray-700 leading-relaxed">
+                                    ${fullM.resume}
+                                </div>
+                            </div>
+                            
+                            <!-- Actors -->
+                            <div class="grid md:grid-cols-2 gap-8">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-400 uppercase mb-3">Auteur</h3>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-brand-dark text-white flex items-center justify-center font-bold">
+                                            ${fullM.auteur.nom.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-brand-dark">${fullM.auteur.nom}</p>
+                                            <p class="text-xs text-gray-500">Etudiant</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-400 uppercase mb-3">Encadreurs</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        ${fullM.encadreurs.map(e => `
+                                            <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full text-sm text-gray-700">
+                                                <i class="fas fa-user-tie text-gray-400"></i> ${e.full_name || e.nom}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="pt-6 border-t border-gray-100 flex gap-4">
+                                ${fullM.pdf_url ? `
+                                    <a href="${fullM.pdf_url}" target="_blank" class="px-6 py-3 bg-brand-dark text-white rounded-lg hover:bg-black transition-colors flex items-center gap-2 font-bold shadow-lg shadow-brand-dark/20">
+                                        <i class="fas fa-file-pdf text-red-400"></i> Lire le document
+                                    </a>
+                                ` : '<span class="text-gray-400 italic">Aucun PDF disponible</span>'}
+                            </div>
+                        </div>
+                    `;
+
+                    document.getElementById('detailModal').classList.remove('hidden');
+
+                } catch(e) {
+                    alert("Impossible de charger les détails");
+                }
+            },
+            
+            editMemoire(id) {
+                this.openFormModal(id);
+            }
+        };
+
+        // Init App
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>
