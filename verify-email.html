@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification de l'Email</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles de base pour la page */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        .message {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Vérification de l'Email</h2>
+    <p>Nous vérifions votre adresse email. Veuillez patienter...</p>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    // Fonction pour extraire le token de l'URL
+    function getTokenFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('token');
+    }
+
+    // Fonction pour vérifier l'email
+    async function verifyEmail(token) {
+        const response = await fetch('/api/auth/verify-email/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token }),
+        });
+
+        return response.json();
+    }
+
+    // Démarrer la vérification lorsque la page se charge
+    window.onload = async () => {
+        const token = getTokenFromURL();
+        if (token) {
+            const result = await verifyEmail(token);
+            const messageElement = document.getElementById('message');
+            if (result.detail) {
+                messageElement.textContent = result.detail;
+                messageElement.style.color = result.detail.includes('déjà vérifié') ? 'green' : 'red';
+            } else {
+                messageElement.textContent = 'Erreur inconnue.';
+                messageElement.style.color = 'red';
+            }
+        } else {
+            document.getElementById('message').textContent = 'Token manquant!';
+        }
+    };
+</script>
+
+</body>
+</html>

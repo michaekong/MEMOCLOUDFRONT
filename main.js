@@ -1,7 +1,7 @@
 // Main JavaScript for ENSTP Yaoundé Website
 class ENSTPWebsite {
     constructor() {
-        this.apiBaseUrl = 'https://memocloudbackend.onrender.com';
+        this.apiBaseUrl = 'https://dashboard.render.com';
         this.token = localStorage.getItem('authToken');
         this.user = null;
         
@@ -198,7 +198,7 @@ class ENSTPWebsite {
             
             // Redirect to login
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'register.html';
             }, 2000);
             
             return data;

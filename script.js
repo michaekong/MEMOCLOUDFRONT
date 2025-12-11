@@ -1,6 +1,6 @@
 // --- Config ---
 // --- Config ---
-const BASE_URL = 'https://memocloudbackend.onrender.com/api';
+const BASE_URL = 'https://dashboard.render.com/api';
 const UNIV_SLUG = 'ecole-des-travaux';
 
 // ⚡ on déclare les variables avant tout
@@ -129,7 +129,7 @@ function initSlideshow() {
 function getFullUrl(path) {
     if (!path) return 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80';
     if (path.startsWith('http')) return path;
-    return `https://memocloudbackend.onrender.com${path}`;
+    return `https://dashboard.render.com${path}`;
 }
 
 // --- Data Loading ---

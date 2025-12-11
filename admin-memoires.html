@@ -262,7 +262,7 @@
          * GLOBAL CONFIGURATION & STATE
          */
         const CONFIG = {
-            API_URL: 'https://memocloudbackend.onrender.com/api',
+            API_URL: 'https://dashboard.render.com/api',
             UNIV_SLUG: 'ecole-des-travaux',
             ALLOWED_ROLES: ['admin', 'superadmin', 'bigboss']
         };
@@ -494,7 +494,7 @@
             },
 
             redirectLogin() {
-                window.location.href = '/login.html';
+                window.location.href = '/register.html';
             },
 
             async loadCurrentUser(token) {
