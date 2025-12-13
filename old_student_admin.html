@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Témoignages Admin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Configuration Tailwind -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                yellow: '#ffb606',
+                dark: '#3a3a3a',
+                light: '#f5f7fa',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.3s ease-out',
+              'slide-up': 'slideUp 0.3s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        background-color: #f5f7fa;
+        color: #3a3a3a;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: #f1f1f1; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+      }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- APP CONTAINER -->
+    <div id="app" class="flex-1 flex flex-col">
+        <!-- Loading Spinner Initial -->
+        <div class="fixed inset-0 flex items-center justify-center bg-brand-light z-50" id="initialLoader">
+            <div class="flex flex-col items-center gap-4">
+                <i class="fas fa-circle-notch fa-spin text-5xl text-brand-yellow"></i>
+                <p class="text-brand-dark font-bold animate-pulse">Chargement des témoignages...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEMPLATES -->
+    
+    <!-- Header Template -->
+    <template id="header-template">
+        <header class="bg-brand-dark text-white shadow-lg sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brand-yellow flex items-center justify-center text-brand-dark font-bold text-xl shadow-lg">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight">Admin<span class="text-brand-yellow">Témoignages</span></h1>
+                </div>
+                <div class="flex items-center gap-4 bg-white/10 px-4 py-2 rounded-full border border-white/5">
+                    <div class="flex flex-col items-end">
+                        <span class="text-sm font-bold text-brand-yellow" id="header-username">User</span>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-wider bg-black/20 px-2 rounded" id="header-role">Role</span>
+                    </div>
+                    <button onclick="app.logout()" class="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+    </template>
+
+    <!-- Main Content Template -->
+    <template id="main-template">
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 animate-fade-in">
+            <!-- Controls -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div class="relative w-full md:w-96 group">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-yellow transition-colors"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher un témoignage..." 
+                           class="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:bg-white focus:border-brand-yellow/50 focus:ring-0 transition-all outline-none"
+                           onkeyup="app.handleSearch(this.value)">
+                </div>
+                <button onclick="app.openFormModal()" 
+                        class="w-full md:w-auto px-6 py-3 bg-brand-yellow text-brand-dark font-bold rounded-lg shadow-md hover:bg-yellow-400 hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-plus"></i> <span>Nouveau Témoignage</span>
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-gray-400">
+                <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-comments text-4xl opacity-20 text-brand-dark"></i>
+                </div>
+                <p class="text-lg font-medium">Aucun témoignage trouvé</p>
+                <p class="text-sm">Essayez de modifier votre recherche</p>
+            </div>
+
+            <!-- Cards Grid -->
+            <div id="testimonialsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </main>
+    </template>
+
+    <!-- Modal Form Template -->
+    <div id="formModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-slide-up">
+            <!-- Modal Header -->
+            <div class="bg-brand-dark text-white p-6 flex justify-between items-center shrink-0">
+                <div>
+                    <h2 class="text-xl font-bold" id="formTitle">Nouveau témoignage</h2>
+                    <p class="text-sm text-gray-400 mt-1">Partagez l'expérience d'un ancien étudiant</p>
+                </div>
+                <button onclick="app.closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto flex-1 relative">
+                <form id="testimonialForm" onsubmit="return false;">
+                    
+                    <div class="space-y-5">
+                        <div class="form-group">
+                            <label class="block text-sm font-bold text-brand-dark mb-1 uppercase tracking-wide">Titre <span class="text-red-500">*</span></label>
+                            <input type="text" name="title" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none transition-colors" placeholder="Ex: Mon parcours en génie civil">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-bold text-brand-dark mb-1 uppercase tracking-wide">Témoignage <span class="text-red-500">*</span></label>
+                            <textarea name="body" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow focus:ring-0 outline-none transition-colors h-48" placeholder="Partagez votre expérience, votre parcours, vos conseils..."></textarea>
+                            <p class="text-xs text-gray-500 mt-1"><i class="fas fa-info-circle"></i> Minimum 100 caractères recommandés</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-bold text-brand-dark mb-1 uppercase tracking-wide">Photo de couverture</label>
+                            <div class="p-8 border-2 border-dashed border-gray-300 rounded-xl hover:border-brand-yellow hover:bg-brand-yellow/5 transition-all group relative cursor-pointer">
+                                <input type="file" name="cover" id="coverInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="app.handleFileSelect(this, 'coverLabel')">
+                                <i class="fas fa-image text-4xl text-gray-300 group-hover:text-brand-yellow mb-3 transition-colors block text-center"></i>
+                                <p class="font-bold text-brand-dark text-center">Image de couverture</p>
+                                <p class="text-xs text-gray-500 mt-1 text-center" id="coverLabel">Glisser ou cliquer pour ajouter (Optionnel)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+                <button onclick="app.closeModal()" class="px-5 py-2.5 rounded-lg text-gray-600 font-bold hover:bg-gray-200 transition-colors">
+                    Annuler
+                </button>
+                <button id="btnSave" onclick="app.submitForm()" class="px-6 py-2.5 rounded-lg bg-brand-yellow text-brand-dark font-bold hover:bg-yellow-400 shadow-md transition-colors flex items-center gap-2">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/90 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto flex flex-col relative animate-slide-up">
+            <button onclick="document.getElementById('detailModal').classList.add('hidden')" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 hover:bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 hover:text-red-500 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <div id="detailContent" class="p-0">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /**
+         * GLOBAL CONFIGURATION & STATE
+         */
+        const CONFIG = {
+            API_URL: 'https://mcb.reimca-app.com',
+            UNIV_SLUG: 'ecole-des-travaux',
+            ALLOWED_ROLES: ['admin', 'superadmin', 'bigboss']
+        };
+
+        const state = {
+            currentUser: null,
+            testimonials: [],
+            filteredTestimonials: [],
+            editingId: null
+        };
+
+        /**
+         * MAIN APP LOGIC
+         */
+        const app = {
+            async init() {
+                const token = localStorage.getItem('authToken');
+                alert(token)
+                if (!token) return this.redirectLogin();
+
+                try {
+
+                    await this.loadCurrentUser(token);
+                  
+                    await this.loadData(token);
+                    this.renderApp();
+                } catch (e) {
+                    console.error(e);
+                    alert("Erreur d'authentification ou de connexion");
+                    this.redirectLogin();
+                }
+            },
+
+            redirectLogin() {
+                window.location.href = '/register.html';
+            },
+
+            async loadCurrentUser(token) {
+                // Get User
+                const resMe = await fetch(`${CONFIG.API_URL}/auth/me/`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!resMe.ok) throw new Error('User fetch failed');
+                state.currentUser = await resMe.json();
+
+                // Get Role
+                const resRole = await fetch(`${CONFIG.API_URL}/universites/auth/${CONFIG.UNIV_SLUG}/my-role/`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!resRole.ok) throw new Error('Role fetch failed');
+                const roleData = await resRole.json();
+
+                if (!CONFIG.ALLOWED_ROLES.includes(roleData.role)) {
+                    document.body.innerHTML = `
+                        <div class="h-screen flex flex-col items-center justify-center bg-brand-light text-center p-4">
+                            <i class="fas fa-ban text-red-500 text-6xl mb-4"></i>
+                            <h1 class="text-2xl font-bold text-brand-dark">Accès Interdit</h1>
+                            <p class="text-gray-600 mt-2">Vous n'avez pas les droits administrateur requis.</p>
+                            <button onclick="app.logout()" class="mt-4 px-4 py-2 bg-brand-dark text-white rounded">Déconnexion</button>
+                        </div>
+                    `;
+                    throw new Error('Forbidden');
+                }
+                state.currentUser.role = roleData.role;
+             
+            },
+
+            async loadData(token) {
+                const headers = { 'Authorization': `Bearer ${token}` };
+                
+                const res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, { headers });
+                if (!res.ok) throw new Error('Failed to fetch testimonials');
+                
+                state.testimonials = await res.json();
+                state.filteredTestimonials = state.testimonials;
+            },
+
+            renderApp() {
+                document.getElementById('initialLoader').remove();
+                
+                // Inject Header
+                const headerTmpl = document.getElementById('header-template').content.cloneNode(true);
+                headerTmpl.querySelector('#header-username').textContent = state.currentUser.full_name || state.currentUser.nom;
+                headerTmpl.querySelector('#header-role').textContent = state.currentUser.role;
+                document.getElementById('app').appendChild(headerTmpl);
+
+                // Inject Main
+                const mainTmpl = document.getElementById('main-template').content.cloneNode(true);
+                document.getElementById('app').appendChild(mainTmpl);
+
+                this.renderTestimonialsList();
+            },
+
+            renderTestimonialsList() {
+                const grid = document.getElementById('testimonialsGrid');
+                const emptyState = document.getElementById('emptyState');
+
+                grid.innerHTML = '';
+
+                if (state.filteredTestimonials.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    return;
+                } else {
+                    emptyState.classList.add('hidden');
+                }
+
+                state.filteredTestimonials.forEach(t => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 group';
+                    
+                    const truncatedBody = t.body.length > 150 ? t.body.substring(0, 150) + '...' : t.body;
+                    const createdDate = new Date(t.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+                    
+                    card.innerHTML = `
+                        <!-- Cover Image -->
+                        <div class="h-48 bg-gray-100 w-full overflow-hidden relative">
+                            ${t.cover_url ? `<img src="${t.cover_url}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">` : '<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-yellow/20 to-brand-dark/10"><i class="fas fa-user-graduate text-5xl text-brand-dark/20"></i></div>'}
+                            <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-brand-dark">
+                                <i class="fas fa-calendar-alt text-brand-yellow"></i> ${createdDate}
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-5">
+                            <h3 class="font-bold text-lg text-brand-dark mb-2 line-clamp-2">${t.title}</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed mb-4 line-clamp-3">${truncatedBody}</p>
+                            
+                            <!-- Actions -->
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                <button onclick="app.viewDetails(${t.id})" class="flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                                    <i class="fas fa-eye"></i> Voir plus
+                                </button>
+                                <div class="flex gap-2">
+                                    <button onclick="app.editTestimonial(${t.id})" class="w-8 h-8 rounded bg-brand-yellow/10 text-brand-dark hover:bg-brand-yellow hover:text-white flex items-center justify-center transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="app.deleteTestimonial(${t.id})" class="w-8 h-8 rounded bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            },
+
+            handleSearch(query) {
+                const lower = query.toLowerCase();
+                state.filteredTestimonials = state.testimonials.filter(t => 
+                    t.title.toLowerCase().includes(lower) || 
+                    t.body.toLowerCase().includes(lower)
+                );
+                this.renderTestimonialsList();
+            },
+
+            logout() {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
+                window.location.reload();
+            },
+
+            /* --- MODAL FORM LOGIC --- */
+            
+            openFormModal(id = null) {
+                state.editingId = id;
+                
+                // Reset Form
+                const form = document.getElementById('testimonialForm');
+                form.reset();
+                document.getElementById('coverLabel').textContent = 'Glisser ou cliquer pour ajouter (Optionnel)';
+                document.getElementById('coverLabel').classList.remove('text-brand-dark', 'font-bold');
+
+                if (id) {
+                    document.getElementById('formTitle').textContent = 'Modifier le témoignage';
+                    const t = state.testimonials.find(i => i.id === id);
+                    if(!t) return;
+                    
+                    // Fill Fields
+                    form.title.value = t.title;
+                    form.body.value = t.body;
+                    
+                    if (t.cover_url) {
+                        document.getElementById('coverLabel').textContent = 'Image actuelle (cliquez pour changer)';
+                        document.getElementById('coverLabel').classList.add('text-brand-dark', 'font-bold');
+                    }
+                } else {
+                    document.getElementById('formTitle').textContent = 'Nouveau témoignage';
+                }
+
+                document.getElementById('formModal').classList.remove('hidden');
+                document.getElementById('formModal').classList.add('flex');
+            },
+
+            closeModal() {
+                document.getElementById('formModal').classList.add('hidden');
+                document.getElementById('formModal').classList.remove('flex');
+            },
+
+            handleFileSelect(input, labelId) {
+                const label = document.getElementById(labelId);
+                if (input.files && input.files[0]) {
+                    label.textContent = input.files[0].name;
+                    label.classList.add('text-brand-dark', 'font-bold');
+                }
+            },
+
+            async submitForm() {
+                const btn = document.getElementById('btnSave');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+
+                try {
+                    const form = document.getElementById('testimonialForm');
+                    
+                    // Validation
+                    if (!form.title.value || !form.body.value) {
+                        alert("Veuillez remplir tous les champs obligatoires");
+                        return;
+                    }
+
+                    const formData = new FormData(form);
+                    
+                    // Remove cover if not changed in edit mode
+                    if (state.editingId && !form.cover.files.length) {
+                        formData.delete('cover');
+                    }
+
+                    const token = localStorage.getItem('authToken');
+                    const headers = { 'Authorization': `Bearer ${token}` };
+
+                    let res;
+                    if (state.editingId) {
+                        // UPDATE
+                        res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/${state.editingId}/`, {
+                            method: 'PATCH',
+                            headers: headers,
+                            body: formData
+                        });
+                    } else {
+                        // CREATE
+                        res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, {
+                            method: 'POST',
+                            headers: headers,
+                            body: formData
+                        });
+                    }
+
+                    if (!res.ok) {
+                        const errorData = await res.json();
+                        throw new Error(JSON.stringify(errorData));
+                    }
+
+                    // Success
+                    await this.loadData(token);
+                    this.renderTestimonialsList();
+                    this.closeModal();
+                    
+                } catch (e) {
+                    console.error(e);
+                    alert("Erreur: " + e.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            },
+
+            /* --- DELETE & VIEW --- */
+            
+            async deleteTestimonial(id) {
+                if(!confirm("Supprimer définitivement ce témoignage ?")) return;
+                
+                try {
+                    const token = localStorage.getItem('authToken');
+                    const res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/${id}/`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if(!res.ok) throw new Error(await res.text());
+                    
+                    state.testimonials = state.testimonials.filter(t => t.id !== id);
+                    state.filteredTestimonials = state.filteredTestimonials.filter(t => t.id !== id);
+                    this.renderTestimonialsList();
+                } catch(e) {
+                    alert("Erreur: " + e.message);
+                }
+            },
+
+            async viewDetails(id) {
+                const t = state.testimonials.find(i => i.id === id);
+                if(!t) return;
+                
+                const container = document.getElementById('detailContent');
+                const createdDate = new Date(t.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                
+                container.innerHTML = `
+                    <!-- Cover Image Header -->
+                    <div class="h-64 bg-gray-100 w-full overflow-hidden relative">
+                        ${t.cover_url ? `<img src="${t.cover_url}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-yellow/20 to-brand-dark/20"><i class="fas fa-user-graduate text-8xl text-brand-dark/30"></i></div>'}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                            <div>
+                                <h2 class="text-white text-3xl font-bold shadow-black drop-shadow-lg mb-2">${t.title}</h2>
+                                <p class="text-white/80 text-sm"><i class="fas fa-calendar-alt"></i> Publié le ${createdDate}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-8 space-y-6">
+                        <!-- Testimonial Body -->
+                        <div class="prose max-w-none">
+                            <div class="bg-yellow-50/50 p-6 rounded-xl border-l-4 border-brand-yellow text-gray-700 leading-relaxed whitespace-pre-line">
+                                ${t.body}
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="pt-6 border-t border-gray-100 flex gap-4">
+                            <button onclick="app.editTestimonial(${t.id}); document.getElementById('detailModal').classList.add('hidden')" class="px-6 py-3 bg-brand-yellow text-brand-dark rounded-lg hover:bg-yellow-400 transition-colors flex items-center gap-2 font-bold shadow-md">
+                                <i class="fas fa-edit"></i> Modifier
+                            </button>
+                            <button onclick="app.deleteTestimonial(${t.id}); document.getElementById('detailModal').classList.add('hidden')" class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 font-bold shadow-md">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('detailModal').classList.remove('hidden');
+            },
+            
+            editTestimonial(id) {
+                this.openFormModal(id);
+            }
+        };
+
+        // Init App
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>

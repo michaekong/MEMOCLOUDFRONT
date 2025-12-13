@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Actualités</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                yellow: '#ffb606',
+                dark: '#3a3a3a',
+                light: '#f5f7fa',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body { background-color: white; font-family: 'Segoe UI', sans-serif; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+    </style>
+</head>
+<body class="bg-white text-brand-dark p-6">
+
+    <!-- Toolbar -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-fade-in">
+        <div class="relative w-full md:w-96 group">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-yellow transition-colors"></i>
+            <input type="text" id="searchInput" placeholder="Rechercher une actualité..." 
+                   class="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:bg-white focus:border-brand-yellow/50 focus:ring-0 transition-all outline-none"
+                   onkeyup="app.handleSearch()">
+        </div>
+        <button onclick="app.openModal()" 
+                class="w-full md:w-auto px-6 py-3 bg-brand-yellow text-brand-dark font-bold rounded-lg shadow-md hover:bg-yellow-400 hover:shadow-lg transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-plus"></i> <span>Ajouter Actualité</span>
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 animate-fade-in">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-bold border-b border-gray-100">
+                    <tr>
+                        <th class="px-6 py-4">Image</th>
+                        <th class="px-6 py-4">Titre</th>
+                        <th class="px-6 py-4">Catégorie</th>
+                        <th class="px-6 py-4">Statut</th>
+                        <th class="px-6 py-4">Date</th>
+                        <th class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="newsTableBody" class="divide-y divide-gray-100">
+                    <tr><td colspan="6" class="text-center py-8 text-gray-400">Chargement...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="modalOverlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] animate-slide-up">
+            <div class="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50 rounded-t-xl">
+                <h3 id="modalTitle" class="text-xl font-bold text-brand-dark">Nouvelle Actualité</h3>
+                <button onclick="app.closeModal()" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto">
+                <form id="newsForm" class="space-y-5" onsubmit="return false;">
+                    <input type="hidden" name="id" id="newsId">
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-brand-dark mb-1">Titre <span class="text-red-500">*</span></label>
+                        <input type="text" name="title" required class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow outline-none transition-colors">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-brand-dark mb-1">Résumé / Accroche</label>
+                        <input type="text" name="headline" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow outline-none transition-colors">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-brand-dark mb-1">Contenu <span class="text-red-500">*</span></label>
+                        <textarea name="body" required rows="6" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow outline-none transition-colors"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-brand-dark mb-1">Catégorie</label>
+                            <select name="topics" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-brand-yellow bg-white outline-none">
+                                <option value="general">Général</option>
+                                <option value="event">Événement</option>
+                                <option value="award">Récompense</option>
+                                <option value="research">Recherche</option>
+                                <option value="alumni">Alumni</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-brand-dark mb-1">Image de couverture</label>
+                            <input type="file" name="cover" accept="image/*" class="w-full p-2 border-2 border-gray-200 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-yellow/10 file:text-brand-yellow hover:file:bg-brand-yellow/20">
+                            <div id="currentImage" class="mt-2 hidden">
+                                <p class="text-xs text-gray-500">Image actuelle:</p>
+                                <img src="" class="h-16 w-auto rounded object-cover mt-1 border border-gray-200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="flex items-center gap-3 p-4 border border-gray-100 rounded-lg bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <input type="checkbox" name="is_published" class="w-5 h-5 text-brand-yellow rounded focus:ring-brand-yellow border-gray-300">
+                        <span class="font-bold text-brand-dark select-none">Publier immédiatement</span>
+                    </label>
+                </form>
+                <div id="formError" class="hidden mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm"></div>
+            </div>
+
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 rounded-b-xl">
+                <button onclick="app.closeModal()" class="px-5 py-2.5 text-gray-600 font-bold hover:bg-gray-200 rounded-lg transition-colors">Annuler</button>
+                <button onclick="app.submitForm()" id="btnSave" class="px-6 py-2.5 bg-brand-yellow text-brand-dark font-bold rounded-lg shadow hover:bg-yellow-400 transition-colors flex items-center gap-2">
+                    <i class="fas fa-save"></i> <span>Enregistrer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg text-white font-medium transform translate-y-20 opacity-0 transition-all duration-300 z-[60]"></div>
+
+    <script>
+        // Configuration
+        const API_URL = 'https://mcb.reimca-app.com';
+        const UNIV_SLUG = 'ecole-des-travaux';
+        const TOKEN = localStorage.getItem('authToken');
+
+        const app = {
+            news: [],
+            
+            init() {
+                if (!TOKEN) {
+                    document.body.innerHTML = '<div class="p-10 text-center text-red-500">Session expirée. Veuillez vous reconnecter.</div>';
+                    return;
+                }
+                this.loadNews();
+            },
+
+            async loadNews() {
+                const tbody = document.getElementById('newsTableBody');
+                try {
+                    const res = await fetch(`${API_URL}/universites/universities/${UNIV_SLUG}/news/`, {
+                        headers: { 'Authorization': `Bearer ${TOKEN}` }
+                    });
+                    
+                    if (!res.ok) throw new Error("Erreur chargement");
+                    
+                    this.news = await res.json();
+                    this.renderNews(this.news);
+                    
+                } catch (e) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-red-500">Impossible de charger les actualités</td></tr>';
+                    console.error(e);
+                }
+            },
+
+            renderNews(list) {
+                const tbody = document.getElementById('newsTableBody');
+                
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-gray-400">Aucune actualité trouvée</td></tr>';
+                    return;
+                }
+
+                const topicsMap = { 'general':'Général', 'event':'Événement', 'award':'Récompense', 'research':'Recherche', 'alumni':'Alumni' };
+
+                tbody.innerHTML = list.map(item => {
+                    const date = new Date(item.created_at).toLocaleDateString('fr-FR');
+                    const statusClass = item.is_published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
+                    const statusLabel = item.is_published ? 'Publié' : 'Brouillon';
+                    const img = item.cover_url || 'https://via.placeholder.com/50?text=IMG';
+
+                    // Echappement des chaînes pour éviter les problèmes XSS et JS
+                    const safeTitle = item.title.replace(/'/g, "\\'"); 
+
+                    return `
+                    <tr class="hover:bg-gray-50 transition-colors group">
+                        <td class="px-6 py-4">
+                            <img src="${img}" class="w-12 h-12 rounded object-cover border border-gray-200">
+                        </td>
+                        <td class="px-6 py-4 font-bold text-brand-dark">${item.title}</td>
+                        <td class="px-6 py-4 text-gray-600">${topicsMap[item.topics] || item.topics}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-xs font-bold ${statusClass}">${statusLabel}</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 font-mono">${date}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="app.editNews(${item.id})" class="w-8 h-8 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition-colors" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="app.deleteNews(${item.id})" class="w-8 h-8 rounded bg-red-50 text-red-600 hover:bg-red-100 flex items-center justify-center transition-colors" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
+                }).join('');
+            },
+
+            handleSearch() {
+                const q = document.getElementById('searchInput').value.toLowerCase();
+                const filtered = this.news.filter(n => n.title.toLowerCase().includes(q));
+                this.renderNews(filtered);
+            },
+
+            // --- MODAL & FORM ---
+
+            openModal(id = null) {
+                const modal = document.getElementById('modalOverlay');
+                const form = document.getElementById('newsForm');
+                const title = document.getElementById('modalTitle');
+                const imgPreview = document.getElementById('currentImage');
+                
+                document.getElementById('formError').classList.add('hidden');
+                
+                if (id) {
+                    const item = this.news.find(n => n.id === id);
+                    if (!item) return;
+
+                    title.textContent = 'Modifier l\'actualité';
+                    document.getElementById('newsId').value = item.id;
+                    form.title.value = item.title;
+                    form.headline.value = item.headline || '';
+                    form.body.value = item.body;
+                    form.topics.value = item.topics;
+                    form.is_published.checked = item.is_published;
+
+                    if (item.cover_url) {
+                        imgPreview.querySelector('img').src = item.cover_url;
+                        imgPreview.classList.remove('hidden');
+                    } else {
+                        imgPreview.classList.add('hidden');
+                    }
+                } else {
+                    title.textContent = 'Nouvelle Actualité';
+                    form.reset();
+                    document.getElementById('newsId').value = '';
+                    imgPreview.classList.add('hidden');
+                }
+
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            },
+
+            closeModal() {
+                document.getElementById('modalOverlay').classList.add('hidden');
+                document.getElementById('modalOverlay').classList.remove('flex');
+            },
+
+            editNews(id) {
+                this.openModal(id);
+            },
+
+            async submitForm() {
+                const btn = document.getElementById('btnSave');
+                const errorBox = document.getElementById('formError');
+                const form = document.getElementById('newsForm');
+                
+                // Basic validation
+                if (!form.title.value || !form.body.value) {
+                    this.showError('Le titre et le contenu sont obligatoires.');
+                    return;
+                }
+
+                const id = document.getElementById('newsId').value;
+                const isEdit = !!id;
+                
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+                errorBox.classList.add('hidden');
+
+                const fd = new FormData(form);
+                
+                // Checkbox handling (FormData doesn't send unchecked boxes as false usually, need explicit)
+                if(!form.is_published.checked) fd.append('is_published', 'false');
+                else fd.set('is_published', 'true');
+
+                if (!isEdit) fd.append('publish_at', new Date().toISOString());
+
+                const url = isEdit 
+                    ? `${API_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`
+                    : `${API_URL}/universites/universities/${UNIV_SLUG}/news/`;
+
+                try {
+                    const res = await fetch(url, {
+                        method: isEdit ? 'PATCH' : 'POST',
+                        headers: { 'Authorization': `Bearer ${TOKEN}` }, // No Content-Type for FormData
+                        body: fd
+                    });
+
+                    if (!res.ok) {
+                        const err = await res.json();
+                        throw new Error(err.detail || JSON.stringify(err));
+                    }
+
+                    this.showToast(isEdit ? 'Actualité modifiée !' : 'Actualité créée !', 'success');
+                    this.closeModal();
+                    this.loadNews();
+
+                } catch (e) {
+                    console.error(e);
+                    this.showError(e.message.replace(/[{}"[\]]/g, ' '));
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save"></i> <span>Enregistrer</span>';
+                }
+            },
+
+            async deleteNews(id) {
+                if (!confirm("Voulez-vous vraiment supprimer cette actualité ?")) return;
+
+                try {
+                    const res = await fetch(`${API_URL}/universites/universities/${UNIV_SLUG}/news/${id}/`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${TOKEN}` }
+                    });
+
+                    if (!res.ok) throw new Error("Erreur suppression");
+                    
+                    this.showToast('Actualité supprimée', 'success');
+                    this.news = this.news.filter(n => n.id !== id);
+                    this.renderNews(this.news);
+
+                } catch (e) {
+                    this.showToast('Erreur lors de la suppression', 'error');
+                }
+            },
+
+            // --- UTILS ---
+            
+            showError(msg) {
+                const box = document.getElementById('formError');
+                box.textContent = msg;
+                box.classList.remove('hidden');
+            },
+
+            showToast(msg, type = 'info') {
+                const t = document.getElementById('toast');
+                t.textContent = msg;
+                t.className = `fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg text-white font-medium transform transition-all duration-300 z-[60] ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+                
+                // Show
+                setTimeout(() => t.classList.remove('translate-y-20', 'opacity-0'), 10);
+                
+                // Hide
+                setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
+            }
+        };
+
+        // Init app
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>

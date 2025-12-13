@@ -104,6 +104,10 @@
             <button onclick="app.nav('domaines')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group text-gray-300" data-target="domaines">
                 <i class="fas fa-tags w-6 text-center text-gray-400 group-hover:text-brand-yellow"></i><span class="font-medium sidebar-text">Domaines</span>
             </button>
+            <button onclick="app.nav('old-students')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group text-gray-300" data-target="old-students">
+    <i class="fas fa-user-graduate w-6 text-center text-gray-400 group-hover:text-brand-yellow"></i>
+    <span class="font-medium sidebar-text"> Temoignages Anciens Étudiants</span>
+</button>
             <div class="pt-4 pb-2 px-4 text-xs font-bold text-gray-500 uppercase sidebar-text">Communication</div>
             <button onclick="app.nav('news')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group text-gray-300" data-target="news">
                 <i class="fas fa-newspaper w-6 text-center text-gray-400 group-hover:text-brand-yellow"></i><span class="font-medium sidebar-text">Actualités</span>
@@ -181,7 +185,10 @@
                     </table>
                 </div>
             </div>
-
+            <!-- SECTION: ANCIENS ÉTUDIANTS -->
+<div id="section-old-students" class="section-content hidden h-full">
+    <iframe src="old_student_admin.html" class="iframe-container shadow-sm border border-gray-200"></iframe>
+</div>
             <!-- SECTION: DOMAINES -->
             <div id="section-domaines" class="section-content hidden animate-fade-in">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
@@ -235,7 +242,7 @@
     <!-- JavaScript Logic -->
     <script>
         // CONFIG
-        const CONFIG = { API_BASE: 'https://memocloudbackend.onrender.com/api', UNIV_SLUG: 'ecole-des-travaux', TOKEN: localStorage.getItem('authToken') || '' };
+        const CONFIG = { API_BASE: 'https://mcb.reimca-app.com', UNIV_SLUG: 'ecole-des-travaux', TOKEN: localStorage.getItem('authToken') || '' };
         
         // UTILS
         const Utils = {
@@ -254,28 +261,55 @@
         // GLOBAL APP
         const app = {
             init: async function() {
-                if(!CONFIG.TOKEN) console.warn("No token");
-                // Simulation User (Demo)
-                this.user = { full_name: "Admin Demo", prenom: "Admin", role: "admin" };
-                document.getElementById('userName').textContent = this.user.full_name;
-                document.getElementById('userAvatar').textContent = this.user.prenom[0];
-                document.getElementById('userRole').textContent = this.user.role;
-                
-                // --- INIT DASHBOARD ANALYTICS (Nouveau) ---
-                if (window.DashboardAnalytics) {
-                    const dashboard = new DashboardAnalytics({
-                        apiBase: CONFIG.API_BASE,
-                        univSlug: CONFIG.UNIV_SLUG,
-                        token: CONFIG.TOKEN,
-                        containerId: 'section-dashboard'
-                    });
-                    dashboard.init();
-                } else {
-                    console.error("DashboardAnalytics not loaded");
-                }
+    // 🔒 Vérification sécurisée AVANT tout chargement
+    const token = localStorage.getItem('authToken');
 
-                domaineManager.init();
-            },
+    if (!token) {
+        window.location.replace('/register.html');
+        return;
+    }
+
+    try {
+        const res = await fetch(`${CONFIG.API_BASE}/universites/auth/${CONFIG.UNIV_SLUG}/my-role/`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error("Invalid role response");
+
+        const data = await res.json();
+        const role = data.role;
+
+        if (!['admin', 'superadmin', 'bigboss'].includes(role)) {
+            window.location.replace('/register.html');
+            return;
+        }
+
+        // ✅ Accès autorisé → on continue
+        this.user = { full_name: "Admin Vérifié", prenom: "Admin", role: role };
+        document.getElementById('userName').textContent = this.user.full_name;
+        document.getElementById('userAvatar').textContent = this.user.prenom[0];
+        document.getElementById('userRole').textContent = role;
+
+        // --- INIT MODULES ---
+        if (window.DashboardAnalytics) {
+            const dashboard = new DashboardAnalytics({
+                apiBase: CONFIG.API_BASE,
+                univSlug: CONFIG.UNIV_SLUG,
+                token: CONFIG.TOKEN,
+                containerId: 'section-dashboard'
+            });
+            dashboard.init();
+        } else {
+            console.error("DashboardAnalytics not loaded");
+        }
+
+        domaineManager.init();
+
+    } catch (e) {
+        console.error("Secure access error:", e);
+        window.location.replace('/register.html');
+    }
+},
             nav: function(section) {
                 // Menu Active State
                 document.querySelectorAll('.menu-item').forEach(b => {
@@ -293,13 +327,22 @@
                 if(target) target.classList.remove('hidden');
                 
                 // Titles
-                const titles = { dashboard: 'Tableau de bord', users: 'Utilisateurs', memoires: 'Mémoires', news: 'Actualités', domaines: 'Domaines' };
+                const titles = {
+    dashboard: 'Tableau de bord',
+    users: 'Utilisateurs',
+    memoires: 'Mémoires',
+    news: 'Actualités',
+    domaines: 'Domaines',
+    'old-students': 'Anciens Étudiants'
+};
                 document.getElementById('pageTitle').innerText = titles[section] || 'Administration';
                 
                 // Load Data specific logic
                 if(section === 'news') newsManager.load();
                 if(section === 'domaines') domaineManager.loadDomaines();
-                
+                if(section === 'old-students') {
+  
+}
                 // Mobile Sidebar Logic
                 const sb = document.getElementById('sidebar');
                 if(sb.classList.contains('sidebar-mobile') && sb.classList.contains('active')) toggleSidebar();
@@ -349,6 +392,7 @@
         // DOMAINE MANAGER
         class DomaineManager {
             constructor() { this.domaines = []; this.searchDebounce = null; }
+            
             init() {
                 this.DOM = { listBox: document.getElementById('domaines-container'), search: document.getElementById('domaine-search'), suggest: document.getElementById('suggestions-box'), modal: document.getElementById('add-domaine-modal'), form: document.getElementById('add-domaine-form'), input: document.getElementById('new-domaine-nom'), slug: document.getElementById('slug-preview') };
                 this.DOM.search.addEventListener('input', e=>this.onSearch(e.target.value));
