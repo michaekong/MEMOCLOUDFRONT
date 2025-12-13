@@ -1,6 +1,6 @@
 // --- Config ---
 // --- Config ---
-const BASE_URL = 'https://mcb.reimca-app.com';
+const BASE_URL = 'http://127.0.0.1:8000/api';
 const UNIV_SLUG = 'ecole-des-travaux';
 
 // ⚡ on déclare les variables avant tout
