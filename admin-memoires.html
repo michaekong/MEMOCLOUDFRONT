@@ -262,7 +262,7 @@
          * GLOBAL CONFIGURATION & STATE
          */
         const CONFIG = {
-            API_URL: 'http://127.0.0.1:8000/api',
+            API_URL: 'https://mcb.reimca-app.com/api',
             UNIV_SLUG: 'ecole-des-travaux',
             ALLOWED_ROLES: ['admin', 'superadmin', 'bigboss']
         };
@@ -502,11 +502,13 @@
                 const resMe = await fetch(`${CONFIG.API_URL}/auth/me/`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (!resMe.ok) throw new Error('User fetch failed');
                 state.currentUser = await resMe.json();
+                
 
                 // Get Role
                 const resRole = await fetch(`${CONFIG.API_URL}/universites/auth/${CONFIG.UNIV_SLUG}/my-role/`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (!resRole.ok) throw new Error('Role fetch failed');
                 const roleData = await resRole.json();
+                
 
                 if (!CONFIG.ALLOWED_ROLES.includes(roleData.role)) {
                     document.body.innerHTML = `
@@ -520,6 +522,7 @@
                     throw new Error('Forbidden');
                 }
                 state.currentUser.role = roleData.role;
+                
             },
 
             async loadData(token) {

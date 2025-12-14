@@ -203,7 +203,7 @@
          * GLOBAL CONFIGURATION & STATE
          */
         const CONFIG = {
-            API_URL: 'http://127.0.0.1:8000/api',
+            API_URL: 'https://mcb.reimca-app.com/api',
             UNIV_SLUG: 'ecole-des-travaux',
             ALLOWED_ROLES: ['admin', 'superadmin', 'bigboss']
         };
@@ -221,13 +221,10 @@
         const app = {
             async init() {
                 const token = localStorage.getItem('authToken');
-                alert(token)
                 if (!token) return this.redirectLogin();
 
                 try {
-
                     await this.loadCurrentUser(token);
-                  
                     await this.loadData(token);
                     this.renderApp();
                 } catch (e) {
@@ -264,13 +261,12 @@
                     throw new Error('Forbidden');
                 }
                 state.currentUser.role = roleData.role;
-             
             },
 
             async loadData(token) {
                 const headers = { 'Authorization': `Bearer ${token}` };
                 
-                const res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, { headers });
+                const res = await fetch(`${CONFIG.API_URL}/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, { headers });
                 if (!res.ok) throw new Error('Failed to fetch testimonials');
                 
                 state.testimonials = await res.json();
@@ -419,30 +415,69 @@
                     // Validation
                     if (!form.title.value || !form.body.value) {
                         alert("Veuillez remplir tous les champs obligatoires");
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
                         return;
                     }
 
-                    const formData = new FormData(form);
-                    
-                    // Remove cover if not changed in edit mode
-                    if (state.editingId && !form.cover.files.length) {
-                        formData.delete('cover');
-                    }
-
+                    const formData = new FormData();
                     const token = localStorage.getItem('authToken');
                     const headers = { 'Authorization': `Bearer ${token}` };
 
                     let res;
                     if (state.editingId) {
-                        // UPDATE
-                        res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/${state.editingId}/`, {
+                        // UPDATE - Ne envoyer que les champs modifiés
+                        const original = state.testimonials.find(t => t.id === state.editingId);
+                        
+                        if (!original) {
+                            throw new Error("Témoignage introuvable");
+                        }
+
+                        // Comparer et ajouter uniquement les champs modifiés
+                        const trimEqual = (a, b) => String(a || '').trim() === String(b || '').trim();
+                        
+                        if (!trimEqual(form.title.value, original.title)) {
+                            formData.append('title', form.title.value);
+                        }
+                        
+                        if (!trimEqual(form.body.value, original.body)) {
+                            formData.append('body', form.body.value);
+                        }
+                        
+                        // Ajouter l'image uniquement si un nouveau fichier a été sélectionné
+                        if (form.cover.files && form.cover.files.length > 0) {
+                            formData.append('cover', form.cover.files[0]);
+                        }
+
+                        // Si aucun champ n'a été modifié, informer l'utilisateur
+                        let hasChanges = false;
+                        for (let pair of formData.entries()) {
+                            hasChanges = true;
+                            break;
+                        }
+
+                        if (!hasChanges) {
+                            alert("Aucune modification détectée");
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                            return;
+                        }
+
+                        res = await fetch(`${CONFIG.API_URL}/universities/${CONFIG.UNIV_SLUG}/oldstudent/${state.editingId}/`, {
                             method: 'PATCH',
                             headers: headers,
                             body: formData
                         });
                     } else {
-                        // CREATE
-                        res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, {
+                        // CREATE - Envoyer tous les champs
+                        formData.append('title', form.title.value);
+                        formData.append('body', form.body.value);
+                        
+                        if (form.cover.files && form.cover.files.length > 0) {
+                            formData.append('cover', form.cover.files[0]);
+                        }
+
+                        res = await fetch(`${CONFIG.API_URL}/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, {
                             method: 'POST',
                             headers: headers,
                             body: formData
@@ -475,7 +510,7 @@
                 
                 try {
                     const token = localStorage.getItem('authToken');
-                    const res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/${id}/`, {
+                    const res = await fetch(`${CONFIG.API_URL}/universities/${CONFIG.UNIV_SLUG}/oldstudent/${id}/`, {
                         method: 'DELETE',
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
