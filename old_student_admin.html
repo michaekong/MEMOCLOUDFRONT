@@ -265,8 +265,8 @@
 
             async loadData(token) {
                 const headers = { 'Authorization': `Bearer ${token}` };
-                
-                const res = await fetch(`${CONFIG.API_URL}/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, { headers });
+              
+                const res = await fetch(`${CONFIG.API_URL}/universites/universities/${CONFIG.UNIV_SLUG}/oldstudent/`, { headers });
                 if (!res.ok) throw new Error('Failed to fetch testimonials');
                 
                 state.testimonials = await res.json();
