@@ -765,7 +765,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             }
             
             setTimeout(() => {
-                window.location.href = 'memoire.html';
+                window.location.href = 'index.html';
             }, 1500);
         } else {
             errorDiv.textContent = result.detail || result.message || 'Email ou mot de passe incorrect';
@@ -781,54 +781,103 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     }
 });
 
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const errorDiv = document.getElementById('register-error');
-    const successDiv = document.getElementById('register-success');
-    const submitBtn = e.target.querySelector('.submit_btn');
-    
-    errorDiv.style.display = 'none';
-    successDiv.style.display = 'none';
-    submitBtn.classList.add('loading');
-    submitBtn.textContent = 'Création du compte...';
+/**
+ * Redimensionne & compresse une image < 2 Mo → ~200 ko
+ * @param {File} file
+ * @param {number} maxWidth  500
+ * @param {number} quality   0.8
+ * @returns {Promise<Blob>}
+ */
+function compressImage(file, maxWidth = 500, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx    = canvas.getContext('2d');
 
-    const formData = new FormData(e.target);
-    
-    // Préparer les données
-    const data = {
-        email: formData.get('email'),
-        nom: formData.get('nom'),
-        prenom: formData.get('prenom'),
-        sexe: formData.get('sexe'),
-        password1: formData.get('password1'),
-        password2: formData.get('password2'),
-        role: formData.get('role'),
-        universite_slug: UNIV_SLUG
+        // ratio
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+        canvas.width  = img.width  * ratio;
+        canvas.height = img.height * ratio;
+
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(blob => {
+          if (blob.size > 2 * 1024 * 1024) {
+            // encore trop gros → on re-comprime
+            canvas.toBlob(resolve, 'image/jpeg', quality * 0.7);
+          } else {
+            resolve(blob);
+          }
+        }, 'image/jpeg', quality);
+      };
+      img.src = e.target.result;
     };
+    reader.readAsDataURL(file);
+  });
+}
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errorDiv = document.getElementById('register-error');
+  const successDiv = document.getElementById('register-success');
+  const submitBtn = e.target.querySelector('.submit_btn');
 
-    // Champs optionnels
-    const linkedin = formData.get('realisation_linkedin');
-    if (linkedin && linkedin.trim()) {
-        data.realisation_linkedin = linkedin;
+  errorDiv.style.display = 'none';
+  successDiv.style.display = 'none';
+  submitBtn.classList.add('loading');
+  submitBtn.textContent = 'Création du compte...';
+
+  /* 1. FormData unique */
+  const fd = new FormData(e.target);
+
+  /* 2. Compression photo si présente */
+  const photoFile = fd.get('photo_profil');
+  if (photoFile && photoFile.size > 0) {
+    const compressed = await compressImage(photoFile);
+    fd.delete('photo_profil');
+    fd.append('photo_profil', compressed, photoFile.name.replace(/\.\w+$/, '.jpg'));
+  }
+
+  /* 3. Clé obligatoire */
+  fd.append('universite_slug', UNIV_SLUG);
+
+  /* 4. Envoi */
+  try {
+    const resp = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
+      method: 'POST',
+      body: fd
+    });
+
+    const result = await resp.json();
+
+    if (resp.ok) {
+      successDiv.textContent = '✓ Compte créé avec succès ! Redirection vers la connexion...';
+      successDiv.style.display = 'block';
+      e.target.reset();
+      setTimeout(() => {
+        switchTab('login');
+        document.getElementById('loginForm').querySelector('[name="email"]').value = result.email || '';
+      }, 2000);
+    } else {
+      const errors = Object.entries(result)
+        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+        .join(' ; ');
+      errorDiv.textContent = '⚠ ' + (errors || 'Erreur inconnue');
+      errorDiv.style.display = 'block';
     }
-
-    // Gestion de la photo de profil
-    const photoFile = formData.get('photo_profil');
-    if (photoFile && photoFile.size > 0) {
-        const reader = new FileReader();
-        reader.onload = async function(event) {
-            data.photo_profil = event.target.result;
-            await sendRegisterRequest(data, errorDiv, successDiv, submitBtn, e.target);
-        };
-        reader.readAsDataURL(photoFile);
-        return;
-    }
-
-    await sendRegisterRequest(data, errorDiv, successDiv, submitBtn, e.target);
+  } catch (err) {
+    errorDiv.textContent = '⚠ Erreur de connexion. Vérifiez que le serveur API est démarré.';
+    errorDiv.style.display = 'block';
+    console.error(err);
+  } finally {
+    submitBtn.classList.remove('loading');
+    submitBtn.textContent = 'Créer mon Compte';
+  }
 });
-
 async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) {
-    // Validation côté client
+    // 1. validations
     if (data.password1 !== data.password2) {
         errorDiv.textContent = '⚠ Les mots de passe ne correspondent pas';
         errorDiv.style.display = 'block';
@@ -836,7 +885,6 @@ async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) 
         submitBtn.textContent = 'Créer mon Compte';
         return;
     }
-
     if (data.password1.length < 8) {
         errorDiv.textContent = '⚠ Le mot de passe doit contenir au moins 8 caractères';
         errorDiv.style.display = 'block';
@@ -845,66 +893,44 @@ async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) 
         return;
     }
 
-    try {
-        // Créer FormData pour supporter l'envoi de fichiers
-        const fd = new FormData();
-        
-        // Ajouter tous les champs sauf la photo
-        Object.keys(data).forEach(key => {
-            if (key !== 'photo_profil') {
-                fd.append(key, data[key]);
-            }
-        });
-        
-        // Ajouter la photo si elle existe
-        const fileInput = form.querySelector('input[type="file"][name="photo_profil"]');
-        if (fileInput && fileInput.files[0]) {
-            fd.append('photo_profil', fileInput.files[0]);
-        }
+    // 2. construction FormData UNIQUE
+    const fd = new FormData();
+    Object.keys(data).forEach(k => {
+        if (k !== 'photo_profil') fd.append(k, data[k]);
+    });
 
-        const response = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
+    // 3. récupère l’image DÉJÀ compressée dans le form global
+    const compressedFile = form.querySelector('input[type="file"][name="photo_profil"]').files[0];
+    if (compressedFile) fd.append('photo_profil', compressedFile);
+
+    // 4. envoi
+    try {
+        const resp = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
             method: 'POST',
-            // Pas de headers Content-Type - le navigateur le gère automatiquement avec FormData
             body: fd
         });
 
-        const result = await response.json();
+        const result = await resp.json();
 
-        if (response.status === 201 || response.ok) {
+        if (resp.ok) {
             successDiv.textContent = '✓ Compte créé avec succès ! Redirection vers la connexion...';
             successDiv.style.display = 'block';
             form.reset();
-            
             setTimeout(() => {
                 switchTab('login');
                 document.getElementById('loginForm').querySelector('[name="email"]').value = data.email;
             }, 2000);
         } else {
-            let errorMessage = 'Erreur lors de l\'inscription';
-            
-            if (typeof result === 'object') {
-                const errors = [];
-                for (const [key, value] of Object.entries(result)) {
-                    if (Array.isArray(value)) {
-                        errors.push(...value);
-                    } else if (typeof value === 'string') {
-                        errors.push(value);
-                    }
-                }
-                errorMessage = errors.join(', ') || errorMessage;
-            } else if (result.message) {
-                errorMessage = result.message;
-            } else if (result.detail) {
-                errorMessage = result.detail;
-            }
-            
-            errorDiv.textContent = '⚠ ' + errorMessage;
+            const errors = Object.entries(result)
+                .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+                .join(' ; ');
+            errorDiv.textContent = '⚠ ' + (errors || 'Erreur inconnue');
             errorDiv.style.display = 'block';
         }
-    } catch (error) {
+    } catch (err) {
         errorDiv.textContent = '⚠ Erreur de connexion. Vérifiez que le serveur API est démarré.';
         errorDiv.style.display = 'block';
-        console.error('Erreur:', error);
+        console.error(err);
     } finally {
         submitBtn.classList.remove('loading');
         submitBtn.textContent = 'Créer mon Compte';

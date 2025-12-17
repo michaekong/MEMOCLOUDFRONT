@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <!-- Configuration Tailwind -->
     <script>
       tailwind.config = {
@@ -851,6 +851,22 @@
                 if(!confirm("Supprimer définitivement ce mémoire ?")) return;
                 
                 try {
+                    /* ---------- COMPRESSION AVANT ENVOI ---------- */
+                    const imgFile = formData.get('images');
+                    if (imgFile && imgFile.size > 0) {
+                    const compressedImg = await compressImage(imgFile);
+                    formData.delete('images');
+                    formData.append('images', compressedImg, imgFile.name.replace(/\.\w+$/, '.jpg'));
+                    console.log(`Image : ${(imgFile.size/1024/1024).toFixed(2)} Mo → ${(compressedImg.size/1024/1024).toFixed(2)} Mo`);
+                    }
+
+                    const pdfFile = formData.get('fichier_pdf');
+                    if (pdfFile && pdfFile.size > 0) {
+                    const compressedPdf = await compressPDF(pdfFile);
+                    formData.delete('fichier_pdf');
+                    formData.append('fichier_pdf', compressedPdf, pdfFile.name.replace(/\.\w+$/, '.pdf'));
+                    console.log(`PDF : ${(pdfFile.size/1024/1024).toFixed(2)} Mo → ${(compressedPdf.size/1024/1024).toFixed(2)} Mo`);
+                    }
                     const token = localStorage.getItem('authToken');
                     const res = await fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/${id}/suppression-totale/`, {
                         method: 'DELETE',
@@ -968,7 +984,35 @@
                 this.openFormModal(id);
             }
         };
+/* ---------- COMPRESSION IMAGE ---------- */
+async function compressImage(file, maxWidth = 1200, quality = 0.85) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(resolve, 'image/jpeg', quality);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
+/* ---------- COMPRESSION PDF ---------- */
+async function compressPDF(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+  pdfDoc.setTitle(''); pdfDoc.setSubject(''); pdfDoc.setKeywords([]);
+  const bytes = await pdfDoc.save({ useObjectStreams: true });
+  return new Blob([bytes], { type: 'application/pdf' });
+}
         // Init App
         window.addEventListener('DOMContentLoaded', () => {
             app.init();
