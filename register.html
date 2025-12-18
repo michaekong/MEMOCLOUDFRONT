@@ -819,62 +819,47 @@ function compressImage(file, maxWidth = 500, quality = 0.8) {
   });
 }
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const errorDiv = document.getElementById('register-error');
-  const successDiv = document.getElementById('register-success');
-  const submitBtn = e.target.querySelector('.submit_btn');
+    e.preventDefault();                  // ← toujours en premier
+    const errorDiv = document.getElementById('register-error');
+    const successDiv = document.getElementById('register-success');
+    const submitBtn = e.target.querySelector('.submit_btn');
 
-  errorDiv.style.display = 'none';
-  successDiv.style.display = 'none';
-  submitBtn.classList.add('loading');
-  submitBtn.textContent = 'Création du compte...';
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    submitBtn.classList.add('loading');
+    submitBtn.textContent = 'Création du compte...';
 
-  /* 1. FormData unique */
-  const fd = new FormData(e.target);
+    const formData = new FormData(e.target);
+    // Préparer les données
+    const data = {
+        email: formData.get('email'),
+        nom: formData.get('nom'),
+        prenom: formData.get('prenom'),
+        sexe: formData.get('sexe'),
+        password1: formData.get('password1'),
+        password2: formData.get('password2'),
+        role: formData.get('role'),
+        universite_slug: UNIV_SLUG
+    };
 
-  /* 2. Compression photo si présente */
-  const photoFile = fd.get('photo_profil');
-  if (photoFile && photoFile.size > 0) {
-    const compressed = await compressImage(photoFile);
-    fd.delete('photo_profil');
-    fd.append('photo_profil', compressed, photoFile.name.replace(/\.\w+$/, '.jpg'));
-  }
-
-  /* 3. Clé obligatoire */
-  fd.append('universite_slug', UNIV_SLUG);
-
-  /* 4. Envoi */
-  try {
-    const resp = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
-      method: 'POST',
-      body: fd
-    });
-
-    const result = await resp.json();
-
-    if (resp.ok) {
-      successDiv.textContent = '✓ Compte créé avec succès ! Redirection vers la connexion...';
-      successDiv.style.display = 'block';
-      e.target.reset();
-      setTimeout(() => {
-        switchTab('login');
-        document.getElementById('loginForm').querySelector('[name="email"]').value = result.email || '';
-      }, 2000);
-    } else {
-      const errors = Object.entries(result)
-        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
-        .join(' ; ');
-      errorDiv.textContent = '⚠ ' + (errors || 'Erreur inconnue');
-      errorDiv.style.display = 'block';
+    // Champs optionnels
+    const linkedin = formData.get('realisation_linkedin');
+    if (linkedin && linkedin.trim()) {
+        data.realisation_linkedin = linkedin;
     }
-  } catch (err) {
-    errorDiv.textContent = '⚠ Erreur de connexion. Vérifiez que le serveur API est démarré.';
-    errorDiv.style.display = 'block';
-    console.error(err);
-  } finally {
-    submitBtn.classList.remove('loading');
-    submitBtn.textContent = 'Créer mon Compte';
-  }
+
+
+    // photo
+    const photoFile = formData.get('photo_profil');
+    if (photoFile && photoFile.size > 0) {
+    const compressed = await compressImage(photoFile);   // ← Blob ~200 ko
+    fd.append('photo_profil', compressed, photoFile.name.replace(/\.\w+$/, '.jpg'));
+} else {
+    data.photo_profil = null;
+}
+
+    // Envoyer la requête
+    sendRegisterRequest(data, errorDiv, successDiv, submitBtn, e.target);
 });
 async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) {
     // 1. validations
