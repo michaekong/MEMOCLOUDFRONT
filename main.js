@@ -1,7 +1,7 @@
 // Main JavaScript for ENSTP Yaoundé Website
 class ENSTPWebsite {
     constructor() {
-        this.apiBaseUrl = 'https://mcb.reimca-app.com/';
+        this.apiBaseUrl = 'https://mcb.reimca-app.com';
         this.token = localStorage.getItem('authToken');
         this.user = null;
         
