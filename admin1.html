@@ -104,6 +104,9 @@
             <button onclick="app.nav('domaines')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group text-gray-300" data-target="domaines">
                 <i class="fas fa-tags w-6 text-center text-gray-400 group-hover:text-brand-yellow"></i><span class="font-medium sidebar-text">Domaines</span>
             </button>
+             <button onclick="app.nav('interactions')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group text-gray-300" data-target="interactions">
+                <i class="fas fa-tags w-6 text-center text-gray-400 group-hover:text-brand-yellow"></i><span class="font-medium sidebar-text">Interactions</span>
+            </button>
             <button onclick="app.nav('old-students')" class="menu-item w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left hover:bg-white/10 transition-colors group text-gray-300" data-target="old-students">
     <i class="fas fa-user-graduate w-6 text-center text-gray-400 group-hover:text-brand-yellow"></i>
     <span class="font-medium sidebar-text"> Temoignages Anciens Étudiants</span>
@@ -165,8 +168,9 @@
             <!-- SECTION: MEMOIRES (Iframe Integration) -->
             <div id="section-memoires" class="section-content hidden h-full">
                 <iframe src="admin-memoires.html" class="iframe-container shadow-sm border border-gray-200"></iframe>
+            </div><div id="section-interactions" class="section-content hidden h-full">
+              <iframe src="admin_interactions.html" class="iframe-container shadow-sm border border-gray-200"></iframe>
             </div>
-
             <!-- SECTION: NEWS -->
             <div id="section-news" class="section-content hidden animate-fade-in">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
@@ -242,7 +246,7 @@
     <!-- JavaScript Logic -->
     <script>
         // CONFIG
-        const CONFIG = { API_BASE: 'https://mcb.reimca-app.com/api', UNIV_SLUG: 'ecole-des-travaux', TOKEN: localStorage.getItem('authToken') || '' };
+        const CONFIG = { API_BASE: 'https://memocloudfront.vercel.app/api', UNIV_SLUG: 'ecole-des-travaux', TOKEN: localStorage.getItem('authToken') || '' };
         
         // UTILS
         const Utils = {
@@ -333,7 +337,8 @@
     memoires: 'Mémoires',
     news: 'Actualités',
     domaines: 'Domaines',
-    'old-students': 'Anciens Étudiants'
+    interactions: 'Interactions',
+    old_students: 'Anciens Étudiants'
 };
                 document.getElementById('pageTitle').innerText = titles[section] || 'Administration';
                 
