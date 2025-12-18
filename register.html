@@ -14,6 +14,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
@@ -47,63 +51,19 @@ body::before {
     flex-direction: column;
     align-items: center;
     gap: 30px;
+    padding-top: 20px;
 }
 
 /* Hero Section */
 .hero_section {
-    margin-top: 180px;
-    padding: 80px 0;
+    padding: 40px 0 20px;
     color: white;
     text-align: center;
     position: relative;
-    overflow: hidden;
-    height: 60vh; /* ← pour que l’image remplisse bien */
-}
-
-/* 🖼️ CARROUSEL */
-.hero_slider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
-
-.hero_slider img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
-}
-
-.hero_slider img.active {
-    opacity: 1;
-}
-
-/* 🧥 OVERLAY LÉGER */
-.hero_overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.35); /* ← ajuste ici pour plus ou moins de contraste */
-    z-index: 1;
-}
-
-/* ✅ TEXTE (inchangé) */
-.hero_section .container {
-    position: relative;
-    z-index: 2;
 }
 
 .hero_section h1 {
-    font-size: 56px;
+    font-size: clamp(28px, 5vw, 56px);
     font-weight: 700;
     margin-bottom: 15px;
     animation: fadeInUp 0.8s ease;
@@ -111,15 +71,17 @@ body::before {
 
 .hero_section h1 span {
     background: #ffb606;
-    padding: 5px 25px;
+    padding: 5px 20px;
     display: inline-block;
     box-shadow: 0 10px 30px rgba(255, 182, 6, 0.3);
+    border-radius: 8px;
 }
 
 .hero_section p {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 20px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: clamp(16px, 3vw, 20px);
     animation: fadeInUp 0.8s ease 0.2s backwards;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 @keyframes fadeInUp {
@@ -140,23 +102,18 @@ body::before {
     animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 .auth_card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 24px;
-    padding: 45px 40px;
+    padding: 40px 35px;
     box-shadow: 0 30px 80px rgba(0,0,0,0.3);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .auth_tabs {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     margin-bottom: 32px;
     border-bottom: 2px solid rgba(0,0,0,0.08);
 }
@@ -194,7 +151,7 @@ body::before {
 }
 
 .form_group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .form_label {
@@ -284,13 +241,18 @@ body::before {
     box-shadow: 0 4px 15px rgba(255,182,6,0.35);
 }
 
-.submit_btn:hover {
+.submit_btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(255,182,6,0.45);
 }
 
 .submit_btn:active {
     transform: translateY(0);
+}
+
+.submit_btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .form_footer {
@@ -353,19 +315,120 @@ body::before {
     color: #ffb606;
 }
 
-.loading {
-    opacity: 0.7;
-    pointer-events: none;
+/* Image Upload Preview */
+.image_preview_container {
+    margin-top: 10px;
+    display: none;
 }
 
-/* Features Grid - Below form on mobile */
+.image_preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(0,0,0,0.1);
+}
+
+.compress_info {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+/* Modal Reset Password */
+.modal_overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal_overlay.show {
+    display: flex;
+}
+
+.modal_content {
+    background: white;
+    border-radius: 20px;
+    padding: 35px 30px;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.modal_header h2 {
+    font-size: 22px;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.modal_close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal_close:hover {
+    background: rgba(0,0,0,0.05);
+    color: #1e293b;
+}
+
+.modal_body {
+    margin-bottom: 20px;
+}
+
+.modal_body p {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* Features Grid */
 .features_grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
     width: 100%;
     max-width: 1200px;
-    margin-top: 40px;
+    margin-top: 30px;
     animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
@@ -420,49 +483,42 @@ body::before {
         padding: 15px;
     }
 
-    .hero_title {
-        font-size: 32px;
+    .page_container {
+        padding-top: 10px;
     }
 
-    .hero_subtitle {
-        font-size: 15px;
+    .hero_section {
+        padding: 20px 0 15px;
     }
 
     .auth_card {
-        padding: 35px 28px;
+        padding: 30px 25px;
+        border-radius: 20px;
     }
 
     .form_row {
         grid-template-columns: 1fr;
+        gap: 0;
     }
 
     .features_grid {
         grid-template-columns: 1fr;
         gap: 15px;
-        margin-top: 30px;
+        margin-top: 25px;
     }
 
     .auth_tab {
         font-size: 16px;
     }
+
+    .modal_content {
+        padding: 30px 25px;
+    }
 }
 
 @media (max-width: 480px) {
-    body {
-        padding: 10px;
-    }
-
-    .hero_title {
-        font-size: 26px;
-    }
-
-    .hero_subtitle {
-        font-size: 14px;
-    }
-
     .auth_card {
-        padding: 28px 20px;
-        border-radius: 20px;
+        padding: 25px 20px;
     }
 
     .form_group {
@@ -476,6 +532,14 @@ body::before {
 
     .feature_card {
         padding: 22px 18px;
+    }
+
+    .modal_content {
+        padding: 25px 20px;
+    }
+
+    .modal_header h2 {
+        font-size: 20px;
     }
 }
 
@@ -491,8 +555,8 @@ body::before {
 <div class="page_container">
     <!-- Hero Section -->
     <div class="hero_section">
-        <h1 class="hero_title">Bienvenue sur <span>ENSTP</span></h1>
-        <p class="hero_subtitle">Portail de gestion des mémoires universitaires</p>
+        <h1>Bienvenue sur <span>ENSTP</span></h1>
+        <p>Portail de gestion des mémoires universitaires</p>
     </div>
 
     <!-- Auth Card -->
@@ -525,7 +589,7 @@ body::before {
                     </div>
 
                     <div class="forgot_password">
-                        <a href="#" onclick="showResetPassword(); return false;">Mot de passe oublié ?</a>
+                        <a href="#" onclick="showResetPasswordModal(); return false;">Mot de passe oublié ?</a>
                     </div>
 
                     <button type="submit" class="submit_btn">Se Connecter</button>
@@ -593,7 +657,11 @@ body::before {
 
                     <div class="form_group">
                         <label class="form_label">Photo de profil (optionnel)</label>
-                        <input type="file" class="form_input" name="photo_profil" accept="image/*" style="padding: 12px;">
+                        <input type="file" class="form_input" name="photo_profil" accept="image/*" style="padding: 12px;" id="photoInput">
+                        <div class="image_preview_container" id="previewContainer">
+                            <img class="image_preview" id="imagePreview" alt="Aperçu">
+                            <div class="compress_info" id="compressInfo"></div>
+                        </div>
                     </div>
 
                     <div class="form_checkbox">
@@ -619,7 +687,7 @@ body::before {
 
     <!-- Features Grid -->
     <div class="features_grid">
-         <div class="feature_card">
+        <div class="feature_card">
             <div class="feature_card_icon">
                 <i class="fas fa-map-marked-alt"></i>
             </div>
@@ -635,7 +703,6 @@ body::before {
             <p>Bibliothèque complète de mémoires en architecture et construction.</p>
         </div>
 
-       
         <div class="feature_card">
             <div class="feature_card_icon">
                 <i class="fas fa-leaf"></i>
@@ -653,60 +720,74 @@ body::before {
         </div>
     </div>
 </div>
-<script>
-    const slides = document.querySelectorAll('.hero_slider img');
-    let current = 0;
 
-    function showSlide(index) {
-        slides.forEach((img, i) => {
-            img.classList.toggle('active', i === index);
-        });
-    }
+<!-- Modal Reset Password -->
+<div class="modal_overlay" id="resetPasswordModal">
+    <div class="modal_content">
+        <div class="modal_header">
+            <h2>Réinitialiser le mot de passe</h2>
+            <button class="modal_close" onclick="closeResetPasswordModal()">&times;</button>
+        </div>
+        <div class="modal_body">
+            <p>Entrez votre email et votre nouveau mot de passe pour réinitialiser votre accès.</p>
+            
+            <div class="error_message" id="reset-error"></div>
+            <div class="success_message" id="reset-success"></div>
 
-    function nextSlide() {
-        current = (current + 1) % slides.length;
-        showSlide(current);
-    }
+            <form id="resetPasswordForm">
+                <div class="form_group">
+                    <label class="form_label">Adresse Email</label>
+                    <input type="email" class="form_input" name="email" placeholder="exemple@email.com" required>
+                </div>
 
-    // Initialisation
-    showSlide(current);
-    setInterval(nextSlide, 5000); // change toutes les 5s
-</script>
+                <div class="form_group">
+                    <label class="form_label">Nouveau Mot de Passe</label>
+                    <input type="password" class="form_input" name="new_password1" placeholder="••••••••" required minlength="8">
+                </div>
+
+                <div class="form_group">
+                    <label class="form_label">Confirmer le Mot de Passe</label>
+                    <input type="password" class="form_input" name="new_password2" placeholder="••••••••" required minlength="8">
+                </div>
+
+                <button type="submit" class="submit_btn">Réinitialiser</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 const API_URL = 'https://mcb.reimca-app.com';
 const UNIV_SLUG = 'ecole-des-travaux';
 
-// Background images for different domains
+// Background images
 const backgroundImages = [
-    // Architecture & Génie Civil
     'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070',
     'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2070',
     'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070',
-    
-    // Topographie & Géomatique
     'https://images.unsplash.com/photo-1569163139394-de4798aa62b6?q=80&w=2070',
     'https://images.unsplash.com/photo-1589519160732-57fc498494f8?q=80&w=2070',
-    
-    // Environnement & Développement
     'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2070',
     'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2070',
     'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070',
-    
-    // Conception & Innovation
     'https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=2070',
     'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2070'
 ];
 
-// Set random background on load
 function setRandomBackground() {
     const randomImage = backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
     document.body.style.backgroundImage = `url('${randomImage}')`;
 }
 
-// Change background every 10 seconds
 setRandomBackground();
 setInterval(setRandomBackground, 10000);
 
+// Scroll to top on page load
+window.addEventListener('load', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Tab switching
 const tabs = document.querySelectorAll('.auth_tab');
 const forms = document.querySelectorAll('.form_container');
 
@@ -723,8 +804,14 @@ function switchTab(tabName) {
     
     document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
     document.getElementById(`${tabName}-form`).classList.add('active');
+    
+    // Scroll to form
+    setTimeout(() => {
+        document.querySelector('.auth_card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
 }
 
+// Login Form
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const errorDiv = document.getElementById('login-error');
@@ -733,7 +820,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
-    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
     submitBtn.textContent = 'Connexion...';
 
     const formData = new FormData(e.target);
@@ -745,9 +832,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     try {
         const response = await fetch(`${API_URL}/api/auth/login/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
@@ -764,9 +849,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 localStorage.setItem('authToken', result.token);
             }
             
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
+            setTimeout(() => window.location.href = 'index.html', 1500);
         } else {
             errorDiv.textContent = result.detail || result.message || 'Email ou mot de passe incorrect';
             errorDiv.style.display = 'block';
@@ -776,134 +859,170 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         errorDiv.style.display = 'block';
         console.error('Erreur:', error);
     } finally {
-        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
         submitBtn.textContent = 'Se Connecter';
     }
 });
 
-/**
- * Redimensionne & compresse une image < 2 Mo → ~200 ko
- * @param {File} file
- * @param {number} maxWidth  500
- * @param {number} quality   0.8
- * @returns {Promise<Blob>}
- */
-function compressImage(file, maxWidth = 500, quality = 0.8) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx    = canvas.getContext('2d');
+// Image compression using Canvas (lightweight alternative to ffmpeg)
+async function compressImage(file, maxWidth = 500, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
 
-        // ratio
-        const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
-        canvas.width  = img.width  * ratio;
-        canvas.height = img.height * ratio;
+                let width = img.width;
+                let height = img.height;
 
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                if (width > maxWidth) {
+                    height = (height / width) * maxWidth;
+                    width = maxWidth;
+                }
 
-        canvas.toBlob(blob => {
-          if (blob.size > 2 * 1024 * 1024) {
-            // encore trop gros → on re-comprime
-            canvas.toBlob(resolve, 'image/jpeg', quality * 0.7);
-          } else {
-            resolve(blob);
-          }
-        }, 'image/jpeg', quality);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        reject(new Error('Compression failed'));
+                        return;
+                    }
+                    
+                    // If still too large, compress more
+                    if (blob.size > 500 * 1024) {
+                        canvas.toBlob(resolve, 'image/jpeg', quality * 0.6);
+                    } else {
+                        resolve(blob);
+                    }
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
 }
+
+// Image preview and compression
+document.getElementById('photoInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const previewContainer = document.getElementById('previewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+    const compressInfo = document.getElementById('compressInfo');
+
+    try {
+        const originalSize = (file.size / 1024).toFixed(2);
+        compressInfo.textContent = `Compression en cours... (Original: ${originalSize} Ko)`;
+        previewContainer.style.display = 'block';
+
+        // Compress image
+        const compressedBlob = await compressImage(file);
+        const compressedSize = (compressedBlob.size / 1024).toFixed(2);
+        
+        // Create new file from blob
+        const compressedFile = new File([compressedBlob], file.name.replace(/\.\w+$/, '.jpg'), {
+            type: 'image/jpeg'
+        });
+        
+        // Update file input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(compressedFile);
+        e.target.files = dataTransfer.files;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            imagePreview.src = ev.target.result;
+          
+        };
+        reader.readAsDataURL(compressedBlob);
+
+    } catch (error) {
+        compressInfo.textContent = '⚠ Erreur de compression';
+        compressInfo.style.color = '#dc2626';
+        console.error('Compression error:', error);
+    }
+});
+
+// Register Form
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();                  // ← toujours en premier
+    e.preventDefault();
     const errorDiv = document.getElementById('register-error');
     const successDiv = document.getElementById('register-success');
     const submitBtn = e.target.querySelector('.submit_btn');
 
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
-    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
     submitBtn.textContent = 'Création du compte...';
 
     const formData = new FormData(e.target);
-    // Préparer les données
-    const data = {
-        email: formData.get('email'),
-        nom: formData.get('nom'),
-        prenom: formData.get('prenom'),
-        sexe: formData.get('sexe'),
-        password1: formData.get('password1'),
-        password2: formData.get('password2'),
-        role: formData.get('role'),
-        universite_slug: UNIV_SLUG
-    };
-
-    // Champs optionnels
-    const linkedin = formData.get('realisation_linkedin');
-    if (linkedin && linkedin.trim()) {
-        data.realisation_linkedin = linkedin;
-    }
-
-
-    // photo
-    const photoFile = formData.get('photo_profil');
-    if (photoFile && photoFile.size > 0) {
-    const compressed = await compressImage(photoFile);   // ← Blob ~200 ko
-    fd.append('photo_profil', compressed, photoFile.name.replace(/\.\w+$/, '.jpg'));
-} else {
-    data.photo_profil = null;
-}
-
-    // Envoyer la requête
-    sendRegisterRequest(data, errorDiv, successDiv, submitBtn, e.target);
-});
-async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) {
-    // 1. validations
-    if (data.password1 !== data.password2) {
+    
+    // Validation
+    const password1 = formData.get('password1');
+    const password2 = formData.get('password2');
+    
+    if (password1 !== password2) {
         errorDiv.textContent = '⚠ Les mots de passe ne correspondent pas';
         errorDiv.style.display = 'block';
-        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
         submitBtn.textContent = 'Créer mon Compte';
         return;
     }
-    if (data.password1.length < 8) {
+    
+    if (password1.length < 8) {
         errorDiv.textContent = '⚠ Le mot de passe doit contenir au moins 8 caractères';
         errorDiv.style.display = 'block';
-        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
         submitBtn.textContent = 'Créer mon Compte';
         return;
     }
 
-    // 2. construction FormData UNIQUE
+    // Prepare form data
     const fd = new FormData();
-    Object.keys(data).forEach(k => {
-        if (k !== 'photo_profil') fd.append(k, data[k]);
-    });
+    fd.append('email', formData.get('email'));
+    fd.append('nom', formData.get('nom'));
+    fd.append('prenom', formData.get('prenom'));
+    fd.append('sexe', formData.get('sexe'));
+    fd.append('password1', password1);
+    fd.append('password2', password2);
+    fd.append('role', formData.get('role'));
+    fd.append('universite_slug', UNIV_SLUG);
 
-    // 3. récupère l’image DÉJÀ compressée dans le form global
-    const compressedFile = form.querySelector('input[type="file"][name="photo_profil"]').files[0];
-    if (compressedFile) fd.append('photo_profil', compressedFile);
+    const linkedin = formData.get('realisation_linkedin');
+    if (linkedin && linkedin.trim()) {
+        fd.append('realisation_linkedin', linkedin);
+    }
 
-    // 4. envoi
+    const photoFile = formData.get('photo_profil');
+    if (photoFile && photoFile.size > 0) {
+        fd.append('photo_profil', photoFile);
+    }
+
     try {
-        const resp = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
+        const response = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
             method: 'POST',
             body: fd
         });
 
-        const result = await resp.json();
+        const result = await response.json();
 
-        if (resp.ok) {
+        if (response.ok) {
             successDiv.textContent = '✓ Compte créé avec succès ! Redirection vers la connexion...';
             successDiv.style.display = 'block';
-            form.reset();
+            e.target.reset();
+            document.getElementById('previewContainer').style.display = 'none';
+            
             setTimeout(() => {
                 switchTab('login');
-                document.getElementById('loginForm').querySelector('[name="email"]').value = data.email;
+                document.getElementById('loginForm').querySelector('[name="email"]').value = formData.get('email');
             }, 2000);
         } else {
             const errors = Object.entries(result)
@@ -912,56 +1031,103 @@ async function sendRegisterRequest(data, errorDiv, successDiv, submitBtn, form) 
             errorDiv.textContent = '⚠ ' + (errors || 'Erreur inconnue');
             errorDiv.style.display = 'block';
         }
-    } catch (err) {
+    } catch (error) {
         errorDiv.textContent = '⚠ Erreur de connexion. Vérifiez que le serveur API est démarré.';
         errorDiv.style.display = 'block';
-        console.error(err);
+        console.error('Erreur:', error);
     } finally {
-        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
         submitBtn.textContent = 'Créer mon Compte';
     }
-}
-function showResetPassword() {
-    const email = prompt('Entrez votre adresse email pour réinitialiser votre mot de passe :');
-    if (!email || !email.trim()) return;
-    
-    const newPassword1 = prompt('Entrez votre nouveau mot de passe :');
-    if (!newPassword1 || newPassword1.length < 8) {
-        alert('⚠ Le mot de passe doit contenir au moins 8 caractères');
-        return;
-    }
-    
-    const newPassword2 = prompt('Confirmez votre nouveau mot de passe :');
-    if (newPassword1 !== newPassword2) {
-        alert('⚠ Les mots de passe ne correspondent pas');
-        return;
-    }
-    
-    fetch(`${API_URL}/api/auth/reset-password/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-            email: email.trim(),
-            new_password1: newPassword1,
-            new_password2: newPassword2
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.email) {
-            alert('✓ Votre mot de passe a été réinitialisé avec succès !');
-        } else {
-            alert('⚠ Erreur lors de la réinitialisation du mot de passe.');
-        }
-    })
-    .catch(error => {
-        alert('⚠ Erreur lors de la réinitialisation du mot de passe.');
-        console.error('Erreur:', error);
-    });
+});
+
+// Reset Password Modal
+function showResetPasswordModal() {
+    document.getElementById('resetPasswordModal').classList.add('show');
+    document.getElementById('resetPasswordForm').reset();
+    document.getElementById('reset-error').style.display = 'none';
+    document.getElementById('reset-success').style.display = 'none';
 }
 
+function closeResetPasswordModal() {
+    document.getElementById('resetPasswordModal').classList.remove('show');
+}
+
+// Close modal on overlay click
+document.getElementById('resetPasswordModal').addEventListener('click', (e) => {
+    if (e.target.id === 'resetPasswordModal') {
+        closeResetPasswordModal();
+    }
+});
+
+// Reset Password Form
+document.getElementById('resetPasswordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorDiv = document.getElementById('reset-error');
+    const successDiv = document.getElementById('reset-success');
+    const submitBtn = e.target.querySelector('.submit_btn');
+
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Réinitialisation...';
+
+    const formData = new FormData(e.target);
+    const email = formData.get('email');
+    const newPassword1 = formData.get('new_password1');
+    const newPassword2 = formData.get('new_password2');
+
+    if (newPassword1 !== newPassword2) {
+        errorDiv.textContent = '⚠ Les mots de passe ne correspondent pas';
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Réinitialiser';
+        return;
+    }
+
+    if (newPassword1.length < 8) {
+        errorDiv.textContent = '⚠ Le mot de passe doit contenir au moins 8 caractères';
+        errorDiv.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Réinitialiser';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/auth/reset-password/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email.trim(),
+                new_password1: newPassword1,
+                new_password2: newPassword2
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            successDiv.textContent = '✓ Votre mot de passe a été réinitialisé avec succès !';
+            successDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                closeResetPasswordModal();
+                switchTab('login');
+                document.getElementById('loginForm').querySelector('[name="email"]').value = email;
+            }, 2000);
+        } else {
+            errorDiv.textContent = result.detail || result.message || '⚠ Erreur lors de la réinitialisation';
+            errorDiv.style.display = 'block';
+        }
+    } catch (error) {
+        errorDiv.textContent = '⚠ Erreur de connexion au serveur';
+        errorDiv.style.display = 'block';
+        console.error('Erreur:', error);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Réinitialiser';
+    }
+});
 </script>
 
 </body>
