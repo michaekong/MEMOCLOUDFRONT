@@ -954,9 +954,9 @@ document.getElementById('photoInput').addEventListener('change', async (e) => {
 // Register Form
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const errorDiv = document.getElementById('register-error');
+    const errorDiv   = document.getElementById('register-error');
     const successDiv = document.getElementById('register-success');
-    const submitBtn = e.target.querySelector('.submit_btn');
+    const submitBtn  = e.target.querySelector('.submit_btn');
 
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
@@ -964,11 +964,10 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     submitBtn.textContent = 'Création du compte...';
 
     const formData = new FormData(e.target);
-    
-    // Validation
     const password1 = formData.get('password1');
     const password2 = formData.get('password2');
-    
+
+    /* ----- validation ----- */
     if (password1 !== password2) {
         errorDiv.textContent = '⚠ Les mots de passe ne correspondent pas';
         errorDiv.style.display = 'block';
@@ -976,7 +975,6 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         submitBtn.textContent = 'Créer mon Compte';
         return;
     }
-    
     if (password1.length < 8) {
         errorDiv.textContent = '⚠ Le mot de passe doit contenir au moins 8 caractères';
         errorDiv.style.display = 'block';
@@ -985,26 +983,23 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         return;
     }
 
-    // Prepare form data
+    /* ----- build FormData ----- */
     const fd = new FormData();
-    fd.append('email', formData.get('email'));
-    fd.append('nom', formData.get('nom'));
-    fd.append('prenom', formData.get('prenom'));
-    fd.append('sexe', formData.get('sexe'));
-    fd.append('password1', password1);
-    fd.append('password2', password2);
-    fd.append('role', formData.get('role'));
+    fd.append('email',        formData.get('email'));
+    fd.append('nom',          formData.get('nom'));
+    fd.append('prenom',       formData.get('prenom'));
+    fd.append('sexe',         formData.get('sexe'));
+    fd.append('password1',    password1);
+    fd.append('password2',    password2);
+    fd.append('role',         formData.get('role'));
     fd.append('universite_slug', UNIV_SLUG);
 
     const linkedin = formData.get('realisation_linkedin');
-    if (linkedin && linkedin.trim()) {
-        fd.append('realisation_linkedin', linkedin);
-    }
+    if (linkedin && linkedin.trim()) fd.append('realisation_linkedin', linkedin);
 
     const photoFile = formData.get('photo_profil');
-    if (photoFile && photoFile.size > 0) {
-        fd.append('photo_profil', photoFile);
-    }
+    if (photoFile && photoFile.size > 0) fd.append('photo_profil', photoFile);
+
 
     try {
         const response = await fetch(`${API_URL}/api/auth/${UNIV_SLUG}/register/`, {
