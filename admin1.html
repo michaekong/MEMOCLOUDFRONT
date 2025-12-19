@@ -394,74 +394,187 @@
             del: async function(id) { if(confirm('Supprimer ?')) Utils.showToast('Supprimé (Simulé)', 'success'); }
         };
 
-        // DOMAINE MANAGER
-        class DomaineManager {
-            constructor() { this.domaines = []; this.searchDebounce = null; }
-            
-            init() {
-                this.DOM = { listBox: document.getElementById('domaines-container'), search: document.getElementById('domaine-search'), suggest: document.getElementById('suggestions-box'), modal: document.getElementById('add-domaine-modal'), form: document.getElementById('add-domaine-form'), input: document.getElementById('new-domaine-nom'), slug: document.getElementById('slug-preview') };
-                this.DOM.search.addEventListener('input', e=>this.onSearch(e.target.value));
-                this.DOM.form.addEventListener('submit', e=>this.onAdd(e));
-                this.DOM.input.addEventListener('input', ()=>this.previewSlug());
-                document.querySelector('[data-action="open-add-modal"]').addEventListener('click', ()=>this.openModal(true));
-                this.DOM.listBox.addEventListener('click', e => {
-                    if(e.target.closest('[data-action="edit"]')) this.onEdit(e.target.closest('[data-action="edit"]').dataset.slug);
-                    if(e.target.closest('[data-action="delete"]')) this.onDelete(e.target.closest('[data-action="delete"]').dataset.slug);
-                });
-                this.DOM.modal.querySelectorAll('.modal-close').forEach(el=>el.addEventListener('click', ()=>this.openModal(false)));
-            }
-            async loadDomaines() {
-                try {
-                    const res = await fetch(`${CONFIG.API_BASE}/universites/universites/${CONFIG.UNIV_SLUG}/domaines/`, { headers: Utils.getHeaders() });
-                    if(res.ok) this.domaines = await res.json();
-                    else throw new Error();
-                } catch {
-                     // Fallback Mock Data
-                     this.domaines = [{id:1, nom:"Informatique", slug:"informatique", universites:[{acronyme:"ET"}]}, {id:2, nom:"Génie Civil", slug:"genie-civil", universites:[{acronyme:"ET"}]}];
-                }
-                this.render();
-            }
-            render() {
-                if(!this.domaines.length) { this.DOM.listBox.innerHTML = document.getElementById('empty-domaine-tpl').innerHTML; return; }
-                this.DOM.listBox.innerHTML = this.domaines.map(d => `
-                    <div class="domaine-card bg-white p-5 rounded-xl border border-gray-100 relative group">
-                        <h4 class="font-bold text-lg">${Utils.escapeHtml(d.nom)}</h4><small class="text-gray-400 text-xs font-mono">${d.slug}</small>
-                        <div class="flex flex-wrap gap-2 mt-2">${d.universites.map(u=>`<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">${u.acronyme||u.nom}</span>`).join('')}</div>
-                        <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="w-8 h-8 rounded bg-yellow-100 text-yellow-700 flex items-center justify-center" data-action="edit" data-slug="${d.slug}"><i class="fas fa-edit text-xs"></i></button>
-                            <button class="w-8 h-8 rounded bg-red-100 text-red-700 flex items-center justify-center" data-action="delete" data-slug="${d.slug}"><i class="fas fa-trash text-xs"></i></button>
-                        </div>
-                    </div>`).join('');
-            }
-            onSearch(q) {
-                if(!q) return this.render();
-                const filtered = this.domaines.filter(d=>d.nom.toLowerCase().includes(q.toLowerCase()));
-                this.DOM.listBox.innerHTML = filtered.length ? filtered.map(d=>`
-                    <div class="domaine-card bg-white p-5 rounded-xl border border-gray-100 relative group">
-                        <h4 class="font-bold text-lg">${Utils.escapeHtml(d.nom)}</h4><small class="text-gray-400 text-xs font-mono">${d.slug}</small>
-                        <div class="flex flex-wrap gap-2 mt-2">${d.universites.map(u=>`<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">${u.acronyme||u.nom}</span>`).join('')}</div>
-                    </div>`).join('') : document.getElementById('empty-domaine-tpl').innerHTML; 
-            }
-            openModal(show) {
-                if(show) { this.DOM.modal.classList.remove('hidden'); this.DOM.modal.classList.add('flex'); this.DOM.input.focus(); }
-                else { this.DOM.modal.classList.add('hidden'); this.DOM.modal.classList.remove('flex'); this.DOM.form.reset(); this.DOM.slug.textContent=''; this.editingSlug=null; }
-            }
-            previewSlug() {
-                const s = this.DOM.input.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\W+/g,'-').toLowerCase();
-                this.DOM.slug.textContent = s ? `Slug: ${s}` : '';
-            }
-            onEdit(slug) {
-                const d = this.domaines.find(x=>x.slug===slug); if(!d) return;
-                this.editingSlug = slug; this.openModal(true); this.DOM.input.value = d.nom; this.previewSlug();
-            }
-            onAdd(e) {
-                e.preventDefault();
-                Utils.showToast(this.editingSlug ? 'Modifié (Simulé)' : 'Créé (Simulé)', 'success');
-                this.openModal(false);
-            }
-            onDelete(slug) { if(confirm('Supprimer ?')) Utils.showToast('Supprimé (Simulé)', 'success'); }
+      class DomaineManager {
+    constructor() {
+        this.domaines = [];
+        this.editingSlug = null; // slug en cours d'édition
+        this.DOM = {
+            listBox: document.getElementById('domaines-container'),
+            search: document.getElementById('domaine-search'),
+            suggest: document.getElementById('suggestions-box'),
+            modal: document.getElementById('add-domaine-modal'),
+            form: document.getElementById('add-domaine-form'),
+            input: document.getElementById('new-domaine-nom'),
+            slug: document.getElementById('slug-preview'),
+        };
+    }
+
+    init() {
+        this.DOM.search.addEventListener('input', e => this.onSearch(e.target.value));
+        this.DOM.form.addEventListener('submit', e => this.onSubmit(e));
+        this.DOM.input.addEventListener('input', () => this.previewSlug());
+        document.querySelector('[data-action="open-add-modal"]').addEventListener('click', () => this.openModal(true));
+        this.DOM.listBox.addEventListener('click', e => {
+            const editBtn = e.target.closest('[data-action="edit"]');
+            const delBtn = e.target.closest('[data-action="delete"]');
+            if (editBtn) this.onEdit(editBtn.dataset.slug);
+            if (delBtn) this.onDelete(delBtn.dataset.slug);
+        });
+        this.DOM.modal.querySelectorAll('.modal-close').forEach(el =>
+            el.addEventListener('click', () => this.openModal(false))
+        );
+    }
+
+    /* ----------  CHARGEMENT  ---------- */
+    async loadDomaines() {
+        try {
+            const res = await fetch(
+                `${CONFIG.API_BASE}/universites/universites/${CONFIG.UNIV_SLUG}/domaines/`,
+                { headers: Utils.getHeaders() }
+            );
+            if (!res.ok) throw new Error();
+            this.domaines = await res.json();
+        } catch {
+            Utils.showToast("Erreur lors du chargement des domaines", "error");
+            this.domaines = [];
         }
-        const domaineManager = new DomaineManager();
+        this.render();
+    }
+
+    /* ----------  AFFICHAGE  ---------- */
+    render() {
+        const box = this.DOM.listBox;
+        if (!this.domaines.length) {
+            box.innerHTML = document.getElementById('empty-domaine-tpl').innerHTML;
+            return;
+        }
+        box.innerHTML = this.domaines
+            .map(d => `
+                <div class="domaine-card bg-white p-5 rounded-xl border border-gray-100 relative group">
+                    <h4 class="font-bold text-lg">${Utils.escapeHtml(d.nom)}</h4>
+                    <small class="text-gray-400 text-xs font-mono">${d.slug}</small>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        ${d.universites.map(u =>
+                            `<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">${u.acronyme || u.nom}</span>`
+                        ).join('')}
+                    </div>
+                    <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="w-8 h-8 rounded bg-yellow-100 text-yellow-700 flex items-center justify-center" data-action="edit" data-slug="${d.slug}">
+                            <i class="fas fa-edit text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 rounded bg-red-100 text-red-700 flex items-center justify-center" data-action="delete" data-slug="${d.slug}">
+                            <i class="fas fa-trash text-xs"></i>
+                        </button>
+                    </div>
+                </div>`)
+            .join('');
+    }
+
+    /* ----------  RECHERCHE LOCALE  ---------- */
+    onSearch(q) {
+        const filtered = this.domaines.filter(d =>
+            d.nom.toLowerCase().includes(q.toLowerCase())
+        );
+        this.DOM.listBox.innerHTML = filtered.length
+            ? filtered.map(d => `
+                <div class="domaine-card bg-white p-5 rounded-xl border border-gray-100">
+                    <h4 class="font-bold text-lg">${Utils.escapeHtml(d.nom)}</h4>
+                    <small class="text-gray-400 text-xs font-mono">${d.slug}</small>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        ${d.universites.map(u =>
+                            `<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">${u.acronyme || u.nom}</span>`
+                        ).join('')}
+                    </div>
+                </div>`).join('')
+            : document.getElementById('empty-domaine-tpl').innerHTML;
+    }
+
+    /* ----------  MODAL  ---------- */
+    openModal(show) {
+        if (show) {
+            this.DOM.modal.classList.remove('hidden');
+            this.DOM.modal.classList.add('flex');
+            this.DOM.input.focus();
+        } else {
+            this.DOM.modal.classList.add('hidden');
+            this.DOM.modal.classList.remove('flex');
+            this.DOM.form.reset();
+            this.DOM.slug.textContent = '';
+            this.editingSlug = null;
+        }
+    }
+
+    previewSlug() {
+        const s = this.DOM.input.value.trim()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\W+/g, '-').toLowerCase();
+        this.DOM.slug.textContent = s ? `Slug: ${s}` : '';
+    }
+
+    /* ----------  ÉDITION  ---------- */
+    onEdit(slug) {
+        const d = this.domaines.find(x => x.slug === slug);
+        if (!d) return;
+        this.editingSlug = slug;
+        this.openModal(true);
+        this.DOM.input.value = d.nom;
+        this.previewSlug();
+    }
+
+    /* ----------  SOUMISSION (CREATE / UPDATE)  ---------- */
+    async onSubmit(e) {
+        e.preventDefault();
+        const nom = this.DOM.input.value.trim();
+        if (!nom) return Utils.showToast("Nom requis", "warning");
+
+        const payload = { nom };
+        const isEdit = !!this.editingSlug;
+        const url = isEdit
+            ? `${CONFIG.API_BASE}/universites/universites/${CONFIG.UNIV_SLUG}/domaines/${this.editingSlug}/update/`
+            : `${CONFIG.API_BASE}/universites/universites/${CONFIG.UNIV_SLUG}/domaines/create/`;
+        const method = isEdit ? 'PATCH' : 'POST';
+
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    ...Utils.getHeaders(),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
+            Utils.showToast(isEdit ? 'Domaine modifié' : 'Domaine créé', 'success');
+            this.openModal(false);
+            this.loadDomaines();
+        } catch (err) {
+            console.error(err);
+            Utils.showToast("Erreur lors de l'enregistrement", "error");
+        }
+    }
+
+    /* ----------  SUPPRESSION  ---------- */
+    async onDelete(slug) {
+        if (!confirm('Supprimer ce domaine ?')) return;
+        try {
+            const res = await fetch(
+                `${CONFIG.API_BASE}/universites/universites/${CONFIG.UNIV_SLUG}/domaines/${slug}/`,
+                { method: 'DELETE', headers: Utils.getHeaders() }
+            );
+            if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
+            Utils.showToast('Domaine supprimé', 'success');
+            this.loadDomaines();
+        } catch (err) {
+            console.error(err);
+            Utils.showToast("Erreur lors de la suppression", "error");
+        }
+    }
+}
+
+/* ----------  INITIALISATION  ---------- */
+const domaineManager = new DomaineManager();
 
         // UI HELPERS
         function toggleSidebar() {

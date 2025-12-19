@@ -11,7 +11,7 @@
  *   {id, nom, slug, universites:[{id,nom,acronyme}]}
  */
 
-class DomaineManager {
+export class DomaineManager {
   constructor() {
     this.universiteSlug  = window.UNIV_SLUG || null; // injected by template
     this.domaines        = [];

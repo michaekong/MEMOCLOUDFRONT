@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Domaines</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#2d3748;color:#fff;padding:.75rem 1.25rem;border-radius:.5rem;font-weight:600;animation:slide .3s ease;z-index:60}
+    .toast.success{background:#38a169}
+    .toast.error{background:#e53e3e}
+    .toast.warning{background:#dd6b20}
+    @keyframes slide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .domaine-card{transition:all .2s}
+    .domaine-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .suggest-item{padding:.5rem .75rem;cursor:pointer}
+    .suggest-item.selected{background:#f6f8fa}
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-6xl mx-auto p-6">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">Gestion des domaines</h1>
+        <p class="text-sm text-gray-500">Créer, modifier ou supprimer des domaines de mémoires</p>
+      </div>
+      <button id="openAdd" class="px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600 flex items-center gap-2">
+        <i class="fas fa-plus"></i> Nouveau domaine
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="relative mb-6 max-w-md">
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input id="searchInput" type="text" placeholder="Rechercher un domaine…" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"/>
+      <ul id="suggestBox" class="absolute top-full left-0 right-0 bg-white border rounded-lg mt-1 shadow hidden"></ul>
+    </div>
+
+    <!-- List -->
+    <div id="list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <div id="empty" class="hidden text-center py-12 text-gray-400">
+      <i class="fas fa-folder-open text-3xl mb-2"></i>
+      <p>Aucun domaine pour le moment</p>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modalTitle">Nouveau domaine</h3>
+        <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+      </div>
+      <form id="form" class="space-y-4">
+        <input type="hidden" id="editSlug">
+        <div>
+          <label class="block text-sm font-bold mb-1">Nom du domaine</label>
+          <input id="nomInput" type="text" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"/>
+          <small id="slugPreview" class="text-gray-500 text-xs"></small>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button type="button" id="cancelBtn" class="px-4 py-2 rounded-lg hover:bg-gray-100">Annuler</button>
+          <button class="px-4 py-2 bg-yellow-500 text-white rounded-lg shadow hover:bg-yellow-600">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script type="module">
+    /* ---------- config ---------- */
+    const UNIV_SLUG = localStorage.getItem('univSlug') || 'ecole-des-travaux';
+    const API_BASE  = 'https://mcb.reimca-app.com/api';
+    const TOKEN     = localStorage.getItem('authToken');
+    if (!TOKEN) location.replace('/register.html');
+
+    /* ---------- helpers ---------- */
+    const hdr = () => ({ Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' });
+    const toast = (msg, type='info') => {
+      const t = document.createElement('div'); t.className=`toast ${type}`; t.textContent=msg;
+      document.body.appendChild(t); setTimeout(()=>t.remove(), 3000);
+    };
+    const esc = str => str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+    /* ---------- state ---------- */
+    let domaines = [];
+    let suggestions = [];
+    let selectedSuggest = -1;
+    let editingSlug = null;
+
+    /* ---------- DOM ---------- */
+    const qs = s => document.querySelector(s);
+    const listBox   = qs('#list');
+    const searchInp = qs('#searchInput');
+    const suggestBox= qs('#suggestBox');
+    const modal     = qs('#modal');
+    const form      = qs('#form');
+    const nomInp    = qs('#nomInput');
+    const slugPrev  = qs('#slugPreview');
+
+    /* ---------- load ---------- */
+    async function load() {
+      try {
+        const res = await fetch(`${API_BASE}/universites/universites/${UNIV_SLUG}/domaines/`, { headers: hdr() });
+        if (!res.ok) throw res.status;
+        domaines = await res.json();
+      } catch {
+        toast('Erreur chargement domaines', 'error');
+        domaines = [];
+      }
+      render();
+    }
+    function render() {
+      if (!domaines.length) { listBox.innerHTML = ''; qs('#empty').classList.remove('hidden'); return; }
+      qs('#empty').classList.add('hidden');
+      listBox.innerHTML = domaines.map(d => `
+        <div class="domaine-card bg-white p-4 rounded-xl border shadow-sm">
+          <div>
+            <h4 class="font-bold text-lg">${esc(d.nom)} <small class="text-gray-400">/${d.slug}</small></h4>
+            <div class="flex flex-wrap gap-1 mt-2">${d.universites.map(u=>`<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">${esc(u.acronyme||u.nom)}</span>`).join('')}</div>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button data-edit="${d.slug}" class="text-sm px-3 py-1.5 rounded bg-yellow-100 text-yellow-700 hover:bg-yellow-200">Modifier</button>
+            <button data-del="${d.slug}" data-nom="${esc(d.nom)}" class="text-sm px-3 py-1.5 rounded bg-red-100 text-red-700 hover:bg-red-200">Supprimer</button>
+          </div>
+        </div>`).join('');
+    }
+
+    /* ---------- search / suggest ---------- */
+    let deb;
+    searchInp.addEventListener('input', e => {
+      clearTimeout(deb);
+      const q = e.target.value.trim();
+      if (q.length < 2) { suggestBox.classList.add('hidden'); return; }
+      deb = setTimeout(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/domaines/suggest/?q=${encodeURIComponent(q)}`, { headers: hdr() });
+          suggestions = await res.json();
+          selectedSuggest = -1;
+          suggestBox.innerHTML = suggestions.map((s,i)=>`<li class="suggest-item" data-i="${i}">${esc(s.nom)}</li>`).join('');
+          suggestBox.classList.remove('hidden');
+        } catch { suggestBox.classList.add('hidden'); }
+      }, 200);
+    });
+    searchInp.addEventListener('keydown', e => {
+      const items = suggestBox.querySelectorAll('li');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); selectedSuggest = Math.min(selectedSuggest+1, items.length-1); }
+      else if (e.key === 'ArrowUp')   { e.preventDefault(); selectedSuggest = Math.max(selectedSuggest-1, -1); }
+      else if (e.key === 'Enter' && selectedSuggest > -1) { e.preventDefault(); nomInp.value = items[selectedSuggest].textContent; suggestBox.classList.add('hidden'); }
+      else if (e.key === 'Escape') { suggestBox.classList.add('hidden'); }
+      items.forEach((n,i)=>n.classList.toggle('bg-gray-100', i===selectedSuggest));
+    });
+    suggestBox.addEventListener('click', e => {
+      if (e.target.tagName === 'LI') { nomInp.value = e.target.textContent; suggestBox.classList.add('hidden'); }
+    });
+
+    /* ---------- modal ---------- */
+    function openModal(edit = false) {
+      editingSlug = edit || null;
+      qs('#modalTitle').textContent = editingSlug ? 'Modifier domaine' : 'Nouveau domaine';
+      form.querySelector('button[type="submit"]').textContent = editingSlug ? 'Enregistrer' : 'Créer';
+      modal.classList.remove('hidden');
+      nomInp.focus();
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+      form.reset();
+      editingSlug = null;
+      slugPrev.textContent = '';
+    }
+    qs('#openAdd').addEventListener('click', () => openModal());
+    qs('#closeModal').addEventListener('click', closeModal);
+    qs('#cancelBtn').addEventListener('click', closeModal);
+    nomInp.addEventListener('input', () => {
+      const s = nomInp.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\W+/g,'-').toLowerCase();
+      slugPrev.textContent = s ? `Slug : ${s}` : '';
+    });
+
+    /* ---------- crud ---------- */
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const nom = nomInp.value.trim();
+      if (!nom) return toast('Nom requis', 'warning');
+
+      // edit
+      if (editingSlug) {
+        if (domaines.some(d => d.slug !== editingSlug && d.nom.toLowerCase() === nom.toLowerCase()))
+          return toast('Nom déjà utilisé', 'warning');
+        try {
+          const res = await fetch(`${API_BASE}/universites/universites/${UNIV_SLUG}/domaines/${editingSlug}/update/`, {
+            method: 'PATCH',
+            headers: hdr(),
+            body: JSON.stringify({ nom })
+          });
+          if (!res.ok) throw await res.json();
+          const updated = await res.json();
+          const idx = domaines.findIndex(d => d.slug === editingSlug);
+          domaines[idx] = updated;
+          toast('Domaine modifié', 'success');
+          closeModal(); render();
+        } catch (ex) { toast(ex.detail || 'Modification impossible', 'error'); }
+        return;
+      }
+
+      // create
+      if (domaines.some(d => d.nom.toLowerCase() === nom.toLowerCase()))
+        return toast('Domaine déjà existant', 'warning');
+      try {
+        const res = await fetch(`${API_BASE}/universites/universites/${UNIV_SLUG}/domaines/create/`, {
+          method: 'POST',
+          headers: hdr(),
+          body: JSON.stringify({ nom })
+        });
+        if (!res.ok) throw await res.json();
+        const created = await res.json();
+        domaines.push(created);
+        toast('Domaine créé', 'success');
+        closeModal(); render();
+      } catch (ex) { toast(ex.detail || 'Création impossible', 'error'); }
+    });
+
+    /* ---------- delete ---------- */
+    listBox.addEventListener('click', e => {
+      const del = e.target.closest('[data-del]');
+      if (del) {
+        const slug = del.dataset.del;
+        const nom  = del.dataset.nom;
+        if (!confirm(`Supprimer « ${nom} » ?`)) return;
+        fetch(`${API_BASE}/universites/universites/${UNIV_SLUG}/domaines/${slug}/`, {
+          method: 'DELETE',
+          headers: hdr()
+        }).then(r => {
+          if (!r.ok) throw r.status;
+          domaines = domaines.filter(d => d.slug !== slug);
+          toast('Domaine supprimé', 'success');
+          render();
+        }).catch(() => toast('Suppression impossible', 'error'));
+        return;
+      }
+      const edit = e.target.closest('[data-edit]');
+      if (edit) {
+        const d = domaines.find(x => x.slug === edit.dataset.edit);
+        if (!d) return;
+        nomInp.value = d.nom;
+        editingSlug = d.slug;
+        openModal(d.slug);
+        nomInp.dispatchEvent(new Event('input'));
+      }
+    });
+
+    /* ---------- init ---------- */
+    load();
+  </script>
+</body>
+</html>
