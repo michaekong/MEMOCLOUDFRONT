@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Course - Teachers</title>
+<title>ENSTP - Teachers & Students</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="description" content="Course Project">
@@ -10,20 +10,218 @@
 <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="styles/teachers_styles.css">
 <link rel="stylesheet" type="text/css" href="styles/teachers_responsive.css">
+<style>
+/* Filtres et Stats */
+.filter-section {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 40px;
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: 12px 30px;
+    background: #f8f9fa;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    color: #333;
+}
+
+.filter-tab.active {
+    background: #ffb606;
+    color: white;
+    border-color: #ffb606;
+}
+
+.filter-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.search-box {
+    position: relative;
+    margin-top: 20px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 15px 50px 15px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #ffb606;
+}
+
+.search-box i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.stat-card:nth-child(2) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-card:nth-child(3) {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-card:nth-child(4) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card .number {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-card .label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Loading Skeleton */
+.skeleton {
+    animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: #e0e0e0;
+    }
+    100% {
+        background-color: #f0f0f0;
+    }
+}
+
+.skeleton-card {
+    height: 400px;
+    border-radius: 10px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state i {
+    font-size: 80px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #999;
+}
+
+/* Card Enhancements */
+.teacher .card {
+    transition: all 0.3s;
+    height: 100%;
+}
+
+.teacher .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.role-badge.professor {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.role-badge.student {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.user-info {
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.user-info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.user-info-item i {
+    color: #ffb606;
+    width: 20px;
+}
+</style>
 </head>
 <body>
 
 <div class="super_container">
 
 	<!-- Header -->
-
 	<header class="header d-flex flex-row">
 		<div class="header_content d-flex flex-row align-items-center">
 			<!-- Logo -->
 			<div class="logo_container">
 				<div class="logo">
 					<img src="images/logo.png" alt="">
-					
 				</div>
 			</div>
 
@@ -36,7 +234,6 @@
 						<li class="main_nav_item"><a href="courses.html">courses</a></li>
 						<li class="main_nav_item"><a href="elements.html">elements</a></li>
 						<li class="main_nav_item"><a href="news_post.html">news</a></li>
-						
 						<li class="main_nav_item"><a href="admin1.html">Admin</a></li>
 					</ul>
 				</div>
@@ -51,31 +248,25 @@
 		<div class="hamburger_container">
 			<i class="fas fa-bars trans_200"></i>
 		</div>
-
 	</header>
 	
 	<!-- Menu -->
 	<div class="menu_container menu_mm">
-
-		<!-- Menu Close Button -->
 		<div class="menu_close_container">
 			<div class="menu_close"></div>
 		</div>
 
-		<!-- Menu Items -->
 		<div class="menu_inner menu_mm">
 			<div class="menu menu_mm">
 				<ul class="menu_list menu_mm">
 					<li class="menu_item menu_mm"><a href="index.html">Home</a></li>
 					<li class="menu_item menu_mm"><a href="about.html">About us</a></li>
 					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
-					<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
+					<li class="menu_item menu_mm"><a href="elements.html">elements</a></li>
 					<li class="menu_item menu_mm"><a href="news_post.html">News</a></li>
 					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
 				</ul>
 
-				<!-- Menu Social -->
-				
 				<div class="menu_social_container menu_mm">
 					<ul class="menu_social menu_mm">
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
@@ -88,172 +279,87 @@
 
 				<div class="menu_copyright menu_mm">Colorlib All rights reserved</div>
 			</div>
-
 		</div>
-
 	</div>
 	
 	<!-- Home -->
-
 	<div class="home">
 		<div class="home_background_container prlx_parent">
 			<div class="home_background prlx" style="background-image:url(images/teachers_background.jpg)"></div>
 		</div>
 		<div class="home_content">
-			<h1>Teachers</h1>
+			<h1>Teachers & Students</h1>
 		</div>
 	</div>
 
-	<!-- Teachers -->
+	<!-- Filter Section -->
+	<div class="container" style="margin-top: 80px;">
+		<div class="filter-section">
+			<div class="filter-tabs">
+				<div class="filter-tab active" data-filter="all">
+					<i class="fas fa-users"></i> Tous
+				</div>
+				<div class="filter-tab" data-filter="professeur">
+					<i class="fas fa-chalkboard-teacher"></i> Professeurs
+				</div>
+				<div class="filter-tab" data-filter="standard">
+					<i class="fas fa-user-graduate"></i> Étudiants
+				</div>
+			</div>
 
+			<div class="search-box">
+				<input type="text" id="searchInput" placeholder="Rechercher par nom, email...">
+				<i class="fas fa-search"></i>
+			</div>
+
+			<!-- Stats -->
+			<div class="stats-grid" id="statsGrid">
+				<div class="stat-card">
+					<div class="number" id="totalCount">0</div>
+					<div class="label">Total</div>
+				</div>
+				<div class="stat-card">
+					<div class="number" id="profCount">0</div>
+					<div class="label">Professeurs</div>
+				</div>
+				<div class="stat-card">
+					<div class="number" id="studentCount">0</div>
+					<div class="label">Étudiants</div>
+				</div>
+				<div class="stat-card">
+					<div class="number" id="activeCount">0</div>
+					<div class="label">Actifs ce mois</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Teachers & Students Grid -->
 	<div class="teachers page_section">
 		<div class="container">
-			<div class="row">
-				
-				<!-- Teacher -->
+			<div class="row" id="usersGrid">
+				<!-- Loading Skeleton -->
 				<div class="col-lg-4 teacher">
-					<div class="card">
-						<div class="card_img">
-							<div class="card_plus trans_200 text-center"><a href="#">+</a></div>
-							<img class="card-img-top trans_200" src="images/teacher_1.jpg" alt="https://unsplash.com/@michaeldam">
-						</div>
-						<div class="card-body text-center">
-							<div class="card-title"><a href="#">Maria Smith</a></div>
-							<div class="card-text">Graphic Designer</div>
-							<div class="teacher_social">
-								<ul class="menu_social">
-									<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
+					<div class="skeleton skeleton-card"></div>
 				</div>
-
-				<!-- Teacher -->
 				<div class="col-lg-4 teacher">
-					<div class="card">
-						<div class="card_img">
-							<div class="card_plus trans_200 text-center"><a href="#">+</a></div>
-							<img class="card-img-top trans_200" src="images/teacher_2.jpg" alt="https://unsplash.com/@jcpeacock">
-						</div>
-						<div class="card-body text-center">
-							<div class="card-title"><a href="#">Christian Blue</a></div>
-							<div class="card-text">Graphic Designer</div>
-							<div class="teacher_social">
-								<ul class="menu_social">
-									<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
+					<div class="skeleton skeleton-card"></div>
 				</div>
-
-				<!-- Teacher -->
 				<div class="col-lg-4 teacher">
-					<div class="card">
-						<div class="card_img">
-							<div class="card_plus trans_200 text-center"><a href="#">+</a></div>
-							<img class="card-img-top trans_200" src="images/teacher_3.jpg" alt="https://unsplash.com/photos/n8jeOSxCRfQ">
-						</div>
-						<div class="card-body text-center">
-							<div class="card-title"><a href="#">James Brown</a></div>
-							<div class="card-text">Graphic Designer</div>
-							<div class="teacher_social">
-								<ul class="menu_social">
-									<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
+					<div class="skeleton skeleton-card"></div>
 				</div>
+			</div>
 
-				<!-- Teacher -->
-				<div class="col-lg-4 teacher">
-					<div class="card">
-						<div class="card_img">
-							<div class="card_plus trans_200 text-center"><a href="#">+</a></div>
-							<img class="card-img-top trans_200" src="images/teacher_4.jpg" alt="https://unsplash.com/@seteales">
-						</div>
-						<div class="card-body text-center">
-							<div class="card-title"><a href="#">Julie Denver</a></div>
-							<div class="card-text">Graphic Designer</div>
-							<div class="teacher_social">
-								<ul class="menu_social">
-									<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Teacher -->
-				<div class="col-lg-4 teacher">
-					<div class="card">
-						<div class="card_img">
-							<div class="card_plus trans_200 text-center"><a href="#">+</a></div>
-							<img class="card-img-top trans_200" src="images/teacher_5.jpg" alt="https://unsplash.com/@jaredsluyter">
-						</div>
-						<div class="card-body text-center">
-							<div class="card-title"><a href="#">Julie Denver</a></div>
-							<div class="card-text">Graphic Designer</div>
-							<div class="teacher_social">
-								<ul class="menu_social">
-									<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Teacher -->
-				<div class="col-lg-4 teacher">
-					<div class="card">
-						<div class="card_img">
-							<div class="card_plus trans_200 text-center"><a href="#">+</a></div>
-							<img class="card-img-top trans_200" src="images/teacher_6.jpg" alt="https://unsplash.com/@mehdizadeh">
-						</div>
-						<div class="card-body text-center">
-							<div class="card-title"><a href="#">Julie Denver</a></div>
-							<div class="card-text">Graphic Designer</div>
-							<div class="teacher_social">
-								<ul class="menu_social">
-									<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-
+			<!-- Empty State -->
+			<div class="empty-state" id="emptyState" style="display: none;">
+				<i class="fas fa-user-slash"></i>
+				<h3>Aucun résultat</h3>
+				<p>Aucun utilisateur ne correspond à votre recherche</p>
 			</div>
 		</div>
 	</div>
 
 	<!-- Milestones -->
-
 	<div class="milestones">
 		<div class="milestones_background" style="background-image:url(images/milestones_background.jpg)"></div>
 
@@ -263,8 +369,8 @@
 				<!-- Milestone -->
 				<div class="col-lg-3 milestone_col">
 					<div class="milestone text-center">
-						<div class="milestone_icon"><img src="images/milestone_1.svg" alt="https://www.flaticon.com/authors/zlatko-najdenovski"></div>
-						<div class="milestone_counter" data-end-value="750">0</div>
+						<div class="milestone_icon"><img src="images/milestone_1.svg" alt=""></div>
+						<div class="milestone_counter" data-end-value="0" id="milestone1">0</div>
 						<div class="milestone_text">Current Students</div>
 					</div>
 				</div>
@@ -272,8 +378,8 @@
 				<!-- Milestone -->
 				<div class="col-lg-3 milestone_col">
 					<div class="milestone text-center">
-						<div class="milestone_icon"><img src="images/milestone_2.svg" alt="https://www.flaticon.com/authors/zlatko-najdenovski"></div>
-						<div class="milestone_counter" data-end-value="120">0</div>
+						<div class="milestone_icon"><img src="images/milestone_2.svg" alt=""></div>
+						<div class="milestone_counter" data-end-value="0" id="milestone2">0</div>
 						<div class="milestone_text">Certified Teachers</div>
 					</div>
 				</div>
@@ -281,8 +387,8 @@
 				<!-- Milestone -->
 				<div class="col-lg-3 milestone_col">
 					<div class="milestone text-center">
-						<div class="milestone_icon"><img src="images/milestone_3.svg" alt="https://www.flaticon.com/authors/zlatko-najdenovski"></div>
-						<div class="milestone_counter" data-end-value="39">0</div>
+						<div class="milestone_icon"><img src="images/milestone_3.svg" alt=""></div>
+						<div class="milestone_counter" data-end-value="39">39</div>
 						<div class="milestone_text">Approved Courses</div>
 					</div>
 				</div>
@@ -290,8 +396,8 @@
 				<!-- Milestone -->
 				<div class="col-lg-3 milestone_col">
 					<div class="milestone text-center">
-						<div class="milestone_icon"><img src="images/milestone_4.svg" alt="https://www.flaticon.com/authors/zlatko-najdenovski"></div>
-						<div class="milestone_counter" data-end-value="3500" data-sign-before="+">0</div>
+						<div class="milestone_icon"><img src="images/milestone_4.svg" alt=""></div>
+						<div class="milestone_counter" data-end-value="3500" data-sign-before="+">+3500</div>
 						<div class="milestone_text">Graduate Students</div>
 					</div>
 				</div>
@@ -301,7 +407,6 @@
 	</div>
 
 	<!-- Become -->
-
 	<div class="become">
 		<div class="container">
 			<div class="row row-eq-height">
@@ -327,12 +432,10 @@
 	</div>
 
 	<!-- Footer -->
-
 	<footer class="footer">
 		<div class="container">
 			
 			<!-- Newsletter -->
-
 			<div class="newsletter">
 				<div class="row">
 					<div class="col">
@@ -358,18 +461,14 @@
 			</div>
 
 			<!-- Footer Content -->
-
 			<div class="footer_content">
 				<div class="row">
 
 					<!-- Footer Column - About -->
 					<div class="col-lg-3 footer_col">
-
-						<!-- Logo -->
 						<div class="logo_container">
 							<div class="logo">
 								<img src="images/logo.png" alt="">
-										
 							</div>
 						</div>
 
@@ -378,7 +477,6 @@
 					</div>
 
 					<!-- Footer Column - Menu -->
-
 					<div class="col-lg-3 footer_col">
 						<div class="footer_column_title">Menu</div>
 						<div class="footer_column_content">
@@ -393,7 +491,6 @@
 					</div>
 
 					<!-- Footer Column - Usefull Links -->
-
 					<div class="col-lg-3 footer_col">
 						<div class="footer_column_title">Usefull Links</div>
 						<div class="footer_column_content">
@@ -408,26 +505,25 @@
 					</div>
 
 					<!-- Footer Column - Contact -->
-
 					<div class="col-lg-3 footer_col">
 						<div class="footer_column_title">Contact</div>
 						<div class="footer_column_content">
 							<ul>
 								<li class="footer_contact_item">
 									<div class="footer_contact_icon">
-										<img src="images/placeholder.svg" alt="https://www.flaticon.com/authors/lucy-g">
+										<img src="images/placeholder.svg" alt="">
 									</div>
 									Rue Elig-Effa Yaoundé-Cameroun
 								</li>
 								<li class="footer_contact_item">
 									<div class="footer_contact_icon">
-										<img src="images/smartphone.svg" alt="https://www.flaticon.com/authors/lucy-g">
+										<img src="images/smartphone.svg" alt="">
 									</div>
 									(237) 222 23 09 44 / (237) 222 22 18 16
 								</li>
 								<li class="footer_contact_item">
 									<div class="footer_contact_icon">
-										<img src="images/envelope.svg" alt="https://www.flaticon.com/authors/lucy-g">
+										<img src="images/envelope.svg" alt="">
 									</div>contact@enstp.cm
 								</li>
 							</ul>
@@ -438,12 +534,9 @@
 			</div>
 
 			<!-- Footer Copyright -->
-
 			<div class="footer_bar d-flex flex-column flex-sm-row align-items-center">
 				<div class="footer_copyright">
-					<span><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span>
+					<span>Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a></span>
 				</div>
 				<div class="footer_social ml-sm-auto">
 					<ul class="menu_social">
@@ -472,6 +565,227 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
 <script src="plugins/easing/easing.js"></script>
 <script src="js/teachers_custom.js"></script>
+
+<script>
+const CONFIG = {
+    API_URL: 'https://mcb.reimca-app.com/api',
+    UNIV_SLUG: 'ecole-des-travaux'
+};
+
+let allUsers = [];
+let filteredUsers = [];
+let currentFilter = 'all';
+
+// Initialize
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadUsers();
+    setupEventListeners();
+});
+
+// Load users from API
+async function loadUsers() {
+    try {
+        const token = localStorage.getItem('authToken');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+        const response = await fetch(`${CONFIG.API_URL}/auth/${CONFIG.UNIV_SLUG}/users/?ordering=-id`, {
+            headers
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        const users = await response.json();
+
+        // Fetch roles for each user
+        const usersWithRoles = await Promise.all(users.map(async (user) => {
+            try {
+                const roleResponse = await fetch(
+                    `${CONFIG.API_URL}/universites/auth/universities/${CONFIG.UNIV_SLUG}/user-role/${user.id}/`,
+                    { headers }
+                );
+
+                if (roleResponse.ok) {
+                    const roleData = await roleResponse.json();
+                    return { ...user, role: roleData.role };
+                }
+            } catch (e) {
+                console.error('Role fetch error:', e);
+            }
+            return { ...user, role: 'standard' };
+        }));
+
+        // Filter only students and professors
+        allUsers = usersWithRoles.filter(u => 
+            u.role === 'standard' || u.role === 'professeur'
+        );
+        filteredUsers = allUsers;
+
+        renderUsers();
+        updateStats();
+    } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersGrid').innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    Erreur de chargement des utilisateurs. Veuillez réessayer.
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Render users grid
+function renderUsers() {
+    const grid = document.getElementById('usersGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    if (filteredUsers.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+
+    grid.innerHTML = filteredUsers.map(user => createUserCard(user)).join('');
+}
+
+// Create user card HTML
+function createUserCard(user) {
+    const photoUrl = user.photo_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.nom)}&background=random&size=400`;
+    const roleLabel = user.role === 'professeur' ? 'Professeur' : 'Étudiant';
+    const roleClass = user.role === 'professeur' ? 'professor' : 'student';
+    const linkedinUrl = user.realisation_linkedin || user.linkedin || '#';
+    const hasLinkedin = linkedinUrl !== '#';
+
+    return `
+        <div class="col-lg-4 teacher">
+            <div class="card">
+                <div class="card_img">
+                    <div class="card_plus trans_200 text-center"><a href="#">+</a></div>
+                    <img class="card-img-top trans_200" src="${photoUrl}" alt="${user.full_name || user.nom}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.nom)}&background=random&size=400'">
+                </div>
+                <div class="card-body text-center">
+                    <div class="card-title"><a href="#">${user.full_name || `${user.prenom} ${user.nom}`}</a></div>
+                    <div class="role-badge ${roleClass}">${roleLabel}</div>
+                    
+                    <div class="user-info">
+                        <div class="user-info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>${user.email}</span>
+                        </div>
+                        ${user.sexe ? `
+                        <div class="user-info-item">
+                            <i class="fas fa-${user.sexe === 'M' ? 'mars' : 'venus'}"></i>
+                            <span>${user.sexe === 'M' ? 'Homme' : 'Femme'}</span>
+                        </div>
+                        ` : ''}
+                        ${user.date_joined ? `
+                        <div class="user-info-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Inscrit le ${new Date(user.date_joined).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="teacher_social">
+                        <ul class="menu_social">
+                            ${hasLinkedin ? `<li class="menu_social_item"><a href="${linkedinUrl}" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>` : ''}
+                            <li class="menu_social_item"><a href="mailto:${user.email}"><i class="fas fa-envelope"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Update statistics
+function updateStats() {
+    const professors = allUsers.filter(u => u.role === 'professeur');
+    const students = allUsers.filter(u => u.role === 'standard');
+    
+    // Active this month (joined in last 30 days)
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+    const activeCount = allUsers.filter(u => 
+        u.date_joined && new Date(u.date_joined) > thirtyDaysAgo
+    ).length;
+
+    // Animate numbers
+    animateNumber('totalCount', allUsers.length);
+    animateNumber('profCount', professors.length);
+    animateNumber('studentCount', students.length);
+    animateNumber('activeCount', activeCount);
+
+    // Update milestones
+    document.getElementById('milestone1').setAttribute('data-end-value', students.length);
+    document.getElementById('milestone1').textContent = students.length;
+    
+    document.getElementById('milestone2').setAttribute('data-end-value', professors.length);
+    document.getElementById('milestone2').textContent = professors.length;
+}
+
+// Animate number counter
+function animateNumber(id, target) {
+    const element = document.getElementById(id);
+    const duration = 1000;
+    const start = 0;
+    const increment = target / (duration / 16);
+    let current = start;
+
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            element.textContent = target;
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(current);
+        }
+    }, 16);
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Filter tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.dataset.filter;
+            applyFilters();
+        });
+    });
+
+    // Search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        applyFilters(e.target.value);
+    });
+}
+
+// Apply filters
+function applyFilters(searchQuery = '') {
+    filteredUsers = allUsers;
+
+    // Filter by role
+    if (currentFilter !== 'all') {
+        filteredUsers = filteredUsers.filter(u => u.role === currentFilter);
+    }
+
+    // Filter by search
+    if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filteredUsers = filteredUsers.filter(u => 
+            (u.full_name || '').toLowerCase().includes(query) ||
+            (u.nom || '').toLowerCase().includes(query) ||
+            (u.prenom || '').toLowerCase().includes(query) ||
+            (u.email || '').toLowerCase().includes(query)
+        );
+    }
+
+    renderUsers();
+}
+</script>
 
 </body>
 </html>
