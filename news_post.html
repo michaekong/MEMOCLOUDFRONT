@@ -575,6 +575,7 @@ async function loadNews() {
         if (!res.ok) throw new Error('Erreur chargement des news');
 
         allNews = await res.json();
+        console.log('✅ News chargées:', allNews);
         applyFilters();
 
     } catch (e) {

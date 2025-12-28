@@ -141,6 +141,15 @@ async function loadInitialData() {
     ]);
 }
 
+/* ----------------------------------------------------------
+   1.  CACHE GLOBAL (indexation poussée)
+---------------------------------------------------------- */
+let FULL_LIST   = [];
+let CACHE_BUILD = false;
+
+/* ----------------------------------------------------------
+   2.  FETCH + FILTRAGE (client, ultra-rapide)
+---------------------------------------------------------- */
 async function fetchMemoires(reset = false) {
     if (reset) {
         currentPage = 1;
@@ -148,68 +157,116 @@ async function fetchMemoires(reset = false) {
         grid.innerHTML = '';
         emptyState.classList.add('hidden');
     }
-    
     loader.classList.remove('hidden');
     paginationContainer.classList.add('hidden');
 
-    const params = new URLSearchParams({
-        ordering: filters.sort,
-        page: currentPage,
-        search: filters.search,
-        annee: filters.year,
-        domaine: filters.domain
-    });
-
-    try {
-        const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/memoires/?${params.toString()}`, { headers: getHeaders() });
-        const data = await res.json();
-        
-        let results = Array.isArray(data) ? data : (data.results || []);
-        
-        // --- CLIENT SIDE FILTERING (Extra Filters) ---
-        if(filters.rating) {
-            results = results.filter(m => (m.note_moyenne || 0) >= parseInt(filters.rating));
-        }
-        if(filters.university && filters.university !== "") {
-            if(filters.university === "ENSTP") {
-                results = results.filter(m => !m.universites_list || m.universites_list.length === 0 || m.universites_list.includes('ecloe-des-travaux'));
-            } else if(filters.university === "Autre") {
-                results = results.filter(m => m.universites_list && m.universites_list.length > 0 && !m.universites_list.includes('ecole-des-travaux'));
+    /* ---- 1ère fois : on charge TOUT ---- */
+    if (!CACHE_BUILD) {
+        let page = 1, hasNext = true;
+        while (hasNext) {
+            try {
+                const res = await fetch(
+                    `${BASE_URL}/memoires/universites/${UNIV_SLUG}/memoires/?page=${page}&ordering=${filters.sort}`,
+                    { headers: getHeaders() }
+                );
+                const data = await res.json();
+                const batch = Array.isArray(data) ? data : (data.results || []);
+                FULL_LIST = FULL_LIST.concat(batch);
+                hasNext = !!data.next;
+                page++;
+            } catch (e) {
+                hasNext = false;
             }
         }
-        if(filters.hasResume) {
-            results = results.filter(m => m.resume && m.resume.length > 50);
-        }
-        if(filters.isPopular) {
-            results = results.filter(m => m.nb_telechargements >= 10);
-        }
-        if(filters.isCommented) {
-            results = results.filter(m => m.nb_commentaires >= 5);
-        }
-
-        if (reset) memoiresData = results;
-        else memoiresData = [...memoiresData, ...results];
-
-        renderGrid(results);
-        
-        if (data.next || (data.count && memoiresData.length < data.count)) {
-            paginationContainer.classList.remove('hidden');
-        } else {
-            paginationContainer.classList.add('hidden');
-        }
-        
-        if (memoiresData.length === 0) {
-            emptyState.classList.remove('hidden');
-        }
-
-    } catch (e) {
-        console.error("Fetch Error:", e);
-        if (reset) emptyState.classList.remove('hidden');
-    } finally {
-        loader.classList.add('hidden');
+        /* INDEXATION AUTEUR / ENCADREUR ultra complète */
+        FULL_LIST = FULL_LIST.map(m => ({
+            ...m,
+            _search: [
+                m.titre,
+                m.resume,
+                m.annee,
+                m.langue,
+                m.nombre_pages,
+                ...(m.domaines_list || []),
+                /* AUTEURS : nom, prénom, email, linkedin */
+                ...(m.auteur
+        ? [
+                    m.auteur.nom,
+                    m.auteur.prenom || '',
+                    m.auteur.email || '',
+                    m.auteur.linkedin || '',
+                ]
+                : []),
+                /* ENCADREURS */
+                ...(m.encadreurs || []).flatMap(e => [
+                    e.nom,
+                    e.email || '',
+                    e.linkedin || '',
+                ]),
+            ]
+                .join(' ')
+                .normalize('NFD')
+                .replace(/\p{Diacritic}/gu, '')
+                .toLowerCase(),
+            _isENSTP:
+                !m.universites_list ||
+                m.universites_list.length === 0 ||
+                m.universites_list.some(u =>
+                    u.toLowerCase().includes('ecole des travaux')
+                ),
+        }));
+        CACHE_BUILD = true;
     }
+
+    /* ---- filtres ---- */
+    let filtered = FULL_LIST;
+
+    /* recherche full-text (split par mot) */
+    if (filters.search.trim()) {
+        const needles = filters.search
+            .normalize('NFD')
+            .replace(/\p{Diacritic}/gu, '')
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean);
+        filtered = filtered.filter(m =>
+            needles.every(n => m._search.includes(n))
+        );
+    }
+
+    /* filtres rapides */
+    if (filters.year)        filtered = filtered.filter(m => String(m.annee) === filters.year);
+    if (filters.domain)      filtered = filtered.filter(m => (m.domaines_list || []).includes(filters.domain));
+    if (filters.rating)      filtered = filtered.filter(m => (m.note_moyenne || 0) >= +filters.rating);
+    if (filters.university === 'ENSTP') filtered = filtered.filter(m => m._isENSTP);
+    if (filters.university === 'Autre') filtered = filtered.filter(m => !m._isENSTP);
+    if (filters.hasResume)   filtered = filtered.filter(m => m.resume && m.resume.length > 50);
+    if (filters.isPopular)   filtered = filtered.filter(m => m.nb_telechargements >= 10);
+    if (filters.isCommented) filtered = filtered.filter(m => m.nb_commentaires >= 5);
+
+    /* ---- pagination client ---- */
+    const start = (currentPage - 1) * 12;
+    const end   = start + 12;
+    const pageResults = filtered.slice(start, end);
+
+    memoiresData = reset ? filtered : [...memoiresData, ...pageResults];
+    renderGrid(pageResults);
+
+    if (end < filtered.length) paginationContainer.classList.remove('hidden');
+    else paginationContainer.classList.add('hidden');
+    if (filtered.length === 0) emptyState.classList.remove('hidden');
+
+    loader.classList.add('hidden');
 }
 
+/* ----------------------------------------------------------
+   3.  DEBOUNCE 200 ms
+---------------------------------------------------------- */
+let debounceTimer;
+function debounceLoad() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => fetchMemoires(true), 200);
+}
 async function loadStats() {
     try {
         const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/stats/`);
