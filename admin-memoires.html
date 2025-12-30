@@ -1014,83 +1014,124 @@
                 reader.readAsText(file);
             },
 
-            parseCSV(text) {
-                const lines = text.split(/\r?\n/).filter(l => l.trim());
-                if (lines.length < 2) return alert("Fichier vide ou mal formaté.");
-                const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-                
-                state.importQueue = lines.slice(1).map(line => {
-                    const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
-                    const data = {};
-                    headers.forEach((h, i) => data[h] = values[i]);
+           parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return alert("Fichier vide ou mal formaté.");
 
-                    // Validation against real state
-                    const auteur = state.users.find(u => String(u.id) === String(data.auteur_id));
-                    const domainSlugs = (data.domaines_slugs || "").split(',').map(s => s.trim()).filter(Boolean);
-                    const domainesFound = state.domaines.filter(d => domainSlugs.includes(d.slug));
-                    
-                    let status = 'OK';
-                    let messages = [];
-                    if (!auteur) { status = 'Error'; messages.push("Auteur introuvable"); }
-                    if (domainesFound.length === 0 && domainSlugs.length > 0) { status = 'Warning'; messages.push("Domaines inconnus"); }
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  state.importQueue = [];
 
-                    return {
-                        id: Math.random().toString(36).substr(2, 9),
-                        ...data,
-                        selected: status !== 'Error',
-                        status,
-                        errorMessages: messages,
-                        auteurObj: auteur,
-                        domaineObjs: domainesFound,
-                        pdfFile: null,
-                        imgFile: null
-                    };
-                });
+  let index = 0;
+  const CHUNK = 50;
 
-                document.getElementById('importStep1').classList.add('hidden');
-                document.getElementById('importStep2').classList.remove('hidden');
-                this.renderImportTable();
-                this.updateImportSummary();
-            },
+  const parseChunk = () => {
+    const end = Math.min(index + CHUNK, lines.length);
+    for (; index < end; index++) {
+      const raw = lines[index];
+      const values = raw.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, ''));
+      const data = {};
+      headers.forEach((h, i) => data[h] = values[i]);
 
+      // 🔁 Champs tableau : on force TOUJOURS un tableau
+      const encadreursIds = (data.encadreurs_ids || "")
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+      const domainSlugs = (data.domaines_slugs || "")
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+      const imageNames = (data.images || "")
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      // 🔍 Correspondance avec les vrais objets
+      const auteur = state.users.find(u => String(u.id) === String(data.auteur_id));
+      const encadreurObjs = state.users.filter(u => encadreursIds.includes(String(u.id)));
+      const domaineObjs = state.domaines.filter(d => domainSlugs.includes(d.slug));
+
+      // ✅ Validation front
+      let status = 'OK';
+      const errors = [];
+      if (!data.titre || !data.resume || !data.annee) {
+        status = 'Error';
+        errors.push("Champs obligatoires manquants");
+      }
+      if (!auteur) {
+        status = 'Error';
+        errors.push("Auteur ID inconnu");
+      }
+      if (domainSlugs.length && domaineObjs.length !== domainSlugs.length) {
+        status = 'Warning';
+        errors.push("Certains domaines sont inconnus");
+      }
+
+      state.importQueue.push({
+        id: Math.random().toString(36).substr(2, 9),
+        ...data,
+        selected: status !== 'Error',
+        status,
+        errorMessages: errors,
+        auteurObj: auteur,
+        encadreurObjs: encadreurObjs.length ? encadreurObjs : [], // ✅ toujours tableau
+        domaineObjs: domaineObjs.length ? domaineObjs : [],       // ✅ toujours tableau
+        imageNames,                                              // ✅ tableau
+        pdfFile: null,
+        imgFiles: []                                            // ✅ tableau pour plusieurs images
+      });
+    }
+
+    if (index < lines.length) {
+      setTimeout(parseChunk, 0);
+    } else {
+      document.getElementById('importStep1').classList.add('hidden');
+      document.getElementById('importStep2').classList.remove('hidden');
+      this.renderImportTable();
+      this.updateImportSummary();
+    }
+  };
+
+  parseChunk();
+},
             renderImportTable() {
-                const tbody = document.getElementById('importTableBody');
-                if(!tbody) return;
+  const tbody = document.getElementById('importTableBody');
+  if (!tbody) return;
 
-                tbody.innerHTML = state.importQueue.map(line => `
-                    <tr class="hover:bg-brand-yellow/5 transition-colors ${!line.selected ? 'opacity-50' : ''}">
-                        <td class="px-6 py-4">
-                            <input type="checkbox" ${line.selected ? 'checked' : ''} onchange="app.toggleImportLine('${line.id}')" class="w-5 h-5 rounded-lg border-gray-300 text-brand-yellow focus:ring-brand-yellow">
-                        </td>
-                        <td class="px-6 py-4">
-                            <p class="font-bold text-brand-dark line-clamp-1">${line.titre}</p>
-                            <p class="text-[10px] text-gray-400 font-bold tracking-widest">${line.annee}</p>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2 mb-1">
-                                <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-[8px] font-black border">
-                                    ${(line.auteurObj?.nom || '?').charAt(0).toUpperCase()}
-                                </div>
-                                <span class="text-xs font-bold text-gray-600">${line.auteurObj?.full_name || 'Inconnu'}</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1">
-                                ${line.domaineObjs.map(d => `<span class="text-[8px] px-2 py-0.5 bg-brand-yellow/10 text-brand-yellow rounded-full font-black uppercase">${d.nom}</span>`).join('')}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex gap-2">
-                                <i class="fas fa-file-pdf text-lg ${line.pdfFile ? 'text-emerald-500' : 'text-gray-200'}" title="${line.fichier_pdf}"></i>
-                                <i class="fas fa-image text-lg ${line.imgFile ? 'text-blue-500' : 'text-gray-200'}" title="${line.images}"></i>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="status-badge ${line.status === 'OK' ? 'status-ok' : line.status === 'Warning' ? 'status-warn' : 'status-error'}">
-                                ${line.status}
-                            </span>
-                        </td>
-                    </tr>
-                `).join('');
-            },
+  tbody.innerHTML = state.importQueue.map(line => `
+    <tr class="hover:bg-brand-yellow/5 transition-colors ${!line.selected ? 'opacity-50' : ''}">
+      <td class="px-6 py-4">
+        <input type="checkbox" ${line.selected ? 'checked' : ''} onchange="app.toggleImportLine('${line.id}')" class="w-5 h-5 rounded-lg border-gray-300 text-brand-yellow focus:ring-brand-yellow">
+      </td>
+      <td class="px-6 py-4">
+        <p class="font-bold text-brand-dark line-clamp-1">${line.titre}</p>
+        <p class="text-[10px] text-gray-400 font-bold tracking-widest">${line.annee}</p>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-[8px] font-black border">
+            ${(line.auteurObj?.nom || '?').charAt(0).toUpperCase()}
+          </div>
+          <span class="text-xs font-bold text-gray-600">${line.auteurObj?.full_name || 'Inconnu'}</span>
+        </div>
+        <div class="flex flex-wrap gap-1">
+          ${(line.domaineObjs || []).map(d => `<span class="text-[8px] px-2 py-0.5 bg-brand-yellow/10 text-brand-yellow rounded-full font-black uppercase">${d.nom}</span>`).join('')}
+        </div>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex gap-2">
+          <i class="fas fa-file-pdf text-lg ${line.pdfFile ? 'text-emerald-500' : 'text-gray-200'}" title="${line.fichier_pdf}"></i>
+          <span class="text-[10px] text-gray-400">${line.imageNames.length} img</span>
+        </div>
+      </td>
+      <td class="px-6 py-4">
+        <span class="status-badge ${line.status === 'OK' ? 'status-ok' : line.status === 'Warning' ? 'status-warn' : 'status-error'}">
+          ${line.status}
+        </span>
+      </td>
+    </tr>
+  `).join('');
+},
 
             handleBatchFiles(input) {
                 const files = Array.from(input.files);
@@ -1164,16 +1205,21 @@
                     this.addLog(logContainer, `⏳ Préparation : "${item.titre}"...`, 'text-gray-400');
 
                                     try {
+                  // Construction FormData
                     const form = new FormData();
-                    form.append('titre', item.titre);
-                    form.append('resume', item.resume);
-                    form.append('annee', item.annee);
-                    form.append('auteur', item.auteurObj.id);
-                    item.encadreurObjs.forEach(e => form.append('encadreurs_ids', e.id));
-                    item.domaineObjs.forEach(d => form.append('domaines_slugs', d.slug));
-                    if (item.pdfFile) form.append('fichier_pdf', item.pdfFile);
-                    if (item.imgFile) form.append('images', item.imgFile);
+                form.append('titre', item.titre);
+                form.append('resume', item.resume);
+                form.append('annee', item.annee);
+                form.append('auteur_id', item.auteurObj.id);        // ✅ CORRIGÉ
+                (item.encadreurObjs || []).forEach(e => form.append('encadreurs_ids', e.id));
+                (item.domaineObjs  || []).forEach(d => form.append('domaines_slugs', d.slug));
+                if (item.pdfFile) form.append('fichier_pdf', item.pdfFile);
+                (item.imageNames || []).forEach(img => {
+                const file = state.attachedFiles.get(img);
+                if (file) form.append('images', file);
+                });
 
+if (item.pdfFile) form.append('fichier_pdf', item.pdfFile);
                     await this.uploadWithProgress(form, item, progressBar, currentText, logContainer);
                     this.addLog(logContainer, `✔ Mémoire créé : ${item.titre}`, 'text-emerald-500');
                     } catch (e) {
