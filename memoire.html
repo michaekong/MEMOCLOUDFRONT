@@ -7,6 +7,13 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Core template styles (needed for navbar appearance) -->
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+    <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -51,82 +58,77 @@
     <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-   <!-- Navbar -->
-<nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm h-[90px] flex items-center border-b border-gray-100">
-  <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center h-full max-w-[1400px]">
+     <div class="super_container">
 
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-3 group">
-      <div class="w-12 h-12 bg-gradient-to-br from-brand-orange to-amber-500 rounded-xl flex items-center justify-center text-white font-title font-extrabold text-xl shadow-lg shadow-brand-orange/30 group-hover:scale-105 transition-transform duration-300">E</div>
-      <div class="flex flex-col">
-        <span class="text-brand-black font-title font-extrabold text-lg uppercase leading-none tracking-tight group-hover:text-brand-orange transition-colors">Bibliothèque</span>
-        <span class="text-brand-grey font-title font-bold text-[10px] uppercase tracking-[0.2em] mt-1">Des Mémoires</span>
-      </div>
-    </a>
+        <!-- Header -->
+        <header class="header d-flex flex-row">
+                <div class="header_content d-flex flex-row align-items-center">
+                        <div class="logo_container">
+                                <div class="logo">
+                                        <img src="images/logo.png" alt="ENSTP">
+                                </div>
+                        </div>
 
-    <!-- Desktop Nav -->
-    <div class="hidden lg:flex main_nav_container ml-auto mr-10">
-      <ul class="main_nav_list flex gap-8 items-center">
-        <li><a href="#" class="nav-link">home</a></li>
-        <li><a href="#" class="nav-link">about us</a></li>
-        <li><a href="courses.html" class="nav-link">courses</a></li>
-        <li><a href="elements.html" class="nav-link">elements</a></li>
-        <li><a href="news_post.html" class="nav-link">news</a></li>
-        <li><a href="contact.html" class="nav-link">contact</a></li>
-        <li><a href="register.html" class="nav-link">register</a></li>
-        <li><a href="admin1.html" class="nav-link">Admin</a></li>
-        <li><a href="memoire.html" class="nav-link text-brand-orange active">memoire</a></li>
-      </ul>
-    </div>
+                        <nav class="main_nav_container">
+                                <div class="main_nav">
+                                        <ul class="main_nav_list">
+                                                <li class="main_nav_item"><a href="index.html">home</a></li>
+                                                <li class="main_nav_item"><a href="#">about us</a></li>
+                                                <li class="main_nav_item"><a href="courses.html">courses</a></li>
+                                                <li class="main_nav_item"><a href="elements.html">elements</a></li>
+                                                <li class="main_nav_item"><a href="news.html">news</a></li>
+                                                <li class="main_nav_item"><a href="contact.html">contact</a></li>
+                                                <li class="main_nav_item"><a href="register.html">register</a></li>
+                                                <li class="main_nav_item"><a href="memoire.html">memoire</a></li>
+                                                <li class="main_nav_item"><a href="admin1.html">Admin</a></li>
+                                        </ul>
+                                </div>
+                        </nav>
+                </div>
+                <div class="header_side d-flex flex-row justify-content-center align-items-center">
+                        <img src="images/phone-call.svg" alt="">
+                        <span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
+                </div>
 
-    <!-- Desktop Login -->
-    <div class="hidden lg:flex items-center gap-3">
-      <button id="login-btn" class="px-6 py-2.5 rounded-full bg-brand-black text-white hover:bg-brand-orange hover:text-brand-black transition-all shadow-md text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-        <i data-lucide="log-in" class="w-4 h-4"></i> Connexion
-      </button>
-    </div>
+                <div class="hamburger_container">
+                        <i class="fas fa-bars trans_200"></i>
+                </div>
+        </header>
+    
+        <!-- Menu -->
+        <div class="menu_container menu_mm">
+                <div class="menu_close_container">
+                        <div class="menu_close"></div>
+                </div>
 
-    <!-- Mobile Burger -->
-    <button id="mobile-menu-btn" class="lg:hidden text-brand-black hover:text-brand-orange transition-colors p-2 bg-gray-50 rounded-lg">
-      <i data-lucide="menu" class="w-7 h-7"></i>
-    </button>
-  </div>
-</nav>
+                <div class="menu_inner menu_mm">
+                        <div class="menu menu_mm">
+                                <ul class="menu_list menu_mm">
+                                        <li class="menu_item menu_mm"><a href="index.html">Home</a></li>
+                                        <li class="menu_item menu_mm"><a href="#">About us</a></li>
+                                        <li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
+                                        <li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
+                                        <li class="menu_item menu_mm"><a href="news.html">News</a></li>
+                                        <li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
+                                        <li class="menu_item menu_mm"><a href="register.html">Register</a></li>
+                                        <li class="menu_item menu_mm"><a href="memoire.html">Memoire</a></li>
+                                        <li class="menu_item menu_mm"><a href="admin1.html">Admin</a></li>
+                                </ul>
 
-<!-- Mobile Sidebar (UNIQUE + Glass + Vertical) -->
-<div id="mobile-sidebar" class="fixed inset-0 z-[1000] transform translate-x-full transition-transform duration-300 ease-in-out lg:hidden">
-  <div id="mobile-backdrop" class="absolute inset-0 bg-brand-black/60 backdrop-blur-sm"></div>
+                                <div class="menu_social_container menu_mm">
+                                        <ul class="menu_social menu_mm">
+                                                <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
+                                                <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                                                <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                                <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                                <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-twitter"></i></a></li>
+                                        </ul>
+                                </div>
 
-  <div class="absolute right-0 top-0 h-full w-[300px] bg-white/90 backdrop-blur-xl border-l border-white/20 shadow-2xl flex flex-col rounded-l-3xl overflow-hidden">
-    <!-- Header -->
-    <div class="flex justify-between items-center p-6 bg-white/50 border-b border-white/20">
-      <span class="text-brand-orange font-title font-extrabold text-xl uppercase tracking-widest">Menu</span>
-      <button id="close-mobile-menu" class="p-3 bg-white/70 hover:bg-white rounded-full transition-all text-brand-black hover:rotate-90">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-    </div>
-
-    <!-- Navigation Links (Vertical + Glass) -->
-    <nav class="flex-1 overflow-y-auto px-5 py-6 space-y-3">
-      <a href="#" class="mobile-glass-link"><i data-lucide="home" class="w-5 h-5"></i> Accueil</a>
-      <a href="#" class="mobile-glass-link"><i data-lucide="info" class="w-5 h-5"></i> À propos</a>
-      <a href="courses.html" class="mobile-glass-link"><i data-lucide="book-open" class="w-5 h-5"></i> Cours</a>
-      <a href="elements.html" class="mobile-glass-link"><i data-lucide="layers" class="w-5 h-5"></i> Éléments</a>
-      <a href="news_post.html" class="mobile-glass-link"><i data-lucide="newspaper" class="w-5 h-5"></i> Actualités</a>
-      <a href="contact.html" class="mobile-glass-link"><i data-lucide="mail" class="w-5 h-5"></i> Contact</a>
-      <a href="register.html" class="mobile-glass-link"><i data-lucide="user-plus" class="w-5 h-5"></i> Inscription</a>
-      <a href="memoire.html" class="mobile-glass-link active"><i data-lucide="graduation-cap" class="w-5 h-5"></i> Mémoires</a>
-      <a href="admin1.html" class="mobile-glass-link active"><i data-lucide="setting" class="w-5 h-5"></i> Admin</a>
-    </nav>
-
-    <!-- Footer Button -->
-    <div class="p-6 bg-white/50 border-t border-white/20">
-      <button id="mobile-login-btn" class="w-full py-4 bg-brand-black text-white rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-brand-orange hover:text-brand-black transition-all shadow-lg hover:shadow-brand-orange/30">
-        Connexion
-      </button>
-    </div>
-  </div>
-</div>
+                                <div class="menu_copyright menu_mm">Colorlib All rights reserved</div>
+                        </div>
+                </div>
+        </div>
     <!-- Hero Section -->
     <section class="relative w-full min-h-[70vh] lg:min-h-[650px] flex items-center justify-center overflow-hidden bg-brand-black pt-[90px]">
         <!-- Background Slideshow -->
@@ -407,6 +409,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Core template scripts (needed for mobile menu) -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="styles/bootstrap4/popper.js"></script>
+    <script src="styles/bootstrap4/bootstrap.min.js"></script>
+    <script src="plugins/greensock/TweenMax.min.js"></script>
+    <script src="plugins/greensock/TimelineMax.min.js"></script>
+    <script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
+    <script src="plugins/greensock/animation.gsap.min.js"></script>
+    <script src="plugins/greensock/ScrollToPlugin.min.js"></script>
+    <script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+    <script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
+    <script src="plugins/easing/easing.js"></script>
+    <script src="js/custom.js"></script>
 
     <!-- Application Logic -->
     <script src="script.js"></script>

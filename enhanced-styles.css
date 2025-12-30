@@ -285,7 +285,10 @@ p {
 }
 
 .logo img {
-    height: 50px;
+    max-height: 60px;
+    height: auto;
+    width: auto;
+    max-width: 100%;
     margin-right: var(--spacing-sm);
 }
 
