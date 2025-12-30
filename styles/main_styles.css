@@ -345,6 +345,18 @@ section
 	.logo_container { padding-left: 16px; }
 	.logo img { max-height: 48px; }
 }
+
+/* Make anchor navigation respect fixed header and enable smooth behaviour */
+html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+
+/* Large screen tweaks */
+@media (min-width: 1200px) {
+	.logo img { max-height: 90px; }
+	.header { height: 130px; }
+	.home { height: 520px; }
+	.main_nav_list { gap: 56px; }
+	.main_nav_item a { font-size: 16px; }
+}
 .logo span
 {
 	font-family: 'Open Sans', sans-serif;
@@ -359,6 +371,9 @@ section
 /*********************************
 3.2 Main Nav
 *********************************/
+
+/* Anchor offset to prevent fixed header covering targets */
+.page_section, .section_title { scroll-margin-top: 140px; }
 
 .main_nav_container
 {
@@ -462,7 +477,7 @@ section
 	width: 50vw;
 	height: 100vh;
 	background: #FFFFFF;
-	z-index: 12;
+	z-index: 2000; /* ensure menu overlays header */
 	-webkit-transition: all 0.6s ease;
 	-moz-transition: all 0.6s ease;
 	-ms-transition: all 0.6s ease;

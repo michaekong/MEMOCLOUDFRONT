@@ -441,7 +441,7 @@ section
 	width: 50vw;
 	height: 100vh;
 	background: #FFFFFF;
-	z-index: 12;
+	z-index: 2000; /* ensure menu overlays header */
 	-webkit-transition: all 0.6s ease;
 	-moz-transition: all 0.6s ease;
 	-ms-transition: all 0.6s ease;
@@ -662,11 +662,13 @@ section
 	-ms-transform: translateX(-50%);
 	-o-transform: translateX(-50%);
 	transform: translateX(-50%);
-	background: #ffb606;
-	padding-top: 24px;
-	padding-bottom: 18px;
-	padding-left: 39px;
-	padding-right: 42px;
+	background: rgba(0,0,0,0.45); /* semi-transparent for better contrast */
+	padding-top: 18px;
+	padding-bottom: 14px;
+	padding-left: 28px;
+	padding-right: 28px;
+	border-radius: 8px;
+	box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 .home_content h1
 {

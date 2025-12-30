@@ -12,83 +12,30 @@
 <link rel="stylesheet" type="text/css" href="styles/teachers_responsive.css">
 <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
 <link rel="stylesheet" type="text/css" href="styles/responsive.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* Filtres et Stats */
 .filter-section {
     background: #fff;
-	<div class="super_container">
+    padding: 22px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
 
-		<!-- Header -->
+/* Teacher card image & card body tweaks */
+.teacher .card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+}
+.teacher .card-body { padding: 18px; }
 
-		<header class="header d-flex flex-row">
-			<div class="header_content d-flex flex-row align-items-center">
-				<div class="logo_container">
-					<div class="logo">
-						<img src="images/logo.png" alt="ENSTP">
-					</div>
-				</div>
 
-				<nav class="main_nav_container">
-					<div class="main_nav">
-						<ul class="main_nav_list">
-							<li class="main_nav_item"><a href="index.html">home</a></li>
-							<li class="main_nav_item"><a href="#">about us</a></li>
-							<li class="main_nav_item"><a href="courses.html">courses</a></li>
-							<li class="main_nav_item"><a href="elements.html">elements</a></li>
-							<li class="main_nav_item"><a href="news.html">news</a></li>
-							<li class="main_nav_item"><a href="contact.html">contact</a></li>
-							<li class="main_nav_item"><a href="register.html">register</a></li>
-							<li class="main_nav_item"><a href="memoire.html">memoire</a></li>
-							<li class="main_nav_item"><a href="admin1.html">Admin</a></li>
-						</ul>
-					</div>
-				</nav>
-			</div>
-			<div class="header_side d-flex flex-row justify-content-center align-items-center">
-				<img src="images/phone-call.svg" alt="">
-				<span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
-			</div>
 
-			<div class="hamburger_container">
-				<i class="fas fa-bars trans_200"></i>
-			</div>
-		</header>
-    
-		<!-- Menu -->
-		<div class="menu_container menu_mm">
-			<div class="menu_close_container">
-				<div class="menu_close"></div>
-			</div>
 
-			<div class="menu_inner menu_mm">
-				<div class="menu menu_mm">
-					<ul class="menu_list menu_mm">
-						<li class="menu_item menu_mm"><a href="index.html">Home</a></li>
-						<li class="menu_item menu_mm"><a href="#">About us</a></li>
-						<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
-						<li class="menu_item menu_mm"><a href="elements.html">Elements</a></li>
-						<li class="menu_item menu_mm"><a href="news.html">News</a></li>
-						<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
-						<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
-						<li class="menu_item menu_mm"><a href="memoire.html">Memoire</a></li>
-						<li class="menu_item menu_mm"><a href="admin1.html">Admin</a></li>
-					</ul>
-
-					<div class="menu_social_container menu_mm">
-						<ul class="menu_social menu_mm">
-							<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-							<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-							<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
-							<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-							<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-twitter"></i></a></li>
-						</ul>
-					</div>
-
-					<div class="menu_copyright menu_mm">Colorlib All rights reserved</div>
-				</div>
-			</div>
-		</div>
 
 .stat-card:nth-child(3) {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -203,6 +150,28 @@
     color: #ffb606;
     width: 20px;
 }
+
+/* UI tweaks */
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:8px;
+}
+.search-box input{
+    flex:1;
+    padding:10px 14px;
+    border-radius:8px;
+    border:1px solid #e6e6e6;
+    outline:none;
+}
+.filter-tab{cursor:pointer;padding:10px 16px;border-radius:8px;margin-right:8px;background:#fff;border:1px solid transparent}
+.filter-tab.active{background:linear-gradient(135deg,#ffb606,#ff8f00);color:#fff;border-color:rgba(0,0,0,0.03);}
+.home .home_content{background:rgba(0,0,0,0.45);padding:18px;border-radius:8px;display:inline-block}
+.home .home_content h1{color:#fff;font-weight:700;margin:0}
+.teacher .card{overflow:hidden;border-radius:10px}
+.teacher .card .card-img-top{height:220px;object-fit:cover}
+
 </style>
 </head>
 <body>
@@ -228,6 +197,8 @@
 						<li class="main_nav_item"><a href="courses.html">courses</a></li>
 						<li class="main_nav_item"><a href="elements.html">elements</a></li>
 						<li class="main_nav_item"><a href="news_post.html">news</a></li>
+						<li class="main_nav_item"><a href="teachers.html">teachers</a></li>
+						<li class="main_nav_item"><a href="memoire.html">memoire</a></li>
 						<li class="main_nav_item"><a href="admin1.html">Admin</a></li>
 					</ul>
 				</div>
@@ -258,12 +229,8 @@
 					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
 					<li class="menu_item menu_mm"><a href="elements.html">elements</a></li>
 					<li class="menu_item menu_mm"><a href="news_post.html">News</a></li>
-					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
-				</ul>
-
-				<div class="menu_social_container menu_mm">
-					<ul class="menu_social menu_mm">
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
+						<li class="menu_item menu_mm"><a href="teachers.html">Teachers</a></li>
+						<li class="menu_item menu_mm"><a href="memoire.html">Memoire</a></li>
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
 						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
@@ -276,10 +243,22 @@
 		</div>
 	</div>
 	
-	<!-- Home -->
+	<!-- Home (hero carousel like index) -->
 	<div class="home">
-		<div class="home_background_container prlx_parent">
-			<div class="home_background prlx" style="background-image:url(images/teachers_background.jpg)"></div>
+		<div class="hero_slider_container">
+			<div class="hero_slider owl-carousel">
+				<div class="hero_slide">
+					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
+				</div>
+				<div class="hero_slide">
+					<div class="hero_slide_background" style="background-image:url(images/travaux2.jpeg)"></div>
+				</div>
+				<div class="hero_slide">
+					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
+				</div>
+			</div>
+			<div class="hero_slider_left hero_slider_nav trans_200"><span class="trans_200">prev</span></div>
+			<div class="hero_slider_right hero_slider_nav trans_200"><span class="trans_200">next</span></div>
 		</div>
 		<div class="home_content">
 			<h1>Teachers & Students</h1>
@@ -558,6 +537,28 @@
 <script src="plugins/greensock/ScrollToPlugin.min.js"></script>
 <script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
 <script src="plugins/easing/easing.js"></script>
+<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+<script>
+$(document).ready(function(){
+    if($('.hero_slider').length){
+        var owl = $('.hero_slider');
+        owl.owlCarousel({
+            items:1,
+            loop:true,
+            smartSpeed:800,
+            autoplay:true,
+            nav:false,
+            dots:false
+        });
+        if($('.hero_slider_left').length){
+            $('.hero_slider_left').on('click', function(){ owl.trigger('prev.owl.carousel'); });
+        }
+        if($('.hero_slider_right').length){
+            $('.hero_slider_right').on('click', function(){ owl.trigger('next.owl.carousel'); });
+        }
+    }
+});
+</script>
 <script src="js/teachers_custom.js"></script>
 
 <script>
@@ -576,8 +577,68 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
 });
 
-// Load users from API
-async function loadUsers() {
+// Helpers: show alert banners with optional actions
+function clearAlerts() {
+    document.querySelectorAll('.page-alert').forEach(n => n.remove());
+}
+
+function showAlert(type, message, options = {}) {
+    // type: 'danger' | 'warning' | 'info' | 'success'
+    clearAlerts();
+    const container = document.querySelector('.teachers .container') || document.body;
+    const node = document.createElement('div');
+    node.className = `page-alert alert alert-${type}`;
+    node.style.marginBottom = '16px';
+    node.innerHTML = `<span>${message}</span>`;
+
+    const actions = document.createElement('div');
+    actions.style.marginTop = '8px';
+
+    if (options.showRetry) {
+        const retryBtn = document.createElement('button');
+        retryBtn.className = 'btn btn-sm btn-primary';
+        retryBtn.textContent = 'Réessayer';
+        retryBtn.addEventListener('click', () => { loadUsers(); });
+        actions.appendChild(retryBtn);
+    }
+
+    if (options.showDemo) {
+        const demoBtn = document.createElement('button');
+        demoBtn.className = 'btn btn-sm btn-secondary';
+        demoBtn.style.marginLeft = '8px';
+        demoBtn.textContent = "Afficher des exemples";
+        demoBtn.addEventListener('click', () => { setDemoUsers(); });
+        actions.appendChild(demoBtn);
+    }
+
+    if (options.loginLink) {
+        const loginA = document.createElement('a');
+        loginA.className = 'btn btn-sm btn-outline-warning';
+        loginA.style.marginLeft = '8px';
+        loginA.href = 'register.html';
+        loginA.textContent = 'Se connecter / s\'inscrire';
+        actions.appendChild(loginA);
+    }
+
+    if (actions.childElementCount) node.appendChild(actions);
+    container.prepend(node);
+}
+
+function setDemoUsers() {
+    const demo = [
+        { full_name: 'Jean Dupont', role: 'professeur', email: 'jean.dupont@example.com', photo_profil: 'images/teacher1.jpg', sexe: 'M', date_joined: new Date().toISOString() },
+        { full_name: 'Amina Touré', role: 'professeur', email: 'amina.toure@example.com', photo_profil: 'images/teacher2.jpg', sexe: 'F', date_joined: new Date().toISOString() },
+        { full_name: 'Aliou N', role: 'standard', email: 'aliou@example.com', photo_profil: 'images/teacher3.jpg', sexe: 'M', date_joined: new Date().toISOString() }
+    ];
+    allUsers = demo;
+    filteredUsers = demo;
+    renderUsers();
+    updateStats();
+}
+
+// Load users from API with better error handling and retry/demo fallback
+async function loadUsers(retry = 0) {
+    clearAlerts();
     try {
         const token = localStorage.getItem('authToken');
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
@@ -586,11 +647,23 @@ async function loadUsers() {
             headers
         });
 
-        if (!response.ok) throw new Error('Failed to fetch users');
+        if (!response.ok) {
+            if (response.status === 401) {
+                // Not authorized: suggest login and offer demo data
+                showAlert('warning', "Accès restreint : connexion requise pour afficher la liste complète.", { showDemo: true, loginLink: true });
+                setDemoUsers();
+                return;
+            }
+
+            // For 4xx/5xx show server message and retry option
+            const text = await response.text().catch(() => response.statusText || '');
+            showAlert('danger', `Erreur serveur ${response.status}: ${text || response.statusText}`, { showRetry: true, showDemo: true });
+            return;
+        }
 
         const users = await response.json();
 
-        // Fetch roles for each user
+        // Fetch roles for each user (best-effort)
         const usersWithRoles = await Promise.all(users.map(async (user) => {
             try {
                 const roleResponse = await fetch(
@@ -609,22 +682,15 @@ async function loadUsers() {
         }));
 
         // Filter only students and professors
-        allUsers = usersWithRoles.filter(u => 
-            u.role === 'standard' || u.role === 'professeur'
-        );
+        allUsers = usersWithRoles.filter(u => u.role === 'standard' || u.role === 'professeur');
         filteredUsers = allUsers;
 
         renderUsers();
         updateStats();
     } catch (error) {
         console.error('Error loading users:', error);
-        document.getElementById('usersGrid').innerHTML = `
-            <div class="col-12">
-                <div class="alert alert-danger">
-                    Erreur de chargement des utilisateurs. Veuillez réessayer.
-                </div>
-            </div>
-        `;
+        // Network error or other exception: allow retry and demo fallback
+        showAlert('danger', 'Impossible de contacter le serveur. Vérifiez votre connexion.', { showRetry: true, showDemo: true, loginLink: true });
     }
 }
 
