@@ -248,13 +248,25 @@
 		<div class="hero_slider_container">
 			<div class="hero_slider owl-carousel">
 				<div class="hero_slide">
-					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
+					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg);position:relative;"></div>
+					<div class="hero_slide_content d-flex flex-column align-items-center justify-content-center text-center" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(26,26,26,0.60);backdrop-filter:blur(2px);padding:0 1rem;">
+						<h2 class="font-title" style="color:#ffb606;font-size:2.7rem;font-weight:800;text-shadow:0 2px 16px #000,0 1px 0 #ffb606;letter-spacing:0.03em;">Enseignants & Étudiants d'Excellence</h2>
+						<p style="color:#fff;font-size:1.25rem;font-weight:500;text-shadow:0 1px 8px #000;max-width:650px;margin:1.2rem auto 0 auto;line-height:1.5;">Découvrez l'annuaire officiel de l'ENSTP : talents, expertises et parcours inspirants réunis pour bâtir l'avenir.</p>
+					</div>
 				</div>
 				<div class="hero_slide">
-					<div class="hero_slide_background" style="background-image:url(images/travaux2.jpeg)"></div>
+					<div class="hero_slide_background" style="background-image:url(images/travaux2.jpeg);position:relative;"></div>
+					<div class="hero_slide_content d-flex flex-column align-items-center justify-content-center text-center" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(26,26,26,0.60);backdrop-filter:blur(2px);padding:0 1rem;">
+						<h2 class="font-title" style="color:#ffb606;font-size:2.7rem;font-weight:800;text-shadow:0 2px 16px #000,0 1px 0 #ffb606;letter-spacing:0.03em;">Rejoignez la Communauté ENSTP</h2>
+						<p style="color:#fff;font-size:1.25rem;font-weight:500;text-shadow:0 1px 8px #000;max-width:650px;margin:1.2rem auto 0 auto;line-height:1.5;">Partagez vos connaissances, développez votre réseau et accédez à des opportunités uniques au sein de notre institution.</p>
+					</div>
 				</div>
 				<div class="hero_slide">
-					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
+					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg);position:relative;"></div>
+					<div class="hero_slide_content d-flex flex-column align-items-center justify-content-center text-center" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(26,26,26,0.60);backdrop-filter:blur(2px);padding:0 1rem;">
+						<h2 class="font-title" style="color:#ffb606;font-size:2.7rem;font-weight:800;text-shadow:0 2px 16px #000,0 1px 0 #ffb606;letter-spacing:0.03em;">Innovation & Savoir-Faire</h2>
+						<p style="color:#fff;font-size:1.25rem;font-weight:500;text-shadow:0 1px 8px #000;max-width:650px;margin:1.2rem auto 0 auto;line-height:1.5;">L’ENSTP valorise l’excellence académique et l’innovation pour former les leaders de demain dans le secteur des travaux publics.</p>
+					</div>
 				</div>
 			</div>
 			<div class="hero_slider_left hero_slider_nav trans_200"><span class="trans_200">prev</span></div>
@@ -344,7 +356,7 @@
 					<div class="milestone text-center">
 						<div class="milestone_icon"><img src="images/milestone_1.svg" alt=""></div>
 						<div class="milestone_counter" data-end-value="0" id="milestone1">0</div>
-						<div class="milestone_text">Current Students</div>
+						<div class="milestone_text">Étudiants inscrits</div>
 					</div>
 				</div>
 
@@ -353,7 +365,7 @@
 					<div class="milestone text-center">
 						<div class="milestone_icon"><img src="images/milestone_2.svg" alt=""></div>
 						<div class="milestone_counter" data-end-value="0" id="milestone2">0</div>
-						<div class="milestone_text">Certified Teachers</div>
+						<div class="milestone_text">Enseignants certifiés</div>
 					</div>
 				</div>
 
@@ -361,8 +373,8 @@
 				<div class="col-lg-3 milestone_col">
 					<div class="milestone text-center">
 						<div class="milestone_icon"><img src="images/milestone_3.svg" alt=""></div>
-						<div class="milestone_counter" data-end-value="39">39</div>
-						<div class="milestone_text">Approved Courses</div>
+						<div class="milestone_counter" data-end-value="0" id="milestone3">0</div>
+						<div class="milestone_text">Cours validés</div>
 					</div>
 				</div>
 
@@ -370,8 +382,8 @@
 				<div class="col-lg-3 milestone_col">
 					<div class="milestone text-center">
 						<div class="milestone_icon"><img src="images/milestone_4.svg" alt=""></div>
-						<div class="milestone_counter" data-end-value="3500" data-sign-before="+">+3500</div>
-						<div class="milestone_text">Graduate Students</div>
+						<div class="milestone_counter" data-end-value="0" id="milestone4">0</div>
+						<div class="milestone_text">Diplômés</div>
 					</div>
 				</div>
 
@@ -685,8 +697,28 @@ async function loadUsers(retry = 0) {
         allUsers = usersWithRoles.filter(u => u.role === 'standard' || u.role === 'professeur');
         filteredUsers = allUsers;
 
-        renderUsers();
-        updateStats();
+		renderUsers();
+		// Charger les stats dynamiques après les users
+		await loadDynamicStats();
+		updateStats();
+	// Charge dynamiquement les stats (cours, diplômés) depuis l'API
+	async function loadDynamicStats() {
+		// Utilise les mêmes endpoints que dashboard-analytics.js
+		try {
+			// Cours validés (si endpoint existe)
+			const coursesResp = await fetch(`${CONFIG.API_URL}/auth/${CONFIG.UNIV_SLUG}/courses/`);
+			if (coursesResp.ok) {
+				window.coursesData = await coursesResp.json();
+			}
+		} catch (e) { window.coursesData = null; }
+		try {
+			// Mémoires (pour diplômés)
+			const memoiresResp = await fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/`);
+			if (memoiresResp.ok) {
+				window.graduatesData = await memoiresResp.json();
+			}
+		} catch (e) { window.graduatesData = null; }
+	}
     } catch (error) {
         console.error('Error loading users:', error);
         // Network error or other exception: allow retry and demo fallback
@@ -696,94 +728,123 @@ async function loadUsers(retry = 0) {
 
 // Render users grid
 function renderUsers() {
-    const grid = document.getElementById('usersGrid');
-    const emptyState = document.getElementById('emptyState');
+	const grid = document.getElementById('usersGrid');
+	const emptyState = document.getElementById('emptyState');
 
-    if (filteredUsers.length === 0) {
-        grid.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-    }
+	if (filteredUsers.length === 0) {
+		grid.innerHTML = '';
+		emptyState.style.display = 'block';
+		return;
+	}
 
-    emptyState.style.display = 'none';
+	emptyState.style.display = 'none';
 
-    grid.innerHTML = filteredUsers.map(user => createUserCard(user)).join('');
+	// Séparer les utilisateurs par rôle
+	const admins = filteredUsers.filter(u => u.role === 'admin' || u.role === 'administrateur');
+	const students = filteredUsers.filter(u => u.role === 'standard' || u.role === 'étudiant');
+	const teachers = filteredUsers.filter(u => u.role === 'professeur' || u.role === 'enseignant');
+
+	let html = '';
+	if (admins.length) {
+		html += `<div class="row mb-4"><div class="col-12"><h3 style="color:#ffb606;font-weight:800;">Administrateurs</h3></div></div>`;
+		html += admins.map(user => createUserCard(user, 'admin')).join('');
+	}
+	if (students.length) {
+		html += `<div class="row mb-4"><div class="col-12"><h3 style="color:#ffb606;font-weight:800;">Étudiants</h3></div></div>`;
+		html += students.map(user => createUserCard(user, 'student')).join('');
+	}
+	if (teachers.length) {
+		html += `<div class="row mb-4"><div class="col-12"><h3 style="color:#ffb606;font-weight:800;">Enseignants</h3></div></div>`;
+		html += teachers.map(user => createUserCard(user, 'teacher')).join('');
+	}
+	grid.innerHTML = html;
 }
 
 // Create user card HTML
 function createUserCard(user) {
-    const photoUrl = user.photo_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.nom)}&background=random&size=400`;
-    const roleLabel = user.role === 'professeur' ? 'Professeur' : 'Étudiant';
-    const roleClass = user.role === 'professeur' ? 'professor' : 'student';
-    const linkedinUrl = user.realisation_linkedin || user.linkedin || '#';
-    const hasLinkedin = linkedinUrl !== '#';
+	const photoUrl = user.photo_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.nom)}&background=ffb606&color=fff&size=400`;
+	let roleLabel = '';
+	let roleClass = '';
+	if (user.role === 'admin' || user.role === 'administrateur') {
+		roleLabel = 'Administrateur';
+		roleClass = 'admin';
+	} else if (user.role === 'professeur' || user.role === 'enseignant') {
+		roleLabel = 'Enseignant';
+		roleClass = 'teacher';
+	} else {
+		roleLabel = 'Étudiant';
+		roleClass = 'student';
+	}
+	const linkedinUrl = user.realisation_linkedin || user.linkedin || '#';
+	const hasLinkedin = linkedinUrl !== '#';
 
-    return `
-        <div class="col-lg-4 teacher">
-            <div class="card">
-                <div class="card_img">
-                    <div class="card_plus trans_200 text-center"><a href="#">+</a></div>
-                    <img class="card-img-top trans_200" src="${photoUrl}" alt="${user.full_name || user.nom}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.nom)}&background=random&size=400'">
-                </div>
-                <div class="card-body text-center">
-                    <div class="card-title"><a href="#">${user.full_name || `${user.prenom} ${user.nom}`}</a></div>
-                    <div class="role-badge ${roleClass}">${roleLabel}</div>
-                    
-                    <div class="user-info">
-                        <div class="user-info-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>${user.email}</span>
-                        </div>
-                        ${user.sexe ? `
-                        <div class="user-info-item">
-                            <i class="fas fa-${user.sexe === 'M' ? 'mars' : 'venus'}"></i>
-                            <span>${user.sexe === 'M' ? 'Homme' : 'Femme'}</span>
-                        </div>
-                        ` : ''}
-                        ${user.date_joined ? `
-                        <div class="user-info-item">
-                            <i class="fas fa-calendar"></i>
-                            <span>Inscrit le ${new Date(user.date_joined).toLocaleDateString('fr-FR')}</span>
-                        </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="teacher_social">
-                        <ul class="menu_social">
-                            ${hasLinkedin ? `<li class="menu_social_item"><a href="${linkedinUrl}" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>` : ''}
-                            <li class="menu_social_item"><a href="mailto:${user.email}"><i class="fas fa-envelope"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+	// Couleurs de la charte uniquement
+	const cardBg = roleClass === 'admin' ? '#fff8e1' : (roleClass === 'teacher' ? '#e3f2fd' : '#fcfcfc');
+	const borderColor = roleClass === 'admin' ? '#ffb606' : (roleClass === 'teacher' ? '#1976d2' : '#388e3c');
+	const badgeBg = roleClass === 'admin' ? '#ffb606' : (roleClass === 'teacher' ? '#1976d2' : '#388e3c');
+	const badgeColor = '#fff';
+
+	return `
+		<div class="col-lg-4 col-md-6 mb-4 teacher">
+			<div class="card" style="background:${cardBg};border:2px solid ${borderColor};border-radius:18px;box-shadow:0 8px 32px rgba(26,26,26,0.07);">
+				<div class="card_img" style="border-radius:16px 16px 0 0;overflow:hidden;">
+					<img class="card-img-top trans_200" src="${photoUrl}" alt="${user.full_name || user.nom}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.nom)}&background=ffb606&color=fff&size=400'" style="height:220px;object-fit:cover;">
+				</div>
+				<div class="card-body text-center" style="padding:18px;">
+					<div class="card-title" style="font-weight:700;font-size:1.2rem;color:#1a1a1a;"><a href="#" style="color:#1a1a1a;">${user.full_name || `${user.prenom} ${user.nom}`}</a></div>
+					<div class="role-badge" style="background:${badgeBg};color:${badgeColor};font-weight:700;font-size:0.9rem;border-radius:999px;padding:4px 18px;margin-top:10px;">${roleLabel}</div>
+					<div class="user-info" style="background:#fff;border-radius:10px;margin-top:15px;padding:10px 0;">
+						<div class="user-info-item" style="color:#888;font-size:0.97rem;margin:6px 0;"><i class="fas fa-envelope" style="color:#ffb606;width:20px;"></i> <span>${user.email}</span></div>
+						${user.sexe ? `<div class="user-info-item" style="color:#888;font-size:0.97rem;margin:6px 0;"><i class="fas fa-${user.sexe === 'M' ? 'mars' : 'venus'}" style="color:#ffb606;width:20px;"></i> <span>${user.sexe === 'M' ? 'Homme' : 'Femme'}</span></div>` : ''}
+						${user.date_joined ? `<div class="user-info-item" style="color:#888;font-size:0.97rem;margin:6px 0;"><i class="fas fa-calendar" style="color:#ffb606;width:20px;"></i> <span>Inscrit le ${new Date(user.date_joined).toLocaleDateString('fr-FR')}</span></div>` : ''}
+					</div>
+					<div class="teacher_social mt-2">
+						<ul class="menu_social" style="display:flex;justify-content:center;gap:10px;">
+							${hasLinkedin ? `<li class="menu_social_item"><a href="${linkedinUrl}" target="_blank" style="color:#ffb606;font-size:1.2rem;"><i class="fab fa-linkedin-in"></i></a></li>` : ''}
+							<li class="menu_social_item"><a href="mailto:${user.email}" style="color:#ffb606;font-size:1.2rem;"><i class="fas fa-envelope"></i></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
 }
 
 // Update statistics
 function updateStats() {
-    const professors = allUsers.filter(u => u.role === 'professeur');
-    const students = allUsers.filter(u => u.role === 'standard');
-    
-    // Active this month (joined in last 30 days)
-    const now = new Date();
-    const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
-    const activeCount = allUsers.filter(u => 
-        u.date_joined && new Date(u.date_joined) > thirtyDaysAgo
-    ).length;
+	const professors = allUsers.filter(u => u.role === 'professeur' || u.role === 'enseignant');
+	const students = allUsers.filter(u => u.role === 'standard' || u.role === 'étudiant');
+	const admins = allUsers.filter(u => u.role === 'admin' || u.role === 'administrateur');
+	// Active this month (joined in last 30 days)
+	const now = new Date();
+	const thirtyDaysAgo = new Date();
+	thirtyDaysAgo.setDate(now.getDate() - 30);
+	const activeCount = allUsers.filter(u => u.date_joined && new Date(u.date_joined) > thirtyDaysAgo).length;
 
-    // Animate numbers
-    animateNumber('totalCount', allUsers.length);
-    animateNumber('profCount', professors.length);
-    animateNumber('studentCount', students.length);
-    animateNumber('activeCount', activeCount);
+	// Cours validés (dynamique si API, sinon valeur fictive)
+	let coursesCount = 0;
+	if (window.coursesData && Array.isArray(window.coursesData)) {
+		coursesCount = window.coursesData.length;
+	} else {
+		coursesCount = 39; // valeur par défaut
+	}
+	// Diplômés (dynamique si API, sinon valeur fictive)
+	let graduatesCount = 0;
+	if (window.graduatesData && Array.isArray(window.graduatesData)) {
+		graduatesCount = window.graduatesData.length;
+	} else {
+		graduatesCount = 3500; // valeur par défaut
+	}
 
-    // Update milestones
-    document.getElementById('milestone1').setAttribute('data-end-value', students.length);
-    document.getElementById('milestone1').textContent = students.length;
-    
-    document.getElementById('milestone2').setAttribute('data-end-value', professors.length);
-    document.getElementById('milestone2').textContent = professors.length;
+	// Animate numbers
+	animateNumber('totalCount', allUsers.length);
+	animateNumber('profCount', professors.length + admins.length);
+	animateNumber('studentCount', students.length);
+	animateNumber('activeCount', activeCount);
+	animateNumber('milestone1', students.length);
+	animateNumber('milestone2', professors.length + admins.length);
+	animateNumber('milestone3', coursesCount);
+	animateNumber('milestone4', graduatesCount);
 }
 
 // Animate number counter
