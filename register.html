@@ -294,6 +294,55 @@ body::before {
     border-left: 4px solid #059669;
 }
 
+/* Info bubble - notification for email activation */
+.info_bubble {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(90deg, rgba(255,182,6,0.12), rgba(255,143,0,0.08));
+    border: 1px solid rgba(255,182,6,0.3);
+    color: #1e293b;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 30px rgba(255,182,6,0.15);
+    position: relative;
+}
+
+.info_bubble_icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ffb606 0%, #ff8f00 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    flex: 0 0 36px;
+}
+
+.info_bubble_text {
+    font-size: 14px;
+    color: #1e293b;
+    line-height: 1.35;
+}
+
+.info_bubble_close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #475569;
+    cursor: pointer;
+}
+
+.info_bubble.show {
+    animation: fadeInUp 0.35s ease both;
+}
+
 .back_link {
     text-align: center;
     margin-top: 20px;
@@ -565,6 +614,13 @@ body::before {
             <div class="auth_tabs">
                 <div class="auth_tab active" data-tab="login">Connexion</div>
                 <div class="auth_tab" data-tab="register">Inscription</div>
+            </div>
+
+            <!-- Info bubble for activation email -->
+            <div class="info_bubble" id="info-bubble" role="status" aria-live="polite" style="display:none">
+                <div class="info_bubble_icon"><i class="fas fa-envelope-open-text"></i></div>
+                <div class="info_bubble_text" id="info-bubble-text"></div>
+                <button class="info_bubble_close" id="info-bubble-close" aria-label="Fermer">&times;</button>
             </div>
 
             <!-- Login Form -->
@@ -1010,14 +1066,16 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const result = await response.json();
 
         if (response.ok) {
-            successDiv.textContent = '✓ Compte créé avec succès ! Redirection vers la connexion...';
-            successDiv.style.display = 'block';
+            const email = formData.get('email');
             e.target.reset();
             document.getElementById('previewContainer').style.display = 'none';
             
+            // Show a styled info-bubble asking the user to check their email to activate the account
+            showInfoBubble(`Un email d'activation a été envoyé à <strong>${email}</strong>. Veuillez vérifier votre boîte de réception et activer votre compte.`);
+            
             setTimeout(() => {
                 switchTab('login');
-                document.getElementById('loginForm').querySelector('[name="email"]').value = formData.get('email');
+                document.getElementById('loginForm').querySelector('[name="email"]').value = email;
             }, 2000);
         } else {
             const errors = Object.entries(result)
@@ -1035,6 +1093,31 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         submitBtn.textContent = 'Créer mon Compte';
     }
 });
+
+// Info bubble helpers
+function showInfoBubble(message, autoHideMs = 8000) {
+    const bubble = document.getElementById('info-bubble');
+    const text = document.getElementById('info-bubble-text');
+    if (!bubble || !text) return;
+    text.innerHTML = message;
+    bubble.style.display = 'flex';
+    bubble.classList.add('show');
+    if (bubble._hideTimeout) clearTimeout(bubble._hideTimeout);
+    if (autoHideMs) {
+        bubble._hideTimeout = setTimeout(hideInfoBubble, autoHideMs);
+    }
+}
+
+function hideInfoBubble() {
+    const bubble = document.getElementById('info-bubble');
+    if (!bubble) return;
+    if (bubble._hideTimeout) { clearTimeout(bubble._hideTimeout); bubble._hideTimeout = null; }
+    bubble.classList.remove('show');
+    setTimeout(() => { bubble.style.display = 'none'; }, 300);
+}
+
+const _infoClose = document.getElementById('info-bubble-close');
+if (_infoClose) _infoClose.addEventListener('click', hideInfoBubble);
 
 // Reset Password Modal
 function showResetPasswordModal() {
@@ -1105,6 +1188,9 @@ document.getElementById('resetPasswordForm').addEventListener('submit', async (e
             successDiv.textContent = '✓ Votre mot de passe a été réinitialisé avec succès !';
             successDiv.style.display = 'block';
             
+            // Show a styled info-bubble on the page asking user to check their email to activate the new password
+            showInfoBubble(`Un email d'activation a été envoyé à <strong>${email}</strong>. Consultez votre boîte de réception pour activer votre nouveau mot de passe.`);
+
             setTimeout(() => {
                 closeResetPasswordModal();
                 switchTab('login');
