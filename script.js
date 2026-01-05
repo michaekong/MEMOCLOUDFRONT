@@ -489,6 +489,9 @@ function createCardHTML(m) {
 function openDetail(id) {
     const m = memoiresData.find(item => item.id === id);
     if (!m) return;
+
+    // Auth check: if user not connected, show a themed interactive prompt instead
+    if (!TOKEN) { showAuthPrompt(); return; }
     
     const modal = document.getElementById('modal-detail');
     const content = document.getElementById('modal-detail-content');
@@ -655,7 +658,7 @@ function openDetail(id) {
 }
 
 window.sendCommentFromModal = async (id) => {
-    if (!TOKEN) return alert("Connectez-vous pour commenter.");
+    if (!TOKEN) { showAuthPrompt(); return; }
     const input = document.getElementById('modal-quick-comment');
     const txt = input.value.trim();
     if(!txt) return;
@@ -676,10 +679,24 @@ function closeModal(id) {
     document.getElementById(id).classList.add('hidden');
 }
 
+function showAuthPrompt() {
+    const el = document.getElementById('auth-prompt');
+    if (!el) return;
+    el.classList.remove('hidden');
+    // ensure icons render correctly
+    initIcons();
+}
+
+function closeAuthPrompt() {
+    const el = document.getElementById('auth-prompt');
+    if (!el) return;
+    el.classList.add('hidden');
+} 
+
 // --- Chat Logic ---
 function openChat(e, id) {
      if(e) e.stopPropagation();
-    if (!TOKEN) return alert("Veuillez vous connecter pour voir les commentaires.");
+    if (!TOKEN) { showAuthPrompt(); return; }
 
     const m = memoiresData.find(item => item.id === id);
     if (!m) return;
@@ -842,6 +859,8 @@ function debounceLoad() {
 
 window.openDetail = openDetail;
 window.closeModal = closeModal;
+window.showAuthPrompt = showAuthPrompt;
+window.closeAuthPrompt = closeAuthPrompt;
 window.toggleView = toggleView;
 window.handleAction = handleAction;
 window.rateMemoire = rateMemoire;
@@ -854,14 +873,14 @@ window.sendCommentFromModal = sendCommentFromModal;
 
 function downloadMemoire(e, id, url) {
     if(e) e.stopPropagation();
-    if (!TOKEN) return alert("Connectez-vous pour télécharger.");
+    if (!TOKEN) { showAuthPrompt(); return; }
     fetch(`${BASE_URL}/interactions/telechargements/telecharger/`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({ memoire: id }) });
     window.open(url, '_blank');
 }
 
 function toggleLike(e, id) {
     if(e) e.stopPropagation();
-    if (!TOKEN) return alert("Connectez-vous pour liker.");
+    if (!TOKEN) { showAuthPrompt(); return; }
     if(e.currentTarget) {
         const icon = e.currentTarget.querySelector('svg');
         icon.classList.toggle('fill-current');
@@ -872,7 +891,7 @@ function toggleLike(e, id) {
 
 function rateMemoire(id, note) {
     if(event) event.stopPropagation();
-    if (!TOKEN) return alert("Connectez-vous pour noter.");
+    if (!TOKEN) { showAuthPrompt(); return; }
     fetch(`${BASE_URL}/interactions/notations/`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({ memoire_id: id, note: note }) })
     .then(res => { if(res.ok) alert(`Note ${note}/5 enregistrée !`); });
 }
@@ -895,7 +914,7 @@ function resetFilters() {
 }
 
 async function handleAction(type) {
-    if (!TOKEN && type !== 'annuaire') return alert("Veuillez vous connecter.");
+    if (!TOKEN && type !== 'annuaire') { showAuthPrompt(); return; }
     const modal = document.getElementById('modal-generic');
     const contentEl = document.getElementById('modal-generic-content');
     const titleEl = document.getElementById('modal-generic-title');

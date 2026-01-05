@@ -178,7 +178,7 @@ class ENSTPWebsite {
             this.updateAuthUI();
             
             // Redirect to dashboard
-            window.location.href = 'memoire.html';
+            window.location.href = 'index.html';
             
             return data;
         } catch (error) {

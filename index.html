@@ -78,7 +78,7 @@
                             <li class="main_nav_item"><a href="index.html">Accueil</a></li>
                             <li class="main_nav_item"><a href="courses.html">Formations</a></li>
                             <li class="main_nav_item"><a href="teachers.html">Enseignants</a></li>
-                            <li class="main_nav_item"><a href="memoire.html">Mémoires</a></li>
+                            <li class="main_nav_item"><a href="index.html">Mémoires</a></li>
                             <li class="main_nav_item"><a href="news_post.html">Actualités</a></li>
                             <li class="main_nav_item"><a href="contact.html">Contact</a></li>
                             <li class="main_nav_item"><a href="register.html">Inscription</a></li>
@@ -116,7 +116,7 @@
                         <li class="menu_item menu_mm"><a href="index.html">Accueil</a></li>
                         <li class="menu_item menu_mm"><a href="courses.html">Formations</a></li>
                         <li class="menu_item menu_mm"><a href="teachers.html">Enseignants</a></li>
-                        <li class="menu_item menu_mm"><a href="memoire.html">Mémoires</a></li>
+                        <li class="menu_item menu_mm"><a href="index.html">Mémoires</a></li>
                         <li class="menu_item menu_mm"><a href="news_post.html">Actualités</a></li>
                         <li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
                         <li class="menu_item menu_mm"><a href="register.html">Inscription</a></li>
@@ -493,6 +493,20 @@
                 </div>
                 <div id="modal-generic-content" class="max-h-[60vh] overflow-y-auto custom-scrollbar p-6">
                     <!-- Content injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTH PROMPT: shown when user is not logged in and tries to view details -->
+        <div id="auth-prompt" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-brand-black/80 backdrop-blur-sm" onclick="closeAuthPrompt()"></div>
+            <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 animate-fade-in-up text-center">
+                <div class="text-4xl mb-3">🔒</div>
+                <h3 class="text-lg font-title font-extrabold mb-2">Accès réservé</h3>
+                <p class="text-gray-500 mb-6">Veuillez vous connecter pour voir les détails du mémoire.</p>
+                <div class="flex gap-3 justify-center">
+                    <button onclick="closeAuthPrompt()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm">Fermer</button>
+                    <button onclick="location.href='register.html'" class="px-4 py-2 rounded-xl bg-brand-orange text-brand-black font-bold text-sm">Veuillez vous connecter</button>
                 </div>
             </div>
         </div>
