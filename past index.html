@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<title>ENSTP - École Nationale Supérieure des Travaux Publics</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="ENSTP - Excellence in Engineering Education">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+<link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
+<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+<link rel="stylesheet" type="text/css" href="styles/responsive.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Stats modernisés - Position fixe en bas du hero */
+.stats-overlay {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    max-width: 1000px;
+    width: 90%;
+    padding: 0 1rem;
+    z-index: 10;
+}
+
+.stat-card-modern {
+    background: rgba(26, 26, 26, 0.85);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 182, 6, 0.3);
+    border-radius: 12px;
+    padding: 1.2rem 0.8rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 182, 6, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.stat-card-modern:hover::before {
+    left: 100%;
+}
+
+.stat-card-modern:hover {
+    transform: translateY(-5px);
+    border-color: #ffb606;
+    box-shadow: 0 10px 30px rgba(255, 182, 6, 0.3);
+}
+
+.stat-card-modern.gold {
+    background: rgba(255, 182, 6, 0.2);
+    border-color: #ffb606;
+}
+
+.stat-card-modern.gold::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ffb606, #ffa000);
+    border-radius: 12px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.stat-card-modern.gold:hover::after {
+    opacity: 0.3;
+}
+
+.stat-icon-modern {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #ffb606;
+    opacity: 0.9;
+}
+
+.stat-value-modern {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.3rem;
+    transition: transform 0.3s;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1;
+}
+
+.stat-card-modern:hover .stat-value-modern {
+    transform: scale(1.15);
+    color: #ffb606;
+}
+
+.stat-label-modern {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.85;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+}
+
+/* Testimonials améliorés */
+.testimonials-modern {
+    background: #1a1a1a;
+    position: relative;
+    overflow: hidden;
+    padding: 5rem 0;
+}
+
+.testimonials-background-modern {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.25;
+    transition: background-image 0.5s ease;
+}
+
+.testimonials-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(255, 182, 6, 0.2));
+}
+
+.testimonials-content-modern {
+    position: relative;
+    z-index: 2;
+}
+
+.testimonial-card-modern {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    margin: 0 1rem;
+    transition: all 0.4s ease;
+}
+
+.testimonial-card-modern:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.quote-icon-modern {
+    font-size: 4rem;
+    color: #ffb606;
+    margin-bottom: 1.5rem;
+    line-height: 1;
+}
+
+.testimonial-text-modern {
+    font-size: 1.2rem;
+    color: white;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    font-style: italic;
+    text-align: center;
+}
+
+.testimonial-author-modern {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.testimonial-avatar-modern {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #ffb606;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.testimonial-avatar-modern img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.testimonial-info-modern h4 {
+    color: #ffb606;
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+}
+
+.testimonial-info-modern p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Owl Carousel personnalisé */
+.owl-carousel .owl-nav button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 182, 6, 0.3) !important;
+    color: white !important;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 2rem !important;
+    line-height: 50px !important;
+    transition: all 0.3s ease;
+}
+
+.owl-carousel .owl-nav button:hover {
+    background: #ffb606 !important;
+}
+
+.owl-carousel .owl-nav button.owl-prev {
+    left: -60px;
+}
+
+.owl-carousel .owl-nav button.owl-next {
+    right: -60px;
+}
+
+.owl-carousel .owl-dots {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.owl-carousel .owl-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 5px;
+    transition: all 0.3s ease;
+}
+
+.owl-carousel .owl-dot.active,
+.owl-carousel .owl-dot:hover {
+    background: #ffb606;
+    transform: scale(1.3);
+}
+
+/* News Section */
+.news-section-modern {
+    padding: 5rem 0;
+}
+
+.news-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.news-card-modern {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.news-card-modern:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.news-image-modern {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+}
+
+.news-image-modern img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.news-card-modern:hover .news-image-modern img {
+    transform: scale(1.1);
+}
+
+.news-date-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #ffb606;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.news-content-modern {
+    padding: 1.5rem;
+}
+
+.news-title-modern {
+    color: #1a1a1a;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.news-excerpt-modern {
+    color: #a5a5a5;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.news-link-modern {
+    color: #ffb606;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: gap 0.3s ease;
+}
+
+.news-link-modern:hover {
+    gap: 1rem;
+}
+
+/* Responsive amélioré */
+@media (max-width: 1199px) {
+    .owl-carousel .owl-nav button.owl-prev {
+        left: 10px;
+    }
+    .owl-carousel .owl-nav button.owl-next {
+        right: 10px;
+    }
+    
+    .stats-overlay {
+        max-width: 900px;
+        gap: 0.8rem;
+    }
+    
+    .stat-card-modern {
+        padding: 1rem 0.6rem;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .stats-overlay {
+        grid-template-columns: repeat(2, 1fr);
+        bottom: 60px;
+        gap: 0.8rem;
+        width: 85%;
+    }
+    
+    .stat-card-modern {
+        padding: 1rem 0.8rem;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.8rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 1.3rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .stats-overlay {
+        grid-template-columns: repeat(2, 1fr);
+        bottom: 40px;
+        gap: 0.6rem;
+        width: 92%;
+    }
+    
+    .stat-card-modern {
+        padding: 0.8rem 0.5rem;
+        border-radius: 10px;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.5rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.55rem;
+        letter-spacing: 1px;
+    }
+    
+    .testimonial-card-modern {
+        padding: 2rem 1.5rem;
+    }
+    
+    .testimonial-text-modern {
+        font-size: 1rem;
+    }
+    
+    .testimonial-author-modern {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .news-grid-modern {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575px) {
+    .stats-overlay {
+        grid-template-columns: 1fr 1fr;
+        bottom: 30px;
+        gap: 0.5rem;
+        width: 95%;
+        padding: 0 0.5rem;
+    }
+    
+    .stat-card-modern {
+        padding: 0.7rem 0.4rem;
+        border-radius: 8px;
+        border-width: 1px;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.3rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.5rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .hero_slide_content h1 {
+        font-size: 2rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .stats-overlay {
+        bottom: 20px;
+        gap: 0.4rem;
+    }
+    
+    .stat-card-modern {
+        padding: 0.6rem 0.3rem;
+    }
+    
+    .stat-value-modern {
+        font-size: 1.1rem;
+    }
+    
+    .stat-icon-modern {
+        font-size: 0.9rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-label-modern {
+        font-size: 0.45rem;
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    text-align: center;
+    padding: 3rem;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 182, 6, 0.2);
+    border-top: 4px solid #ffb606;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.owl-nav {
+background-color: #ffb606 !important;
+  padding: 10px;
+  border-radius: 8px;
+}/* Carte témoignage modernisée */
+.testimonial-card-modern {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  margin: 0 1rem;
+  transition: all 0.4s ease;
+  text-align: center;
+}
+
+.testimonial-card-modern:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* Image avatar = image de fond (même source) */
+.testimonial-avatar-modern img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ffb606;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-avatar-modern img:hover {
+  transform: scale(1.05);
+}
+
+/* Citation */
+.quote-icon-modern {
+  font-size: 4rem;
+  color: #ffb606;
+  margin-bottom: 1.5rem;
+  line-height: 1;
+}
+
+/* Texte */
+.testimonial-text-modern {
+  font-size: 1.2rem;
+  color: white;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+/* Auteur */
+.testimonial-author-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.testimonial-info-modern h4 {
+  color: #ffb606;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+}
+
+.testimonial-info-modern p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .testimonial-card-modern {
+    padding: 2rem 1.5rem;
+  }
+  .testimonial-text-modern {
+    font-size: 1rem;
+  }
+  .testimonial-author-modern {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="super_container">
+
+	<!-- Header -->
+	<header class="header d-flex flex-row">
+		<div class="header_content d-flex flex-row align-items-center">
+			<div class="logo_container">
+				<div class="logo">
+					<img src="images/logo.png" alt="ENSTP">
+				</div>
+			</div>
+
+			<nav class="main_nav_container">
+				<div class="main_nav">
+					<ul class="main_nav_list">
+						<li class="main_nav_item"><a href="#">home</a></li>
+						<li class="main_nav_item"><a href="#">about us</a></li>
+						<li class="main_nav_item"><a href="courses.html">courses</a></li>
+						<li class="main_nav_item"><a href="elements.html">elements</a></li>
+						<li class="main_nav_item"><a href="news_post.html">news</a></li>
+						<li class="main_nav_item"><a href="contact.html">contact</a></li>
+						<li class="main_nav_item"><a href="register.html">register</a></li>
+						<li class="main_nav_item"><a href="teachers.html">teachers</a></li>
+						<li class="main_nav_item"><a href="memoire.html">memoire</a></li>	
+                        <li class="main_nav_item"><a href="admin1.html">Admin</a></li>
+					</ul>
+				</div>
+			</nav>
+		</div>
+		<div class="header_side d-flex flex-row justify-content-center align-items-center">
+			<img src="images/phone-call.svg" alt="">
+			<span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
+		</div>
+
+		<div class="hamburger_container">
+			<i class="fas fa-bars trans_200"></i>
+		</div>
+	</header>
+	
+	<!-- Menu -->
+	<div class="menu_container menu_mm">
+		<div class="menu_close_container">
+			<div class="menu_close"></div>
+		</div>
+
+		<div class="menu_inner menu_mm">
+			<div class="menu menu_mm">
+				<ul class="menu_list menu_mm">
+					<li class="menu_item menu_mm"><a href="#">Home</a></li>
+					<li class="menu_item menu_mm"><a href="#">About us</a></li>
+					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
+
+					<li class="menu_item menu_mm"><a href="news_post.html">News</a></li>
+					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
+					<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
+          <li class="menu_item menu_mm"><a href="admin1.html">Admin</a></li>
+					<li class="menu_item menu_mm"><a href="memoire.html">Memoire</a></li>
+                    
+				</ul>
+
+				<div class="menu_social_container menu_mm">
+					<ul class="menu_social menu_mm">
+						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
+						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
+						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-twitter"></i></a></li>
+					</ul>
+				</div>
+
+                <div class="menu_copyright menu_mm">Colorlib — Tous droits réservés</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Home -->
+	<div class="home">
+		<div class="hero_slider_container">
+			<div class="hero_slider owl-carousel">
+				
+				<div class="hero_slide">
+					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
+					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
+						<div class="hero_slide_content text-center">
+                            <h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Bienvenue à l’ENSTP, l’excellence au service des infrastructures durables</h1>
+							<div id="stats-container" class="stats-overlay">
+								<div class="loading-spinner">
+									<div class="spinner"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="hero_slide">
+					<div class="hero_slide_background" style="background-image:url(images/travaux2.jpeg)"></div>
+					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
+						<div class="hero_slide_content text-center">
+							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
+							<div id="stats-container-2" class="stats-overlay">
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="hero_slide">
+					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
+					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
+						<div class="hero_slide_content text-center">
+							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
+							<div id="stats-container-3" class="stats-overlay">
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="hero_slider_left hero_slider_nav trans_200"><span class="trans_200">prev</span></div>
+			<div class="hero_slider_right hero_slider_nav trans_200"><span class="trans_200">next</span></div>
+		</div>
+	</div>
+
+	<!-- Hero Boxes -->
+	<div class="hero_boxes">
+		<div class="hero_boxes_inner">
+			<div class="container">
+				<div class="row">
+
+					<div class="col-lg-4 hero_box_col">
+						<div class="hero_box d-flex flex-row align-items-center justify-content-start">
+							<img src="images/earth-globe.svg" class="svg" alt="">
+							<div class="hero_box_content">
+                                <h2 class="hero_box_title">Nos Formations</h2>
+                                <a href="courses.html" class="hero_box_link">Découvrir</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-4 hero_box_col">
+						<div class="hero_box d-flex flex-row align-items-center justify-content-start">
+							<img src="images/books.svg" class="svg" alt="">
+							<div class="hero_box_content">
+                                <h2 class="hero_box_title">Bibliothèque numérique</h2>
+                                <a href="memoire.html" class="hero_box_link">Accéder</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-4 hero_box_col">
+						<div class="hero_box d-flex flex-row align-items-center justify-content-start">
+							<img src="images/professor.svg" class="svg" alt="">
+							<div class="hero_box_content">
+                                <h2 class="hero_box_title">Nos Enseignants</h2>
+                                <a href="teachers.html" class="hero_box_link">Voir l’équipe</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Popular -->
+<div class="popular page_section">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="section_title text-center">
+                    <h1>Formations phares de l’ENSTP</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="row course_boxes">
+
+            <div class="col-lg-4 course_box">
+                <div class="card">
+                    <a href="courses.html#topographie">
+                        <img class="card-img-top" src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2070" alt="Topographie">
+                    </a>
+                    <div class="card-body text-center">
+                        <div class="card-title"><a href="courses.html#topographie">Topographie</a></div>
+                        <div class="card-text">Maîtrise des techniques de mesure, de cartographie et de gestion de l’information géographique.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 course_box">
+                <div class="card">
+                    <a href="courses.html#genie-civil">
+                        <img class="card-img-top" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070" alt="Génie Civil">
+                    </a>
+                    <div class="card-body text-center">
+                        <div class="card-title"><a href="courses.html#genie-civil">Génie Civil</a></div>
+                        <div class="card-text">Formation d’ingénieurs et de techniciens supérieurs pour la conception, la réalisation et la gestion d’infrastructures.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 course_box">
+                <div class="card">
+                    <a href="courses.html#environnement">
+                        <img class="card-img-top" src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2070" alt="Environnement et Développement Durable">
+                    </a>
+                    <div class="card-body text-center">
+                        <div class="card-title"><a href="courses.html#environnement">Environnement et Développement Durable</a></div>
+                        <div class="card-text">Compétences pour la gestion durable des ressources, l’aménagement du territoire et la protection de l’environnement.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+	<!-- Services -->
+	<div class="services page_section">
+	<div class="services page_section">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="section_title text-center">
+						<h1>Our Services</h1>
+					</div>
+				</div>
+			</div>
+
+			<div class="row services_row">
+
+				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
+					<div class="icon_container d-flex flex-column justify-content-end">
+						<img src="images/earth-globe.svg" alt="">
+					</div>
+                    <h3>Formations diplômantes</h3>
+                    <h3>Stages pratiques</h3>
+                    <p>Des cursus professionnalisants, alliant théorie et pratique, pour répondre aux besoins du secteur des travaux publics.</p>
+				</div>
+
+				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
+					<div class="icon_container d-flex flex-column justify-content-end">
+						<img src="images/books.svg" alt="">
+					</div>
+                    <h3>Bibliothèque & ressources numériques</h3>
+                    <p>Un accès à une documentation riche, des mémoires, des ressources scientifiques et techniques de pointe.</p>
+				</div>
+
+				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
+					<div class="icon_container d-flex flex-column justify-content-end">
+						<img src="images/professor.svg" alt="">
+					</div>
+                    <h3>Corps enseignant d’exception</h3>
+                    <p>Des enseignants-chercheurs et professionnels expérimentés, engagés pour la réussite des étudiants.</p>
+				</div>
+
+				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
+					<div class="icon_container d-flex flex-column justify-content-end">
+						<img src="images/blackboard.svg" alt="">
+					</div>
+                    <h3>Partenariats & mobilité</h3>
+                    <p>Des collaborations avec des institutions nationales et internationales, des opportunités de stages et d’échanges académiques.</p>
+				</div>
+
+				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
+					<div class="icon_container d-flex flex-column justify-content-end">
+						<img src="images/mortarboard.svg" alt="">
+					</div>
+                    <h3>Diplômes reconnus</h3>
+                    <p>Des diplômes d’État reconnus au Cameroun et à l’international, gage de qualité et d’employabilité.</p>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Testimonials -->
+	<div class="testimonials-modern">
+		<div id="testimonials-background-dynamic" class="testimonials-background-modern"></div>
+		<div class="testimonials-overlay"></div>
+		<div class="testimonials-content-modern">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="section_title text-center">
+                            <h1 style="color: white;">Témoignages de nos diplômés</h1>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-10 offset-lg-1">
+						<div id="testimonials-slider-container">
+							<div class="loading-spinner">
+								<div class="spinner"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- News Section -->
+	<div class="news-section-modern">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="section_title text-center">
+                        <h1>Actualités de l’ENSTP</h1>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<div id="news-grid-container" class="news-grid-modern">
+						<div class="loading-spinner">
+							<div class="spinner"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- Footer -->
+	<footer class="footer">
+		<div class="container">
+			
+			<!-- Newsletter -->
+			<div class="newsletter">
+				<div class="row">
+					<div class="col">
+						<div class="section_title text-center">
+							<h1>Abonnez-vous à la newsletter</h1>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col text-center">
+						<div class="newsletter_form_container mx-auto">
+							<form action="post">
+								<div class="newsletter_form d-flex flex-md-row flex-column flex-xs-column align-items-center justify-content-center">
+									<input id="newsletter_email" class="newsletter_email" type="email" placeholder="Adresse e-mail" required="required" data-error="Une adresse e-mail valide est requise.">
+									<button id="newsletter_submit" type="submit" class="newsletter_submit_btn trans_300" value="Submit">S\'abonner</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Footer Content -->
+			<div class="footer_content">
+				<div class="row">
+
+					<div class="col-lg-3 footer_col">
+						<div class="logo_container">
+							<div class="logo">
+								<img src="images/logo.png" alt="">
+							</div>
+						</div>
+						<p class="footer_about_text">L'École Nationale Supérieure des Travaux Publics (ENSTP) forme des cadres d'excellence en génie civil, topographie et environnement, contribuant au développement des infrastructures durables au Cameroun et en Afrique.</p>
+					</div>
+
+					<div class="col-lg-3 footer_col">
+						<div class="footer_column_title">Menu</div>
+						<div class="footer_column_content">
+							<ul>
+								<li class="footer_list_item"><a href="#">Accueil</a></li>
+								<li class="footer_list_item"><a href="#">À propos</a></li>
+								<li class="footer_list_item"><a href="courses.html">Formations</a></li>
+								<li class="footer_list_item"><a href="news_post.html">News</a></li>
+								<li class="footer_list_item"><a href="contact.html">Contact</a></li>
+								<li class="footer_list_item"><a href="register.html">Register</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 footer_col">
+                        <div class="footer_column_title">Liens utiles</div>
+						<div class="footer_column_content">
+							<ul>
+                            <li class="footer_list_item"><a href="#">Témoignages</a></li>
+                            <li class="footer_list_item"><a href="#">FAQ</a></li>
+                            <li class="footer_list_item"><a href="#">Communauté</a></li>
+                            <li class="footer_list_item"><a href="#">Galerie</a></li>
+                            <li class="footer_list_item"><a href="#">Frais de scolarité</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-3 footer_col">
+						<div class="footer_column_title">Contact</div>
+						<div class="footer_column_content">
+							<ul>
+								<li class="footer_contact_item">
+									<div class="footer_contact_icon">
+										<img src="images/placeholder.svg" alt="">
+									</div>
+									Rue Elig-Effa Yaoundé-Cameroun
+								</li>
+								<li class="footer_contact_item">
+									<div class="footer_contact_icon">
+										<img src="images/smartphone.svg" alt="">
+									</div>
+									(237) 222 23 09 44 / (237) 222 22 18 16
+								</li>
+								<li class="footer_contact_item">
+									<div class="footer_contact_icon">
+										<img src="images/envelope.svg" alt="">
+									</div>contact@enstp.cm
+								</li>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<!-- Footer Copyright -->
+			<div class="footer_bar d-flex flex-column flex-sm-row align-items-center">
+				<div class="footer_copyright">
+                    <span>© ENSTP Yaoundé — Tous droits réservés. L’excellence au service du développement.</span>
+				</div>
+				<div class="footer_social ml-sm-auto">
+					<ul class="menu_social">
+						<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
+						<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+						<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
+						<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+						<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+	</footer>
+
+</div>
+
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="styles/bootstrap4/popper.js"></script>
+<script src="styles/bootstrap4/bootstrap.min.js"></script>
+<script src="plugins/greensock/TweenMax.min.js"></script>
+<script src="plugins/greensock/TimelineMax.min.js"></script>
+<script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
+<script src="plugins/greensock/animation.gsap.min.js"></script>
+<script src="plugins/greensock/ScrollToPlugin.min.js"></script>
+<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+<script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
+<script src="plugins/easing/easing.js"></script>
+<script src="js/custom.js"></script>
+<script>
+
+  let TOKEN = localStorage.getItem('authToken');
+  let USER_ROLE = null;
+</script>
+<script>
+const BASE_URL = 'https://mcb.reimca-app.com/api';
+const UNIV_SLUG = 'ecole-des-travaux';
+
+// Animation des valeurs
+function animateValue(element, start, end, duration) {
+    let startTimestamp = null;
+    const range = end - start;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        element.textContent = Math.floor(start + range * progress);
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+// Charger les statistiques
+async function loadStats() {
+    try {
+        const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/stats/`);
+        const stats = await res.json();
+        
+        const items = [
+            { label: 'Mémoires', value: stats.total_memoires || 0, icon: 'fas fa-book' },
+            { label: 'Téléchargements', value: stats.total_telechargements || 0, icon: 'fas fa-download' },
+            { label: 'Likes', value: stats.total_likes || 0, icon: 'fas fa-heart' },
+            { label: 'Note Moyenne', value: stats.note_moyenne || 0, icon: 'fas fa-star', isFloat: true, gold: true }
+        ];
+
+        const statsHTML = items.map((item, idx) => `
+            <div class="stat-card-modern ${item.gold ? 'gold' : ''}">
+                <div class="stat-icon-modern">
+                    <i class="${item.icon}"></i>
+                </div>
+                <div class="stat-value-modern" id="stat-${idx}">0</div>
+                <div class="stat-label-modern">${item.label}</div>
+            </div>
+        `).join('');
+
+        // Injecter dans tous les containers de stats
+        document.getElementById('stats-container').innerHTML = statsHTML;
+        document.getElementById('stats-container-2').innerHTML = statsHTML;
+        document.getElementById('stats-container-3').innerHTML = statsHTML;
+
+        // Animer les valeurs
+        items.forEach((item, idx) => {
+            const elements = document.querySelectorAll(`#stat-${idx}`);
+            elements.forEach(el => {
+                if (item.isFloat) {
+                    el.textContent = parseFloat(item.value).toFixed(1);
+                } else {
+                    setTimeout(() => animateValue(el, 0, item.value, 2000), idx * 200);
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Stats error:', error);
+        const errorMsg = '<p style="color: white; text-align: center;">Stats unavailable</p>';
+        document.getElementById('stats-container').innerHTML = errorMsg;
+        document.getElementById('stats-container-2').innerHTML = errorMsg;
+        document.getElementById('stats-container-3').innerHTML = errorMsg;
+    }
+}
+
+// Témoignances modernisées & réactives
+async function loadTestimonials() {
+  try {
+    const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/oldstudent/`);
+    const testimonials = await res.json();
+    if (!testimonials.length) {
+      document.getElementById('testimonials-slider-container').innerHTML =
+        '<p style="color:#fff;text-align:center;">Aucun témoignage</p>';
+      return;
+    }
+
+    const bgElement = document.getElementById('testimonials-background-dynamic');
+
+    const cardsHTML = testimonials.map((t, idx) => `
+      <div class="testimonial-card-modern" data-real-index="${idx}">
+        <div class="quote-icon-modern">"</div>
+        <p class="testimonial-text-modern">${t.body || 'Aucun contenu'}</p>
+        <div class="testimonial-author-modern">
+          <div class="testimonial-avatar-modern">
+            <img class="avatar-img" src="${t.cover_url || 'images/default-testimonial.jpg'}"
+                 alt="${t.title || 'Anonyme'}"
+                 onerror="this.src='images/default-testimonial.jpg'">
+          </div>
+          <div class="testimonial-info-modern">
+            <h4>${t.title || 'Anonyme'}</h4>
+            <p>Étudiant diplômé</p>
+          </div>
+        </div>
+      </div>`).join('');
+
+    document.getElementById('testimonials-slider-container').innerHTML =
+      `<div class="owl-carousel owl-theme testimonials-carousel">${cardsHTML}</div>`;
+
+    function syncBackground(event) {
+      if (!event || !event.item) return; // évite l’erreur
+      const currentSlide = event.item.index;
+      const realIndex = parseInt(
+        $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.testimonial-card-modern').data('real-index')
+      ) % testimonials.length;
+      const t = testimonials[realIndex];
+      if (!t) return;
+      const url = t.cover_url || 'images/default-testimonial.jpg';
+      bgElement.style.backgroundImage = `url(${url})`;
+      $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.avatar-img').attr('src', url);
+    }
+
+    $('.testimonials-carousel').owlCarousel({
+      items: 1,
+      loop: true,
+      margin: 30,
+      nav: true,
+      dots: true,
+      autoplay: true,
+      autoplayTimeout: 6000,
+      smartSpeed: 800,
+      navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+      responsive: { 0: { nav: false }, 768: { nav: true } },
+      onInitialized: syncBackground,
+      onChanged: syncBackground
+    });
+
+  } catch (error) {
+    console.error('Erreur chargement témoignages :', error);
+    document.getElementById('testimonials-slider-container').innerHTML =
+      '<p style="color:#fff;text-align:center;">Témoignages indisponibles</p>';
+  }
+}
+function syncBackground(event) {
+  if (!event || !event.item) return; // ⚠️ sécurité
+
+  const currentSlide = event.item.index;
+  const realIndex = parseInt(
+    $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.testimonial-card-modern').data('real-index')
+  ) % testimonials.length;
+
+  const t = testimonials[realIndex];
+  if (!t) return; // extra sécurité
+
+  const url = t.cover_url || 'images/default-testimonial.jpg';
+  const bgElement = document.getElementById('testimonials-background-dynamic');
+
+  bgElement.style.backgroundImage = `url(${url})`;
+  // Optionnel : forcer l’avatar aussi au cas où
+  $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.avatar-img').attr('src', url);
+}
+// Charger les actualités
+async function loadNews() {
+    try {
+        const headers = {};
+        if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
+
+        const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/`, { headers });
+        if (!res.ok) throw new Error('Erreur chargement des news');
+const news = await res.json();
+        
+        const container = document.getElementById('news-grid-container');
+        
+        if (news.length === 0) {
+            container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No news available</p>';
+            return;
+        }
+
+                // Grouper les news par type, mais afficher les news sans type dans "Autres"
+        const types = [
+            { key: 'general', label: 'Général' },
+            { key: 'event', label: 'Événement' },
+            { key: 'award', label: 'Récompense' },
+            { key: 'research', label: 'Recherche' },
+            { key: 'alumni', label: 'Alumni' }
+        ];
+        let html = '';
+        window._newsData = news; // Stocke les news globalement pour la modale
+        types.forEach(type => {
+            const filtered = news.filter(n => (n.topics || n.type || 'general') === type.key);
+            if (filtered.length) {
+                html += `<h2 style="margin-top:2rem;">${type.label}</h2><div class="news-type-group">`;
+                html += filtered.map(item => {
+                    const date = new Date(item.created_at || Date.now());
+                    const formattedDate = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+                    return `
+                        <div class="news-card-modern">
+                            <div class="news-image-modern">
+                                <img src="${item.cover_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'}" 
+                                     alt="${item.title || 'News'}"
+                                     onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'">
+                                <div class="news-date-badge">${formattedDate}</div>
+                            </div>
+                            <div class="news-content-modern">
+                                <h3 class="news-title-modern">${item.title || 'Untitled'}</h3>
+                                <p class="news-excerpt-modern">${(item.body || 'No description available').substring(0, 120)}...</p>
+                                <a href="#" class="news-link-modern" data-news-id="${item.id}" onclick="event.preventDefault();openNewsModal('${item.id}');return false;">
+                                    Lire plus <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                html += '</div>';
+            }
+        });
+        // Afficher les news sans topic connu
+        const others = news.filter(n => !types.some(t => t.key === (n.topics || n.type || 'general')));
+        if (others.length) {
+            html += `<h2 style=\"margin-top:2rem;\">Autres</h2><div class=\"news-type-group\">`;
+            html += others.map(item => {
+                const date = new Date(item.created_at || Date.now());
+                const formattedDate = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+                return `
+                    <div class=\"news-card-modern\">\n\	<div class=\"news-image-modern\">\n\		<img src=\"${item.cover_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'}\" alt=\"${item.title || 'News'}\" onerror=\"this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'\">\n\		<div class=\"news-date-badge\">${formattedDate}</div>\n\	</div>\n\	<div class=\"news-content-modern\">\n\		<h3 class=\"news-title-modern\">${item.title || 'Untitled'}</h3>\n\		<p class=\"news-excerpt-modern\">${(item.body || 'No description available').substring(0, 120)}...</p>\n\		<a href=\"#\" class=\"news-link-modern\" data-news-id=\"${item.id}\" onclick=\"event.preventDefault();openNewsModal('${item.id}');return false;\">Lire plus <i class=\"fas fa-arrow-right\"></i></a>\n\	</div>\n\</div>\n`;
+            }).join('');
+            html += '</div>';
+        }
+        container.innerHTML = html || '<p style="text-align: center; grid-column: 1/-1;">Aucune actualité disponible</p>';
+    } catch (error) {
+        console.error('News error:', error);
+        document.getElementById('news-grid-container').innerHTML = '<p style="text-align: center; grid-column: 1/-1;">News unavailable</p>';
+    }
+}
+
+// Initialisation au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    loadStats();
+    loadTestimonials();
+    loadNews();
+});
+</script>
+<!-- Modal News -->
+<div id="news-modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+    <div id="news-modal-content" style="background:white;max-width:600px;width:90vw;padding:2rem;border-radius:16px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+        <button onclick="closeNewsModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:2rem;color:#ffb606;cursor:pointer;">&times;</button>
+        <div id="news-modal-body"></div>
+    </div>
+</div>
+<script>
+function openNewsModal(newsId) {
+    if (!window._newsData) return;
+    const item = window._newsData.find(n => String(n.id) === String(newsId));
+    if (!item) return;
+    const body = document.getElementById('news-modal-body');
+    body.innerHTML = `
+        <div style="text-align:center;">
+            <img src="${item.cover_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'}" alt="${item.title || ''}" style="max-width:100%;max-height:250px;border-radius:10px;margin-bottom:1rem;">
+        </div>
+        <h2 style="color:#ffb606;">${item.title || ''}</h2>
+        <div style="color:#888;font-size:0.95rem;margin-bottom:1rem;">${item.created_at ? (new Date(item.created_at)).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</div>
+        <div style="font-size:1.1rem;line-height:1.7;">${item.body || ''}</div>
+    `;
+    document.getElementById('news-modal').style.display = 'flex';
+}
+function closeNewsModal() {
+    document.getElementById('news-modal').style.display = 'none';
+}
+</script>
+
+</body>
+</html>

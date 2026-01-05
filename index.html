@@ -1,1339 +1,518 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-<title>ENSTP - École Nationale Supérieure des Travaux Publics</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="ENSTP - Excellence in Engineering Education">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
-<link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
-<link rel="stylesheet" type="text/css" href="styles/main_styles.css">
-<link rel="stylesheet" type="text/css" href="styles/responsive.css">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-/* Stats modernisés - Position fixe en bas du hero */
-.stats-overlay {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    max-width: 1000px;
-    width: 90%;
-    padding: 0 1rem;
-    z-index: 10;
-}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Bibliothèque des Mémoires - ENSTP</title>
 
-.stat-card-modern {
-    background: rgba(26, 26, 26, 0.85);
-    backdrop-filter: blur(15px);
-    border: 2px solid rgba(255, 182, 6, 0.3);
-    border-radius: 12px;
-    padding: 1.2rem 0.8rem;
-    text-align: center;
-    transition: all 0.3s ease;
-    cursor: default;
-    position: relative;
-    overflow: hidden;
-}
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-.stat-card-modern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 182, 6, 0.2), transparent);
-    transition: left 0.5s;
-}
+    <!-- Core template styles (needed for navbar appearance) -->
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+    <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="styles/main_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/responsive.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
 
-.stat-card-modern:hover::before {
-    left: 100%;
-}
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-.stat-card-modern:hover {
-    transform: translateY(-5px);
-    border-color: #ffb606;
-    box-shadow: 0 10px 30px rgba(255, 182, 6, 0.3);
-}
+    <!-- Moment.js -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment-with-locales.min.js"></script>
+    <script>moment.locale('fr');</script>
 
-.stat-card-modern.gold {
-    background: rgba(255, 182, 6, 0.2);
-    border-color: #ffb606;
-}
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 
-.stat-card-modern.gold::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #ffb606, #ffa000);
-    border-radius: 12px;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.stat-card-modern.gold:hover::after {
-    opacity: 0.3;
-}
-
-.stat-icon-modern {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: #ffb606;
-    opacity: 0.9;
-}
-
-.stat-value-modern {
-    font-size: 2rem;
-    font-weight: 800;
-    color: white;
-    margin-bottom: 0.3rem;
-    transition: transform 0.3s;
-    font-family: 'Open Sans', sans-serif;
-    line-height: 1;
-}
-
-.stat-card-modern:hover .stat-value-modern {
-    transform: scale(1.15);
-    color: #ffb606;
-}
-
-.stat-label-modern {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    opacity: 0.85;
-    font-weight: 700;
-    color: white;
-    line-height: 1.2;
-}
-
-/* Testimonials améliorés */
-.testimonials-modern {
-    background: #1a1a1a;
-    position: relative;
-    overflow: hidden;
-    padding: 5rem 0;
-}
-
-.testimonials-background-modern {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.25;
-    transition: background-image 0.5s ease;
-}
-
-.testimonials-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(26, 26, 26, 0.8), rgba(255, 182, 6, 0.2));
-}
-
-.testimonials-content-modern {
-    position: relative;
-    z-index: 2;
-}
-
-.testimonial-card-modern {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
-    border: 2px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    padding: 3rem 2.5rem;
-    margin: 0 1rem;
-    transition: all 0.4s ease;
-}
-
-.testimonial-card-modern:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-}
-
-.quote-icon-modern {
-    font-size: 4rem;
-    color: #ffb606;
-    margin-bottom: 1.5rem;
-    line-height: 1;
-}
-
-.testimonial-text-modern {
-    font-size: 1.2rem;
-    color: white;
-    line-height: 1.8;
-    margin-bottom: 2rem;
-    font-style: italic;
-    text-align: center;
-}
-
-.testimonial-author-modern {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.testimonial-avatar-modern {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    border: 3px solid #ffb606;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.testimonial-avatar-modern img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.testimonial-info-modern h4 {
-    color: #ffb606;
-    font-size: 1.2rem;
-    margin-bottom: 0.3rem;
-    font-weight: 700;
-}
-
-.testimonial-info-modern p {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.95rem;
-    margin: 0;
-}
-
-/* Owl Carousel personnalisé */
-.owl-carousel .owl-nav button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 182, 6, 0.3) !important;
-    color: white !important;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 2rem !important;
-    line-height: 50px !important;
-    transition: all 0.3s ease;
-}
-
-.owl-carousel .owl-nav button:hover {
-    background: #ffb606 !important;
-}
-
-.owl-carousel .owl-nav button.owl-prev {
-    left: -60px;
-}
-
-.owl-carousel .owl-nav button.owl-next {
-    right: -60px;
-}
-
-.owl-carousel .owl-dots {
-    text-align: center;
-    margin-top: 2rem;
-}
-
-.owl-carousel .owl-dot {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    margin: 0 5px;
-    transition: all 0.3s ease;
-}
-
-.owl-carousel .owl-dot.active,
-.owl-carousel .owl-dot:hover {
-    background: #ffb606;
-    transform: scale(1.3);
-}
-
-/* News Section */
-.news-section-modern {
-    padding: 5rem 0;
-}
-
-.news-grid-modern {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.news-card-modern {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.news-card-modern:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-}
-
-.news-image-modern {
-    width: 100%;
-    height: 220px;
-    overflow: hidden;
-    position: relative;
-}
-
-.news-image-modern img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.news-card-modern:hover .news-image-modern img {
-    transform: scale(1.1);
-}
-
-.news-date-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: #ffb606;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 0.8rem;
-}
-
-.news-content-modern {
-    padding: 1.5rem;
-}
-
-.news-title-modern {
-    color: #1a1a1a;
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-.news-excerpt-modern {
-    color: #a5a5a5;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.news-link-modern {
-    color: #ffb606;
-    font-weight: 700;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: gap 0.3s ease;
-}
-
-.news-link-modern:hover {
-    gap: 1rem;
-}
-
-/* Responsive amélioré */
-@media (max-width: 1199px) {
-    .owl-carousel .owl-nav button.owl-prev {
-        left: 10px;
-    }
-    .owl-carousel .owl-nav button.owl-next {
-        right: 10px;
-    }
-    
-    .stats-overlay {
-        max-width: 900px;
-        gap: 0.8rem;
-    }
-    
-    .stat-card-modern {
-        padding: 1rem 0.6rem;
-    }
-    
-    .stat-value-modern {
-        font-size: 1.8rem;
-    }
-}
-
-@media (max-width: 991px) {
-    .stats-overlay {
-        grid-template-columns: repeat(2, 1fr);
-        bottom: 60px;
-        gap: 0.8rem;
-        width: 85%;
-    }
-    
-    .stat-card-modern {
-        padding: 1rem 0.8rem;
-    }
-    
-    .stat-value-modern {
-        font-size: 1.8rem;
-    }
-    
-    .stat-icon-modern {
-        font-size: 1.3rem;
-    }
-    
-    .stat-label-modern {
-        font-size: 0.6rem;
-    }
-}
-
-@media (max-width: 767px) {
-    .stats-overlay {
-        grid-template-columns: repeat(2, 1fr);
-        bottom: 40px;
-        gap: 0.6rem;
-        width: 92%;
-    }
-    
-    .stat-card-modern {
-        padding: 0.8rem 0.5rem;
-        border-radius: 10px;
-    }
-    
-    .stat-value-modern {
-        font-size: 1.5rem;
-        margin-bottom: 0.2rem;
-    }
-    
-    .stat-icon-modern {
-        font-size: 1.1rem;
-        margin-bottom: 0.3rem;
-    }
-    
-    .stat-label-modern {
-        font-size: 0.55rem;
-        letter-spacing: 1px;
-    }
-    
-    .testimonial-card-modern {
-        padding: 2rem 1.5rem;
-    }
-    
-    .testimonial-text-modern {
-        font-size: 1rem;
-    }
-    
-    .testimonial-author-modern {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .news-grid-modern {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 575px) {
-    .stats-overlay {
-        grid-template-columns: 1fr 1fr;
-        bottom: 30px;
-        gap: 0.5rem;
-        width: 95%;
-        padding: 0 0.5rem;
-    }
-    
-    .stat-card-modern {
-        padding: 0.7rem 0.4rem;
-        border-radius: 8px;
-        border-width: 1px;
-    }
-    
-    .stat-value-modern {
-        font-size: 1.3rem;
-        margin-bottom: 0.2rem;
-    }
-    
-    .stat-icon-modern {
-        font-size: 1rem;
-        margin-bottom: 0.25rem;
-    }
-    
-    .stat-label-modern {
-        font-size: 0.5rem;
-        letter-spacing: 0.5px;
-    }
-    
-    .hero_slide_content h1 {
-        font-size: 2rem !important;
-        margin-bottom: 1rem !important;
-    }
-}
-
-@media (max-width: 400px) {
-    .stats-overlay {
-        bottom: 20px;
-        gap: 0.4rem;
-    }
-    
-    .stat-card-modern {
-        padding: 0.6rem 0.3rem;
-    }
-    
-    .stat-value-modern {
-        font-size: 1.1rem;
-    }
-    
-    .stat-icon-modern {
-        font-size: 0.9rem;
-        margin-bottom: 0.2rem;
-    }
-    
-    .stat-label-modern {
-        font-size: 0.45rem;
-    }
-}
-
-/* Loading spinner */
-.loading-spinner {
-    text-align: center;
-    padding: 3rem;
-}
-
-.spinner {
-    border: 4px solid rgba(255, 182, 6, 0.2);
-    border-top: 4px solid #ffb606;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.owl-nav {
-background-color: #ffb606 !important;
-  padding: 10px;
-  border-radius: 8px;
-}/* Carte témoignage modernisée */
-.testimonial-card-modern {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  padding: 3rem 2.5rem;
-  margin: 0 1rem;
-  transition: all 0.4s ease;
-  text-align: center;
-}
-
-.testimonial-card-modern:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-}
-
-/* Image avatar = image de fond (même source) */
-.testimonial-avatar-modern img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid #ffb606;
-  transition: transform 0.3s ease;
-}
-
-.testimonial-avatar-modern img:hover {
-  transform: scale(1.05);
-}
-
-/* Citation */
-.quote-icon-modern {
-  font-size: 4rem;
-  color: #ffb606;
-  margin-bottom: 1.5rem;
-  line-height: 1;
-}
-
-/* Texte */
-.testimonial-text-modern {
-  font-size: 1.2rem;
-  color: white;
-  line-height: 1.8;
-  margin-bottom: 2rem;
-  font-style: italic;
-}
-
-/* Auteur */
-.testimonial-author-modern {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
-
-.testimonial-info-modern h4 {
-  color: #ffb606;
-  font-size: 1.2rem;
-  margin-bottom: 0.3rem;
-  font-weight: 700;
-}
-
-.testimonial-info-modern p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-/* Responsive */
-@media (max-width: 767px) {
-  .testimonial-card-modern {
-    padding: 2rem 1.5rem;
-  }
-  .testimonial-text-modern {
-    font-size: 1rem;
-  }
-  .testimonial-author-modern {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-</style>
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ffb606',
+                            black: '#1a1a1a',
+                            grey: '#a5a5a5',
+                            light: '#fcfcfc',
+                            white: '#FFFFFF'
+                        }
+                    },
+                    fontFamily: {
+                        title: ['"Open Sans"', 'sans-serif'],
+                        body: ['"Roboto"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 10px 30px rgba(0,0,0,0.05)',
+                        'card-hover': '0 25px 50px rgba(0,0,0,0.1)',
+                        'glow': '0 0 20px rgba(255, 182, 6, 0.3)'
+                    }
+                },
+            },
+        }
+    </script>
 </head>
-<body>
 
-<div class="super_container">
+<body class="bg-[#fcfcfc] text-brand-black font-body antialiased overflow-x-hidden flex flex-col min-h-screen">
 
-	<!-- Header -->
-	<header class="header d-flex flex-row">
-		<div class="header_content d-flex flex-row align-items-center">
-			<div class="logo_container">
-				<div class="logo">
-					<img src="images/logo.png" alt="ENSTP">
-				</div>
-			</div>
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
-			<nav class="main_nav_container">
-				<div class="main_nav">
-					<ul class="main_nav_list">
-						<li class="main_nav_item"><a href="#">home</a></li>
-						<li class="main_nav_item"><a href="#">about us</a></li>
-						<li class="main_nav_item"><a href="courses.html">courses</a></li>
-						<li class="main_nav_item"><a href="elements.html">elements</a></li>
-						<li class="main_nav_item"><a href="news_post.html">news</a></li>
-						<li class="main_nav_item"><a href="contact.html">contact</a></li>
-						<li class="main_nav_item"><a href="register.html">register</a></li>
-						<li class="main_nav_item"><a href="teachers.html">teachers</a></li>
-						<li class="main_nav_item"><a href="memoire.html">memoire</a></li>	
-                        <li class="main_nav_item"><a href="admin1.html">Admin</a></li>
-					</ul>
-				</div>
-			</nav>
-		</div>
-		<div class="header_side d-flex flex-row justify-content-center align-items-center">
-			<img src="images/phone-call.svg" alt="">
-			<span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
-		</div>
+    <div class="super_container">
 
-		<div class="hamburger_container">
-			<i class="fas fa-bars trans_200"></i>
-		</div>
-	</header>
-	
-	<!-- Menu -->
-	<div class="menu_container menu_mm">
-		<div class="menu_close_container">
-			<div class="menu_close"></div>
-		</div>
+        <!-- Header -->
+        <header class="header d-flex flex-row">
+            <div class="header_content d-flex flex-row align-items-center">
+                <div class="logo_container">
+                    <div class="logo">
+                        <img src="images/logo.png" alt="ENSTP">
+                    </div>
+                </div>
+                <nav class="main_nav_container">
+                    <div class="main_nav">
+                        <ul class="main_nav_list">
+                            <li class="main_nav_item"><a href="index.html">Accueil</a></li>
+                            <li class="main_nav_item"><a href="courses.html">Formations</a></li>
+                            <li class="main_nav_item"><a href="teachers.html">Enseignants</a></li>
+                            <li class="main_nav_item"><a href="memoire.html">Mémoires</a></li>
+                            <li class="main_nav_item"><a href="news_post.html">Actualités</a></li>
+                            <li class="main_nav_item"><a href="contact.html">Contact</a></li>
+                            <li class="main_nav_item"><a href="register.html">Inscription</a></li>
+                            <li class="main_nav_item"><a href="admin1.html">Admin</a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="header_side d-flex flex-row justify-content-center align-items-center">
+                <img src="images/phone-call.svg" alt="">
+                <span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
+            </div>
+            <div class="d-flex align-items-center ml-auto" style="gap: 18px;">
+                <div class="header_social d-flex flex-row align-items-center" style="gap: 8px;">
+                    <a href="#" class="header_social_link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="header_social_link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="header_social_link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="header_social_link"><i class="fab fa-twitter"></i></a>
+                </div>
+                <div class="hamburger_container">
+                    <i class="fas fa-bars trans_200"></i>
+                </div>
+            </div>
+        </header>
 
-		<div class="menu_inner menu_mm">
-			<div class="menu menu_mm">
-				<ul class="menu_list menu_mm">
-					<li class="menu_item menu_mm"><a href="#">Home</a></li>
-					<li class="menu_item menu_mm"><a href="#">About us</a></li>
-					<li class="menu_item menu_mm"><a href="courses.html">Courses</a></li>
+        <!-- Menu -->
+        <div class="menu_container menu_mm">
+            <div class="menu_close_container">
+                <div class="menu_close"></div>
+            </div>
 
-					<li class="menu_item menu_mm"><a href="news_post.html">News</a></li>
-					<li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
-					<li class="menu_item menu_mm"><a href="register.html">Register</a></li>
-          <li class="menu_item menu_mm"><a href="admin1.html">Admin</a></li>
-					<li class="menu_item menu_mm"><a href="memoire.html">Memoire</a></li>
-                    
-				</ul>
-
-				<div class="menu_social_container menu_mm">
-					<ul class="menu_social menu_mm">
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-						<li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-twitter"></i></a></li>
-					</ul>
-				</div>
-
-                <div class="menu_copyright menu_mm">Colorlib — Tous droits réservés</div>
-			</div>
-		</div>
-	</div>
-	
-	<!-- Home -->
-	<div class="home">
-		<div class="hero_slider_container">
-			<div class="hero_slider owl-carousel">
-				
-				<div class="hero_slide">
-					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
-					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
-						<div class="hero_slide_content text-center">
-                            <h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Bienvenue à l’ENSTP, l’excellence au service des infrastructures durables</h1>
-							<div id="stats-container" class="stats-overlay">
-								<div class="loading-spinner">
-									<div class="spinner"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<div class="hero_slide">
-					<div class="hero_slide_background" style="background-image:url(images/travaux2.jpeg)"></div>
-					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
-						<div class="hero_slide_content text-center">
-							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
-							<div id="stats-container-2" class="stats-overlay">
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<div class="hero_slide">
-					<div class="hero_slide_background" style="background-image:url(images/slider_background.jpg)"></div>
-					<div class="hero_slide_container d-flex flex-column align-items-center justify-content-center">
-						<div class="hero_slide_content text-center">
-							<h1 data-animation-in="fadeInUp" data-animation-out="animate-out fadeOut">Get your <span>Education</span> today!</h1>
-							<div id="stats-container-3" class="stats-overlay">
-							</div>
-						</div>
-					</div>
-				</div>
-
-			</div>
-
-			<div class="hero_slider_left hero_slider_nav trans_200"><span class="trans_200">prev</span></div>
-			<div class="hero_slider_right hero_slider_nav trans_200"><span class="trans_200">next</span></div>
-		</div>
-	</div>
-
-	<!-- Hero Boxes -->
-	<div class="hero_boxes">
-		<div class="hero_boxes_inner">
-			<div class="container">
-				<div class="row">
-
-					<div class="col-lg-4 hero_box_col">
-						<div class="hero_box d-flex flex-row align-items-center justify-content-start">
-							<img src="images/earth-globe.svg" class="svg" alt="">
-							<div class="hero_box_content">
-                                <h2 class="hero_box_title">Nos Formations</h2>
-                                <a href="courses.html" class="hero_box_link">Découvrir</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-4 hero_box_col">
-						<div class="hero_box d-flex flex-row align-items-center justify-content-start">
-							<img src="images/books.svg" class="svg" alt="">
-							<div class="hero_box_content">
-                                <h2 class="hero_box_title">Bibliothèque numérique</h2>
-                                <a href="memoire.html" class="hero_box_link">Accéder</a>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-lg-4 hero_box_col">
-						<div class="hero_box d-flex flex-row align-items-center justify-content-start">
-							<img src="images/professor.svg" class="svg" alt="">
-							<div class="hero_box_content">
-                                <h2 class="hero_box_title">Nos Enseignants</h2>
-                                <a href="teachers.html" class="hero_box_link">Voir l’équipe</a>
-							</div>
-						</div>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Popular -->
-<div class="popular page_section">
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="section_title text-center">
-                    <h1>Formations phares de l’ENSTP</h1>
+            <div class="menu_inner menu_mm">
+                <div class="menu menu_mm">
+                    <ul class="menu_list menu_mm">
+                        <li class="menu_item menu_mm"><a href="index.html">Accueil</a></li>
+                        <li class="menu_item menu_mm"><a href="courses.html">Formations</a></li>
+                        <li class="menu_item menu_mm"><a href="teachers.html">Enseignants</a></li>
+                        <li class="menu_item menu_mm"><a href="memoire.html">Mémoires</a></li>
+                        <li class="menu_item menu_mm"><a href="news_post.html">Actualités</a></li>
+                        <li class="menu_item menu_mm"><a href="contact.html">Contact</a></li>
+                        <li class="menu_item menu_mm"><a href="register.html">Inscription</a></li>
+                        <li class="menu_item menu_mm"><a href="admin1.html">Admin</a></li>
+                    </ul>
+                    <div class="menu_social_container menu_mm">
+                        <ul class="menu_social menu_mm">
+                            <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                            <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-instagram"></i></a></li>
+                            <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                            <li class="menu_social_item menu_mm"><a href="#"><i class="fab fa-twitter"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="menu_copyright menu_mm">ENSTP — Tous droits réservés</div>
                 </div>
             </div>
         </div>
-
-        <div class="row course_boxes">
-
-            <div class="col-lg-4 course_box">
-                <div class="card">
-                    <a href="courses.html#topographie">
-                        <img class="card-img-top" src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2070" alt="Topographie">
-                    </a>
-                    <div class="card-body text-center">
-                        <div class="card-title"><a href="courses.html#topographie">Topographie</a></div>
-                        <div class="card-text">Maîtrise des techniques de mesure, de cartographie et de gestion de l’information géographique.</div>
-                    </div>
+        <!-- Hero Section -->
+        <section
+            class="relative w-full min-h-[70vh] lg:min-h-[650px] flex items-center justify-center overflow-hidden bg-brand-black pt-[90px]">
+            <!-- Background Slideshow -->
+            <div id="hero-slideshow" class="absolute inset-0 w-full h-full opacity-40 pointer-events-none">
+                <div class="slide absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-[2000ms] scale-100"
+                    style="background-image: url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=1920&q=80')">
+                </div>
+                <div class="slide absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-[2000ms] scale-100 opacity-0"
+                    style="background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920&q=80')">
+                </div>
+                <div class="slide absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-[2000ms] scale-100 opacity-0"
+                    style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&q=80')">
                 </div>
             </div>
-
-            <div class="col-lg-4 course_box">
-                <div class="card">
-                    <a href="courses.html#genie-civil">
-                        <img class="card-img-top" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070" alt="Génie Civil">
-                    </a>
-                    <div class="card-body text-center">
-                        <div class="card-title"><a href="courses.html#genie-civil">Génie Civil</a></div>
-                        <div class="card-text">Formation d’ingénieurs et de techniciens supérieurs pour la conception, la réalisation et la gestion d’infrastructures.</div>
-                    </div>
-                </div>
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/60 to-brand-black/80 pointer-events-none">
             </div>
 
-            <div class="col-lg-4 course_box">
-                <div class="card">
-                    <a href="courses.html#environnement">
-                        <img class="card-img-top" src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=2070" alt="Environnement et Développement Durable">
-                    </a>
-                    <div class="card-body text-center">
-                        <div class="card-title"><a href="courses.html#environnement">Environnement et Développement Durable</a></div>
-                        <div class="card-text">Compétences pour la gestion durable des ressources, l’aménagement du territoire et la protection de l’environnement.</div>
-                    </div>
+            <div class="relative z-10 container mx-auto px-4 flex flex-col items-center text-center py-20">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-orange/10 border border-brand-orange/30 text-brand-orange text-[10px] font-bold uppercase tracking-widest mb-6 animate-fade-in-up">
+                    <span class="w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span> Portail Académique
+                </div>
+
+                <h1
+                    class="font-title font-extrabold text-4xl md:text-6xl lg:text-7xl text-white mb-6 uppercase leading-tight animate-fade-in-up drop-shadow-2xl max-w-4xl mx-auto">
+                    <span class="text-brand-orange inline-block mb-2 md:mb-0">L'Excellence</span>
+                    <span class="block md:inline">à portée de clic</span>
+                </h1>
+
+                <p class="font-body text-xl md:text-2xl text-gray-300 mb-10 font-light animate-fade-in-up tracking-wide leading-relaxed italic"
+                    style="animation-delay: 0.1s;">
+                    Découvrez, consultez et partagez le savoir de l'ENSTP.
+                </p>
+
+                <!-- Stats Grid (Animated) -->
+                <div id="hero-stats"
+                    class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-12 animate-fade-in-up"
+                    style="animation-delay: 0.2s;">
+                    <!-- Injecté via JS -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 animate-fade-in-up w-full px-2"
+                    style="animation-delay: 0.3s;">
+                    <button class="hero-btn group" onclick="handleAction('annuaire')">
+                        <i data-lucide="users" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Annuaire
+                    </button>
+                    <button class="hero-btn group" onclick="handleAction('stats')">
+                        <i data-lucide="chart-line" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Mes
+                        Stats
+                    </button>
+                    <button class="hero-btn group" onclick="handleAction('downloads')">
+                        <i data-lucide="download" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Mes
+                        DLs
+                    </button>
+                    <button class="hero-btn group" onclick="handleAction('likes')">
+                        <i data-lucide="heart" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Mes Likes
+                    </button>
+                    <button id="view-toggle-btn" class="hero-btn-outline group" onclick="toggleView()">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i> <span id="view-label">Vue</span>
+                    </button>
                 </div>
             </div>
+        </section>
 
-        </div>
-    </div>
-</div>
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-12 flex-grow max-w-[1400px]">
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
 
-	<!-- Services -->
-	<div class="services page_section">
-	<div class="services page_section">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="section_title text-center">
-						<h1>Our Services</h1>
-					</div>
-				</div>
-			</div>
-
-			<div class="row services_row">
-
-				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
-					<div class="icon_container d-flex flex-column justify-content-end">
-						<img src="images/earth-globe.svg" alt="">
-					</div>
-                    <h3>Formations diplômantes</h3>
-                    <h3>Stages pratiques</h3>
-                    <p>Des cursus professionnalisants, alliant théorie et pratique, pour répondre aux besoins du secteur des travaux publics.</p>
-				</div>
-
-				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
-					<div class="icon_container d-flex flex-column justify-content-end">
-						<img src="images/books.svg" alt="">
-					</div>
-                    <h3>Bibliothèque & ressources numériques</h3>
-                    <p>Un accès à une documentation riche, des mémoires, des ressources scientifiques et techniques de pointe.</p>
-				</div>
-
-				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
-					<div class="icon_container d-flex flex-column justify-content-end">
-						<img src="images/professor.svg" alt="">
-					</div>
-                    <h3>Corps enseignant d’exception</h3>
-                    <p>Des enseignants-chercheurs et professionnels expérimentés, engagés pour la réussite des étudiants.</p>
-				</div>
-
-				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
-					<div class="icon_container d-flex flex-column justify-content-end">
-						<img src="images/blackboard.svg" alt="">
-					</div>
-                    <h3>Partenariats & mobilité</h3>
-                    <p>Des collaborations avec des institutions nationales et internationales, des opportunités de stages et d’échanges académiques.</p>
-				</div>
-
-				<div class="col-lg-4 service_item text-left d-flex flex-column align-items-start justify-content-start">
-					<div class="icon_container d-flex flex-column justify-content-end">
-						<img src="images/mortarboard.svg" alt="">
-					</div>
-                    <h3>Diplômes reconnus</h3>
-                    <p>Des diplômes d’État reconnus au Cameroun et à l’international, gage de qualité et d’employabilité.</p>
-				</div>
-
-			</div>
-		</div>
-	</div>
-
-	<!-- Testimonials -->
-	<div class="testimonials-modern">
-		<div id="testimonials-background-dynamic" class="testimonials-background-modern"></div>
-		<div class="testimonials-overlay"></div>
-		<div class="testimonials-content-modern">
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<div class="section_title text-center">
-                            <h1 style="color: white;">Témoignages de nos diplômés</h1>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-lg-10 offset-lg-1">
-						<div id="testimonials-slider-container">
-							<div class="loading-spinner">
-								<div class="spinner"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- News Section -->
-	<div class="news-section-modern">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="section_title text-center">
-                        <h1>Actualités de l’ENSTP</h1>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<div id="news-grid-container" class="news-grid-modern">
-						<div class="loading-spinner">
-							<div class="spinner"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-
-	<!-- Footer -->
-	<footer class="footer">
-		<div class="container">
-			
-			<!-- Newsletter -->
-			<div class="newsletter">
-				<div class="row">
-					<div class="col">
-						<div class="section_title text-center">
-							<h1>Abonnez-vous à la newsletter</h1>
-						</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col text-center">
-						<div class="newsletter_form_container mx-auto">
-							<form action="post">
-								<div class="newsletter_form d-flex flex-md-row flex-column flex-xs-column align-items-center justify-content-center">
-									<input id="newsletter_email" class="newsletter_email" type="email" placeholder="Adresse e-mail" required="required" data-error="Une adresse e-mail valide est requise.">
-									<button id="newsletter_submit" type="submit" class="newsletter_submit_btn trans_300" value="Submit">S\'abonner</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Footer Content -->
-			<div class="footer_content">
-				<div class="row">
-
-					<div class="col-lg-3 footer_col">
-						<div class="logo_container">
-							<div class="logo">
-								<img src="images/logo.png" alt="">
-							</div>
-						</div>
-						<p class="footer_about_text">L'École Nationale Supérieure des Travaux Publics (ENSTP) forme des cadres d'excellence en génie civil, topographie et environnement, contribuant au développement des infrastructures durables au Cameroun et en Afrique.</p>
-					</div>
-
-					<div class="col-lg-3 footer_col">
-						<div class="footer_column_title">Menu</div>
-						<div class="footer_column_content">
-							<ul>
-								<li class="footer_list_item"><a href="#">Accueil</a></li>
-								<li class="footer_list_item"><a href="#">À propos</a></li>
-								<li class="footer_list_item"><a href="courses.html">Formations</a></li>
-								<li class="footer_list_item"><a href="news_post.html">News</a></li>
-								<li class="footer_list_item"><a href="contact.html">Contact</a></li>
-								<li class="footer_list_item"><a href="register.html">Register</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<div class="col-lg-3 footer_col">
-                        <div class="footer_column_title">Liens utiles</div>
-						<div class="footer_column_content">
-							<ul>
-                            <li class="footer_list_item"><a href="#">Témoignages</a></li>
-                            <li class="footer_list_item"><a href="#">FAQ</a></li>
-                            <li class="footer_list_item"><a href="#">Communauté</a></li>
-                            <li class="footer_list_item"><a href="#">Galerie</a></li>
-                            <li class="footer_list_item"><a href="#">Frais de scolarité</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<div class="col-lg-3 footer_col">
-						<div class="footer_column_title">Contact</div>
-						<div class="footer_column_content">
-							<ul>
-								<li class="footer_contact_item">
-									<div class="footer_contact_icon">
-										<img src="images/placeholder.svg" alt="">
-									</div>
-									Rue Elig-Effa Yaoundé-Cameroun
-								</li>
-								<li class="footer_contact_item">
-									<div class="footer_contact_icon">
-										<img src="images/smartphone.svg" alt="">
-									</div>
-									(237) 222 23 09 44 / (237) 222 22 18 16
-								</li>
-								<li class="footer_contact_item">
-									<div class="footer_contact_icon">
-										<img src="images/envelope.svg" alt="">
-									</div>contact@enstp.cm
-								</li>
-							</ul>
-						</div>
-					</div>
-
-				</div>
-			</div>
-
-			<!-- Footer Copyright -->
-			<div class="footer_bar d-flex flex-column flex-sm-row align-items-center">
-				<div class="footer_copyright">
-                    <span>© ENSTP Yaoundé — Tous droits réservés. L’excellence au service du développement.</span>
-				</div>
-				<div class="footer_social ml-sm-auto">
-					<ul class="menu_social">
-						<li class="menu_social_item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-						<li class="menu_social_item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-					</ul>
-				</div>
-			</div>
-
-		</div>
-	</footer>
-
-</div>
-
-<script src="js/jquery-3.2.1.min.js"></script>
-<script src="styles/bootstrap4/popper.js"></script>
-<script src="styles/bootstrap4/bootstrap.min.js"></script>
-<script src="plugins/greensock/TweenMax.min.js"></script>
-<script src="plugins/greensock/TimelineMax.min.js"></script>
-<script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
-<script src="plugins/greensock/animation.gsap.min.js"></script>
-<script src="plugins/greensock/ScrollToPlugin.min.js"></script>
-<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
-<script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
-<script src="plugins/easing/easing.js"></script>
-<script src="js/custom.js"></script>
-<script>
-
-  let TOKEN = localStorage.getItem('authToken');
-  let USER_ROLE = null;
-</script>
-<script>
-const BASE_URL = 'https://mcb.reimca-app.com/api';
-const UNIV_SLUG = 'ecole-des-travaux';
-
-// Animation des valeurs
-function animateValue(element, start, end, duration) {
-    let startTimestamp = null;
-    const range = end - start;
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        element.textContent = Math.floor(start + range * progress);
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
-    };
-    window.requestAnimationFrame(step);
-}
-
-// Charger les statistiques
-async function loadStats() {
-    try {
-        const res = await fetch(`${BASE_URL}/memoires/universites/${UNIV_SLUG}/stats/`);
-        const stats = await res.json();
-        
-        const items = [
-            { label: 'Mémoires', value: stats.total_memoires || 0, icon: 'fas fa-book' },
-            { label: 'Téléchargements', value: stats.total_telechargements || 0, icon: 'fas fa-download' },
-            { label: 'Likes', value: stats.total_likes || 0, icon: 'fas fa-heart' },
-            { label: 'Note Moyenne', value: stats.note_moyenne || 0, icon: 'fas fa-star', isFloat: true, gold: true }
-        ];
-
-        const statsHTML = items.map((item, idx) => `
-            <div class="stat-card-modern ${item.gold ? 'gold' : ''}">
-                <div class="stat-icon-modern">
-                    <i class="${item.icon}"></i>
-                </div>
-                <div class="stat-value-modern" id="stat-${idx}">0</div>
-                <div class="stat-label-modern">${item.label}</div>
-            </div>
-        `).join('');
-
-        // Injecter dans tous les containers de stats
-        document.getElementById('stats-container').innerHTML = statsHTML;
-        document.getElementById('stats-container-2').innerHTML = statsHTML;
-        document.getElementById('stats-container-3').innerHTML = statsHTML;
-
-        // Animer les valeurs
-        items.forEach((item, idx) => {
-            const elements = document.querySelectorAll(`#stat-${idx}`);
-            elements.forEach(el => {
-                if (item.isFloat) {
-                    el.textContent = parseFloat(item.value).toFixed(1);
-                } else {
-                    setTimeout(() => animateValue(el, 0, item.value, 2000), idx * 200);
-                }
-            });
-        });
-    } catch (error) {
-        console.error('Stats error:', error);
-        const errorMsg = '<p style="color: white; text-align: center;">Stats unavailable</p>';
-        document.getElementById('stats-container').innerHTML = errorMsg;
-        document.getElementById('stats-container-2').innerHTML = errorMsg;
-        document.getElementById('stats-container-3').innerHTML = errorMsg;
-    }
-}
-
-// Témoignances modernisées & réactives
-async function loadTestimonials() {
-  try {
-    const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/oldstudent/`);
-    const testimonials = await res.json();
-    if (!testimonials.length) {
-      document.getElementById('testimonials-slider-container').innerHTML =
-        '<p style="color:#fff;text-align:center;">Aucun témoignage</p>';
-      return;
-    }
-
-    const bgElement = document.getElementById('testimonials-background-dynamic');
-
-    const cardsHTML = testimonials.map((t, idx) => `
-      <div class="testimonial-card-modern" data-real-index="${idx}">
-        <div class="quote-icon-modern">"</div>
-        <p class="testimonial-text-modern">${t.body || 'Aucun contenu'}</p>
-        <div class="testimonial-author-modern">
-          <div class="testimonial-avatar-modern">
-            <img class="avatar-img" src="${t.cover_url || 'images/default-testimonial.jpg'}"
-                 alt="${t.title || 'Anonyme'}"
-                 onerror="this.src='images/default-testimonial.jpg'">
-          </div>
-          <div class="testimonial-info-modern">
-            <h4>${t.title || 'Anonyme'}</h4>
-            <p>Étudiant diplômé</p>
-          </div>
-        </div>
-      </div>`).join('');
-
-    document.getElementById('testimonials-slider-container').innerHTML =
-      `<div class="owl-carousel owl-theme testimonials-carousel">${cardsHTML}</div>`;
-
-    function syncBackground(event) {
-      if (!event || !event.item) return; // évite l’erreur
-      const currentSlide = event.item.index;
-      const realIndex = parseInt(
-        $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.testimonial-card-modern').data('real-index')
-      ) % testimonials.length;
-      const t = testimonials[realIndex];
-      if (!t) return;
-      const url = t.cover_url || 'images/default-testimonial.jpg';
-      bgElement.style.backgroundImage = `url(${url})`;
-      $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.avatar-img').attr('src', url);
-    }
-
-    $('.testimonials-carousel').owlCarousel({
-      items: 1,
-      loop: true,
-      margin: 30,
-      nav: true,
-      dots: true,
-      autoplay: true,
-      autoplayTimeout: 6000,
-      smartSpeed: 800,
-      navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
-      responsive: { 0: { nav: false }, 768: { nav: true } },
-      onInitialized: syncBackground,
-      onChanged: syncBackground
-    });
-
-  } catch (error) {
-    console.error('Erreur chargement témoignages :', error);
-    document.getElementById('testimonials-slider-container').innerHTML =
-      '<p style="color:#fff;text-align:center;">Témoignages indisponibles</p>';
-  }
-}
-function syncBackground(event) {
-  if (!event || !event.item) return; // ⚠️ sécurité
-
-  const currentSlide = event.item.index;
-  const realIndex = parseInt(
-    $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.testimonial-card-modern').data('real-index')
-  ) % testimonials.length;
-
-  const t = testimonials[realIndex];
-  if (!t) return; // extra sécurité
-
-  const url = t.cover_url || 'images/default-testimonial.jpg';
-  const bgElement = document.getElementById('testimonials-background-dynamic');
-
-  bgElement.style.backgroundImage = `url(${url})`;
-  // Optionnel : forcer l’avatar aussi au cas où
-  $('.testimonials-carousel').find('.owl-item').eq(currentSlide).find('.avatar-img').attr('src', url);
-}
-// Charger les actualités
-async function loadNews() {
-    try {
-        const headers = {};
-        if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
-
-        const res = await fetch(`${BASE_URL}/universites/universities/${UNIV_SLUG}/news/`, { headers });
-        if (!res.ok) throw new Error('Erreur chargement des news');
-const news = await res.json();
-        
-        const container = document.getElementById('news-grid-container');
-        
-        if (news.length === 0) {
-            container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No news available</p>';
-            return;
-        }
-
-                // Grouper les news par type, mais afficher les news sans type dans "Autres"
-        const types = [
-            { key: 'general', label: 'Général' },
-            { key: 'event', label: 'Événement' },
-            { key: 'award', label: 'Récompense' },
-            { key: 'research', label: 'Recherche' },
-            { key: 'alumni', label: 'Alumni' }
-        ];
-        let html = '';
-        window._newsData = news; // Stocke les news globalement pour la modale
-        types.forEach(type => {
-            const filtered = news.filter(n => (n.topics || n.type || 'general') === type.key);
-            if (filtered.length) {
-                html += `<h2 style="margin-top:2rem;">${type.label}</h2><div class="news-type-group">`;
-                html += filtered.map(item => {
-                    const date = new Date(item.created_at || Date.now());
-                    const formattedDate = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-                    return `
-                        <div class="news-card-modern">
-                            <div class="news-image-modern">
-                                <img src="${item.cover_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'}" 
-                                     alt="${item.title || 'News'}"
-                                     onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'">
-                                <div class="news-date-badge">${formattedDate}</div>
+                <!-- Sidebar Filters -->
+                <aside class="w-full lg:w-[300px] flex-shrink-0 sticky top-[110px] z-30">
+                    <div
+                        class="bg-white rounded-3xl shadow-lg shadow-gray-100/50 p-6 border border-gray-100 transition-all duration-300">
+                        <!-- Mobile Toggle -->
+                        <div id="mobile-filter-toggle"
+                            class="flex items-center justify-between lg:cursor-default cursor-pointer mb-0 lg:mb-6 pb-0 lg:pb-4 border-b border-transparent lg:border-gray-100">
+                            <div
+                                class="flex items-center gap-3 text-brand-black font-title font-extrabold text-sm uppercase tracking-wide">
+                                <div class="p-2 bg-brand-orange/10 rounded-lg text-brand-orange">
+                                    <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                                </div>
+                                <h3>Filtres Avancés</h3>
                             </div>
-                            <div class="news-content-modern">
-                                <h3 class="news-title-modern">${item.title || 'Untitled'}</h3>
-                                <p class="news-excerpt-modern">${(item.body || 'No description available').substring(0, 120)}...</p>
-                                <a href="#" class="news-link-modern" data-news-id="${item.id}" onclick="event.preventDefault();openNewsModal('${item.id}');return false;">
-                                    Lire plus <i class="fas fa-arrow-right"></i>
-                                </a>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-brand-grey lg:hidden transition-transform duration-300"
+                                id="filter-chevron"></i>
+                        </div>
+
+                        <!-- Filters Content -->
+                        <div id="filters-content"
+                            class="hidden lg:block space-y-5 pt-4 lg:pt-0 transition-all duration-300 ease-in-out mt-2 lg:mt-0">
+
+                            <!-- Search -->
+                            <div class="relative group">
+                                <input type="text" id="filter-search"
+                                    class="w-full h-[45px] pl-10 pr-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white focus:ring-2 focus:ring-brand-orange/10 outline-none transition-all placeholder:text-gray-400"
+                                    placeholder="Rechercher...">
+                                <i data-lucide="search"
+                                    class="absolute left-3 top-3.5 text-gray-400 w-4 h-4 group-focus-within:text-brand-orange transition-colors"></i>
+                            </div>
+
+                            <!-- Main Filters -->
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="relative">
+                                    <select id="filter-year"
+                                        class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                        <option value="">Toutes les années</option>
+                                        <!-- Options JS -->
+                                    </select>
+                                    <i data-lucide="chevron-down"
+                                        class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                                </div>
+
+                                <div class="relative">
+                                    <select id="filter-domain"
+                                        class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                        <option value="">Tous les domaines</option>
+                                        <!-- Options JS -->
+                                    </select>
+                                    <i data-lucide="chevron-down"
+                                        class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+
+                            <!-- 5 Nouveaux Filtres -->
+                            <div class="pt-4 border-t border-gray-100 space-y-4">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Critères
+                                    spécifiques</p>
+
+                                <!-- 1. Université -->
+                                <div class="relative">
+                                    <select id="filter-university"
+                                        class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                        <option value="">Toutes les universités</option>
+                                        <option value="ENSTP">ENSTP uniquement</option>
+                                        <option value="Autre">Autres établissements</option>
+                                    </select>
+                                    <i data-lucide="school"
+                                        class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                                </div>
+
+                                <!-- 2. Note Minimale -->
+                                <div class="relative">
+                                    <select id="filter-rating"
+                                        class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                        <option value="">Note indifférente</option>
+                                        <option value="4">Mieux notés (4+)</option>
+                                        <option value="3">Bien notés (3+)</option>
+                                    </select>
+                                    <i data-lucide="star"
+                                        class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                                </div>
+
+                                <!-- Checkboxes pour 3, 4, 5 -->
+                                <div class="flex flex-col gap-3">
+                                    <!-- 3. Avec Résumé -->
+                                    <label
+                                        class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-brand-black transition-colors p-2 hover:bg-gray-50 rounded-lg">
+                                        <input type="checkbox" id="filter-resume"
+                                            class="w-4 h-4 rounded border-gray-300 text-brand-orange focus:ring-brand-orange">
+                                        <span>Avec résumé disponible</span>
+                                    </label>
+
+                                    <!-- 4. Populaire -->
+                                    <label
+                                        class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-brand-black transition-colors p-2 hover:bg-gray-50 rounded-lg">
+                                        <input type="checkbox" id="filter-popular"
+                                            class="w-4 h-4 rounded border-gray-300 text-brand-orange focus:ring-brand-orange">
+                                        <span>Populaire (+10 downloads)</span>
+                                    </label>
+
+                                    <!-- 5. Très Commenté -->
+                                    <label
+                                        class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer hover:text-brand-black transition-colors p-2 hover:bg-gray-50 rounded-lg">
+                                        <input type="checkbox" id="filter-commented"
+                                            class="w-4 h-4 rounded border-gray-300 text-brand-orange focus:ring-brand-orange">
+                                        <span>Très commenté (+5 avis)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Sort & Reset -->
+                            <div class="pt-4 border-t border-gray-100">
+                                <div class="relative mb-3">
+                                    <select id="filter-sort"
+                                        class="w-full h-[45px] px-4 border border-gray-200 rounded-xl bg-gray-50/50 text-sm focus:border-brand-orange focus:bg-white outline-none cursor-pointer appearance-none text-gray-700">
+                                        <option value="-created_at">Plus récents d'abord</option>
+                                        <option value="created_at">Plus anciens d'abord</option>
+                                        <option value="-nb_telechargements">Les plus téléchargés</option>
+                                        <option value="-note_moyenne">Les mieux notés</option>
+                                    </select>
+                                    <i data-lucide="arrow-up-down"
+                                        class="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                                </div>
+
+                                <button onclick="resetFilters()"
+                                    class="w-full h-[45px] bg-white border border-gray-200 text-brand-black rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand-black hover:text-white hover:border-brand-black transition-all flex items-center justify-center gap-2 group">
+                                    <i data-lucide="rotate-ccw"
+                                        class="w-4 h-4 group-hover:-rotate-180 transition-transform duration-500"></i>
+                                    Réinitialiser
+                                </button>
                             </div>
                         </div>
-                    `;
-                }).join('');
-                html += '</div>';
-            }
-        });
-        // Afficher les news sans topic connu
-        const others = news.filter(n => !types.some(t => t.key === (n.topics || n.type || 'general')));
-        if (others.length) {
-            html += `<h2 style=\"margin-top:2rem;\">Autres</h2><div class=\"news-type-group\">`;
-            html += others.map(item => {
-                const date = new Date(item.created_at || Date.now());
-                const formattedDate = date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-                return `
-                    <div class=\"news-card-modern\">\n\	<div class=\"news-image-modern\">\n\		<img src=\"${item.cover_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'}\" alt=\"${item.title || 'News'}\" onerror=\"this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'\">\n\		<div class=\"news-date-badge\">${formattedDate}</div>\n\	</div>\n\	<div class=\"news-content-modern\">\n\		<h3 class=\"news-title-modern\">${item.title || 'Untitled'}</h3>\n\		<p class=\"news-excerpt-modern\">${(item.body || 'No description available').substring(0, 120)}...</p>\n\		<a href=\"#\" class=\"news-link-modern\" data-news-id=\"${item.id}\" onclick=\"event.preventDefault();openNewsModal('${item.id}');return false;\">Lire plus <i class=\"fas fa-arrow-right\"></i></a>\n\	</div>\n\</div>\n`;
-            }).join('');
-            html += '</div>';
-        }
-        container.innerHTML = html || '<p style="text-align: center; grid-column: 1/-1;">Aucune actualité disponible</p>';
-    } catch (error) {
-        console.error('News error:', error);
-        document.getElementById('news-grid-container').innerHTML = '<p style="text-align: center; grid-column: 1/-1;">News unavailable</p>';
-    }
-}
+                    </div>
+                </aside>
 
-// Initialisation au chargement de la page
-document.addEventListener('DOMContentLoaded', function() {
-    loadStats();
-    loadTestimonials();
-    loadNews();
-});
-</script>
-<!-- Modal News -->
-<div id="news-modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
-    <div id="news-modal-content" style="background:white;max-width:600px;width:90vw;padding:2rem;border-radius:16px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
-        <button onclick="closeNewsModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:2rem;color:#ffb606;cursor:pointer;">&times;</button>
-        <div id="news-modal-body"></div>
-    </div>
-</div>
-<script>
-function openNewsModal(newsId) {
-    if (!window._newsData) return;
-    const item = window._newsData.find(n => String(n.id) === String(newsId));
-    if (!item) return;
-    const body = document.getElementById('news-modal-body');
-    body.innerHTML = `
-        <div style="text-align:center;">
-            <img src="${item.cover_url || 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600'}" alt="${item.title || ''}" style="max-width:100%;max-height:250px;border-radius:10px;margin-bottom:1rem;">
+                <!-- Grid & Pagination -->
+                <section class="flex-1 w-full min-w-0">
+                    <!-- Loader -->
+                    <div id="loader" class="flex flex-col items-center justify-center py-20 hidden">
+                        <div class="relative">
+                            <div
+                                class="w-16 h-16 border-4 border-brand-orange/20 border-t-brand-orange rounded-full animate-spin">
+                            </div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-2 h-2 bg-brand-black rounded-full"></div>
+                            </div>
+                        </div>
+                        <p
+                            class="text-brand-grey font-title font-bold uppercase tracking-widest text-xs mt-6 animate-pulse">
+                            Recherche en cours...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state"
+                        class="hidden flex flex-col items-center justify-center h-96 bg-white rounded-3xl shadow-sm border border-gray-100 p-8 text-center mx-auto max-w-lg">
+                        <div class="bg-gray-50 p-6 rounded-full mb-6">
+                            <i data-lucide="search-x" class="w-12 h-12 text-gray-300"></i>
+                        </div>
+                        <h3 class="text-2xl font-title font-bold text-brand-black mb-3">Aucun résultat trouvé</h3>
+                        <p class="text-gray-500 font-body text-sm leading-relaxed mb-8">
+                            Nous n'avons trouvé aucun mémoire correspondant à vos critères. Essayez d'élargir votre
+                            recherche.
+                        </p>
+                        <button onclick="resetFilters()"
+                            class="px-8 py-3 bg-brand-orange text-brand-black rounded-full font-bold uppercase text-xs tracking-wide hover:shadow-lg hover:shadow-brand-orange/30 transition-all transform hover:-translate-y-1">
+                            Effacer tous les filtres
+                        </button>
+                    </div>
+
+                    <!-- Grid -->
+                    <div id="memoires-grid"
+                        class="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-2 transition-all duration-300">
+                        <!-- Cards injected by JS -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="pagination-container" class="flex justify-center mt-16 hidden">
+                        <button id="load-more-btn"
+                            class="group px-10 py-4 bg-white border border-gray-200 text-brand-black font-title font-bold uppercase text-xs tracking-widest rounded-full hover:bg-brand-orange hover:text-brand-black hover:border-brand-orange hover:shadow-xl hover:shadow-brand-orange/20 transition-all transform hover:-translate-y-1 flex items-center gap-3">
+                            <span class="group-hover:animate-pulse">Charger plus de résultats</span>
+                            <i data-lucide="arrow-down"
+                                class="w-4 h-4 group-hover:translate-y-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-brand-black text-white py-20 border-t border-white/10">
+            <div class="container mx-auto px-4 text-center">
+                <div
+                    class="w-16 h-16 bg-gradient-to-br from-brand-orange to-amber-600 flex items-center justify-center text-brand-black font-title font-extrabold text-2xl mx-auto mb-8 rounded-2xl shadow-glow">
+                    E</div>
+                <p class="text-brand-orange font-title font-bold text-xl mb-4 uppercase tracking-[0.2em]">Bibliothèque
+                    des Mémoires ENSTP</p>
+                <p class="text-gray-500 font-body text-sm mb-10 max-w-lg mx-auto leading-relaxed">
+                    Plateforme officielle de consultation et d'archivage des travaux de fin d'études de l'École
+                    Nationale Supérieure des Travaux Publics.
+                </p>
+                <p class="text-gray-600 text-xs font-bold uppercase tracking-widest">© <span id="footer-year"></span>
+                    ENSTP. Tous droits réservés.</p>
+            </div>
+        </footer>
+
+        <!-- MODAL: Details (Split View with Actions) -->
+        <div id="modal-detail"
+            class="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 hidden h-screen overflow-hidden">
+            <div class="absolute inset-0 bg-brand-black/90 backdrop-blur-md transition-opacity duration-300"
+                onclick="closeModal('modal-detail')"></div>
+            <div
+                class="relative bg-white w-full h-full md:max-h-[90vh] md:max-w-7xl md:rounded-[32px] shadow-2xl flex flex-col md:flex-row overflow-hidden animate-fade-in-up">
+                <button onclick="closeModal('modal-detail')"
+                    class="absolute top-4 right-4 z-[60] p-2 bg-black/20 hover:bg-black/50 text-white rounded-full backdrop-blur-md transition-colors border border-white/10 group">
+                    <i data-lucide="x" class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300"></i>
+                </button>
+                <div id="modal-detail-content" class="flex flex-col md:flex-row w-full h-full">
+                    <!-- Content injected by JS -->
+                </div>
+            </div>
         </div>
-        <h2 style="color:#ffb606;">${item.title || ''}</h2>
-        <div style="color:#888;font-size:0.95rem;margin-bottom:1rem;">${item.created_at ? (new Date(item.created_at)).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</div>
-        <div style="font-size:1.1rem;line-height:1.7;">${item.body || ''}</div>
-    `;
-    document.getElementById('news-modal').style.display = 'flex';
-}
-function closeNewsModal() {
-    document.getElementById('news-modal').style.display = 'none';
-}
-</script>
 
+        <!-- MODAL: Chat -->
+        <div id="modal-chat"
+            class="fixed inset-0 z-[110] hidden flex items-end md:items-center justify-center p-0 md:p-4">
+            <div class="absolute inset-0 bg-brand-black/80 backdrop-blur-sm" onclick="closeModal('modal-chat')"></div>
+            <div
+                class="relative bg-[#f0f2f5] w-full md:max-w-lg h-[90vh] md:h-[800px] rounded-t-[32px] md:rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-fade-in-up border border-white/20">
+                <!-- Header -->
+                <div
+                    class="bg-white p-5 flex justify-between items-center shadow-sm z-10 shrink-0 border-b border-gray-100">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="p-3 bg-gradient-to-br from-brand-orange to-amber-500 rounded-xl text-white shadow-lg shadow-brand-orange/30">
+                            <i data-lucide="message-circle" class="w-6 h-6 fill-current"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="font-title font-extrabold text-brand-black text-lg leading-tight">Discussion</h3>
+                            <p id="chat-title"
+                                class="text-xs text-gray-500 font-bold uppercase tracking-wider line-clamp-1 truncate max-w-[200px]">
+                                Titre du mémoire</p>
+                        </div>
+                    </div>
+                    <button onclick="closeModal('modal-chat')"
+                        class="p-2 hover:bg-gray-50 rounded-full transition-colors text-gray-400 hover:text-brand-black">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <!-- Messages -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 bg-[#efeae2] custom-scrollbar"
+                    style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px;">
+                </div>
+                <!-- Input -->
+                <div class="p-4 bg-white border-t border-gray-100 shrink-0 pb-8 md:pb-4">
+                    <div
+                        class="flex items-end gap-2 bg-gray-50 rounded-[24px] px-2 py-2 border border-gray-200 focus-within:ring-2 focus-within:ring-brand-orange/50 focus-within:bg-white transition-all shadow-inner">
+                        <textarea id="chat-input"
+                            class="flex-1 bg-transparent border-0 px-4 py-3 text-sm focus:ring-0 outline-none text-brand-black resize-none max-h-32 min-h-[48px]"
+                            placeholder="Votre message..." rows="1"></textarea>
+                        <button id="chat-send"
+                            class="mb-1 p-3 bg-brand-orange text-brand-black rounded-full hover:bg-amber-500 transition-all shadow-md transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: Generic (Lists/Stats) -->
+        <div id="modal-generic" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-brand-black/80 backdrop-blur-sm" onclick="closeModal('modal-generic')">
+            </div>
+            <div
+                class="relative bg-white w-full max-w-lg rounded-3xl shadow-2xl p-0 animate-fade-in-up overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <h3 class="text-xl font-extrabold text-brand-black flex items-center gap-3"
+                        id="modal-generic-title">
+                        <!-- Title injected by JS -->
+                    </h3>
+                    <button onclick="closeModal('modal-generic')"
+                        class="p-2 hover:bg-white rounded-full transition-colors text-gray-400 shadow-sm border border-transparent hover:border-gray-200">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div id="modal-generic-content" class="max-h-[60vh] overflow-y-auto custom-scrollbar p-6">
+                    <!-- Content injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Core template scripts (needed for mobile menu) -->
+        <script src="js/jquery-3.2.1.min.js"></script>
+        <script src="styles/bootstrap4/popper.js"></script>
+        <script src="styles/bootstrap4/bootstrap.min.js"></script>
+        <script src="plugins/greensock/TweenMax.min.js"></script>
+        <script src="plugins/greensock/TimelineMax.min.js"></script>
+        <script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
+        <script src="plugins/greensock/animation.gsap.min.js"></script>
+        <script src="plugins/greensock/ScrollToPlugin.min.js"></script>
+        <script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+        <script src="plugins/scrollTo/jquery.scrollTo.min.js"></script>
+        <script src="plugins/easing/easing.js"></script>
+        <script src="js/custom.js"></script>
+
+        <!-- Application Logic -->
+        <script src="script.js"></script>
 </body>
+
 </html>
