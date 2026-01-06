@@ -663,7 +663,7 @@
                         </div>
                         <div class="flex flex-wrap gap-2 min-h-[36px] bg-white p-3 rounded-xl border-2 border-gray-200">
                             ${Array.from(this.selected).length === 0 ? '<span class="text-gray-400 text-sm italic">Aucune sélection</span>' : ''}
-                            ${Array.from(this.selected).map(val => {
+                            ${Array.from(this.selected).reverse().map(val => {
                                 const item = this.items.find(i => i[this.valueKey] == val);
                                 if(!item) return '';
                                 return `
@@ -680,11 +680,16 @@
                 `;
 
                 const searchInput = this.container.querySelector('.ms-search');
-                searchInput.addEventListener('input', (e) => {
-                    this.filter = e.target.value;
-                    this.render(); 
-                    this.container.querySelector('.ms-search').focus();
-                });
+searchInput.addEventListener('input', (e) => {
+    this.filter = e.target.value;
+    this.render(); 
+    // 🔁 Forcer le curseur à droite
+    const inp = this.container.querySelector('.ss-search');
+    if (inp) {
+        inp.focus();
+        inp.setSelectionRange(inp.value.length, inp.value.length);
+    }
+});
 
                 this.container.querySelectorAll('.ms-option').forEach(el => {
                     el.addEventListener('click', () => {
@@ -793,13 +798,19 @@
                     const inp = this.container.querySelector('.ss-search');
                     if (inp) {
                         inp.addEventListener('input', (e) => {
-                            this.filter = e.target.value;
-                            this.render();
-                            setTimeout(() => {
-                                const searchInput = this.container.querySelector('.ss-search');
-                                if(searchInput) searchInput.focus();
-                            }, 0);
-                        });
+    this.filter = e.target.value;
+    this.render();
+    setTimeout(() => {
+        const searchInput = this.container.querySelector('.ss-search');
+        if(searchInput) {
+            searchInput.focus();
+            // Forcer la direction LTR (Left-to-Right) pour éviter l'inversion
+            searchInput.style.direction = 'ltr';
+            searchInput.style.textAlign = 'left';
+            searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+        }
+    }, 0);
+});
                         inp.addEventListener('click', e => e.stopPropagation());
                     }
 
@@ -870,10 +881,11 @@
             async loadData(token) {
                 const headers = { 'Authorization': `Bearer ${token}` };
                 
-                const [usersRes, domainesRes, memoiresRes] = await Promise.all([
+                const [usersRes, domainesRes, memoiresRes,teachers] = await Promise.all([
                     fetch(`${CONFIG.API_URL}/auth/${CONFIG.UNIV_SLUG}/users/?ordering=-id`, { headers }),
                     fetch(`${CONFIG.API_URL}/universites/domaines/`, { headers }),
-                    fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/`, { headers })
+                    fetch(`${CONFIG.API_URL}/memoires/universites/${CONFIG.UNIV_SLUG}/memoires/`, { headers }),
+                    fetch(`${CONFIG.API_URL}/auth/${CONFIG.UNIV_SLUG}/users/?ordering=-id&role=professeur`, { headers })
                 ]);
 
                 const rawUsers = await usersRes.json();
@@ -881,7 +893,11 @@
                     ...u,
                     label: u.full_name || `${u.prenom} ${u.nom}` || u.email
                 }));
-
+const rawTeachers = await teachers.json();
+state.teachers = rawTeachers.map(u => ({
+    ...u,
+    label: u.full_name || `${u.prenom} ${u.nom}` || u.email
+}));
                 const rawDomaines = await domainesRes.json();
                 state.domaines = rawDomaines.map(d => ({
                     ...d,
@@ -1238,7 +1254,8 @@ if (item.pdfFile) form.append('fichier_pdf', item.pdfFile);
                 const div = document.createElement('div');
                 div.className = `${colorClass} flex gap-2`;
                 div.innerHTML = `<span class="opacity-30">[${new Date().toLocaleTimeString()}]</span> <span>${text}</span>`;
-                container.prepend(div);
+                container.appendChild(div);          // 1. ajoute en BAS
+container.scrollTop = container.scrollHeight;  // 2. reste en BAS
             },
 
             logout() {
@@ -1286,8 +1303,7 @@ if (item.pdfFile) form.append('fichier_pdf', item.pdfFile);
                 new SearchableSelect('author-select-container', 'Auteur', state.users, selectedAuthorId, (val) => {
                     document.getElementById('auteurIdInput').value = val;
                 });
-
-                new MultiSelect('encadreurs-multiselect-container', "Encadreurs", state.users, state.form.encadreurs, (vals) => state.form.encadreurs = vals);
+                new MultiSelect('encadreurs-multiselect-container', "Encadreurs", state.teachers, state.form.encadreurs, (vals) => state.form.encadreurs = vals);
                 new MultiSelect('domaines-multiselect-container', "Domaines", state.domaines, state.form.domaines, (vals) => state.form.domaines = vals, 'slug', 'nom');
 
                 this.updateStepUI();
