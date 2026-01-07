@@ -172,34 +172,7 @@ function getHeaders() {
     if (TOKEN) h['Authorization'] = `Bearer ${TOKEN}`;
     return h;
 }
-async function downloadMemoire(e, id, fallbackUrl) {
-    if (e) e.stopPropagation();
-    if (!TOKEN) { showAuthPrompt(); return; }
 
-    try {
-        /* 1. on signale le téléchargement */
-        const res = await fetch(`${BASE_URL}/interactions/telechargements/telecharger/`, {
-            method : 'POST',
-            headers: getHeaders(),
-            body   : JSON.stringify({ memoire: id })
-        });
-
-        if (!res.ok) throw new Error('Erreur lors de l’enregistrement du téléchargement');
-
-        /* 2. on récupère l’URL exacte du PDF */
-        const data = await res.json();
-
-        /* 3. on priorise le champ que renvoie vraiment ton back
-              (adapte-le si le champ s’appelle autrement) */
-        const pdfUrl = data.file || data.pdf_url || `${BASE_URL}/memoires/${id}/pdf/`;
-
-        /* 4. on ouvre le PDF */
-        window.open(pdfUrl, '_blank');
-    } catch (err) {
-        console.error(err);
-        alert('Impossible de lancer le téléchargement.');
-    }
-}
 async function likeMemoire(memoireId) {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -700,20 +673,24 @@ useEffect(() => {
           </div>
 <p className="text-xs text-slate-400 mb-2">Cliquez pour interagir :</p> 
           <!-- Actions unifiées -->
-        <div className="flex items-center gap-4 text-slate-500 mt-4">
+<div className="flex items-center gap-4 text-slate-500 mt-4">
   <button
     data-memoire-id=${m.id}
     data-action="like"
-  data-id=${m.id}
+    data-id=${m.id}
     class="like-btn group flex items-center gap-2 px-3 py-2 rounded-2xl border border-slate-200 hover:bg-pink-50 transition"
   >
     <i class="fa-solid fa-heart text-slate-300 group-hover:text-pink-500 transition"></i>
     <span class="text-xs font-bold">${m.nb_likes}</span>
   </button>
 
-   <!-- DOWNLOAD -->
+  <!-- DOWNLOAD -->
   <button
-    onclick="downloadMemoire(event, ${m.id}, '${m.pdf_url || ''}')"
+    data-action="download"
+    data-id=${m.id}
+   data-pdfurl=${m.pdf_url?.startsWith('http')
+              ? m.pdf_url
+              : `https://mcb.reimca-app.com${m.pdf_url}`}
     class="group flex items-center gap-2 px-3 py-2 rounded-2xl border border-slate-200 hover:bg-green-50 transition"
   >
     <i class="fa-solid fa-arrow-down text-slate-300 group-hover:text-green-500 transition"></i>
@@ -721,8 +698,8 @@ useEffect(() => {
   </button>
 
   <button
-   data-action="view"
-data-id=${m.id}
+    data-action="view"
+    data-id=${m.id}
     class="group flex items-center gap-2 px-3 py-2 rounded-2xl border border-slate-200 hover:bg-blue-50 transition"
   >
     <i class="fa-solid fa-eye text-slate-300 group-hover:text-blue-500 transition"></i>
@@ -785,16 +762,25 @@ document.addEventListener('click', async e => {
       break;
 
     case 'download':
-        alert(pdf_url)
-      if (!token) { alert('Connectez-vous pour télécharger.'); return; }
-      await fetch(`${BASE_URL}/interactions/telechargements/telecharger/`, {
-        method : 'POST',
-        headers: getHeaders(),
-        body   : JSON.stringify({ memoire: id })
-      });
-      
-      window.open(pdf_url, '_blank');
-      break;
+  if (!token) { alert('Connectez-vous pour télécharger.'); return; }
+  
+  const pdfUrl = btn.dataset.pdfurl; // Récupère l'URL depuis data-pdfurl
+  
+  if (!pdfUrl) {
+    alert('Aucun fichier PDF disponible pour ce mémoire.');
+    return;
+  }
+  
+  // Enregistre le téléchargement
+  await fetch(`${BASE_URL}/interactions/telechargements/telecharger/`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ memoire: id })
+  });
+  
+  // Ouvre le PDF dans un nouvel onglet
+  window.open(pdfUrl, '_blank');
+  break;
 
     case 'view':
       window.location.href = `index.html?memoire=${id}`;
@@ -827,6 +813,41 @@ window.likeMemoire = async (memoireId) => {
 
 window.viewMemoireDetails = (memoireId) => {
   window.location.href = `index.html?memoire=${memoireId}`;
+};
+// ====== Fonction globale de téléchargement (corrigée) ======
+function downloadMemoire(e, id, url) {
+    if(e) e.stopPropagation();
+    if (!TOKEN) { showAuthPrompt(); return; }
+    fetch(`${BASE_URL}/interactions/telechargements/telecharger/`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({ memoire: id }) });
+    window.open(url, '_blank');
+}
+// ====== Gestionnaire de téléchargement via data-attributes ======
+window.handleDownload = async (memoireId, pdfUrl) => {
+  if (!TOKEN) { 
+    alert("Veuillez vous connecter pour télécharger.");
+    return; 
+  }
+
+  try {
+    // Enregistrer le téléchargement
+    const res = await fetch(`${BASE_URL}/interactions/telechargements/telecharger/`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ memoire: memoireId })
+    });
+
+    if (!res.ok) throw new Error('Erreur lors de l\'enregistrement');
+
+    // Ouvrir le PDF
+    if (pdfUrl && pdfUrl !== 'undefined' && pdfUrl !== 'null') {
+      window.open(pdfUrl, '_blank');
+    } else {
+      alert('Aucun fichier PDF disponible pour ce mémoire.');
+    }
+  } catch (err) {
+    console.error('Erreur:', err);
+    alert('Impossible de télécharger.');
+  }
 };
     </script>
 </body>
