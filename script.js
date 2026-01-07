@@ -129,7 +129,7 @@ function initSlideshow() {
 function getFullUrl(path) {
     if (!path) return 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=800&q=80';
     if (path.startsWith('http')) return path;
-    return `https://mcb.reimca-app.com${path}`;
+    return `https://mcb.reimca-app.com`;
 }
 
 // --- Data Loading ---
