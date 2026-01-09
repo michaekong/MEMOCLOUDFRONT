@@ -203,6 +203,7 @@ async function likeMemoire(memoireId) {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
             const [carouselIndex, setCarouselIndex] = useState(0);
             const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+            const [showOnlyProfessors, setShowOnlyProfessors] = useState(false);
             
             const promoScrollRef = useRef(null);
 
@@ -258,22 +259,26 @@ async function likeMemoire(memoireId) {
             }, [alumniWithPromotions]);
 
             const filteredAlumni = useMemo(() => {
-                const filtered = alumniWithPromotions.filter(item => {
-                    const fullName = `${item.utilisateur.prenom} ${item.utilisateur.nom}`.toLowerCase();
-                    const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || 
-                                       item.utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase());
-                    const matchesPromo = selectedPromotion === 'All' || item.promoYear === selectedPromotion;
-                    return matchesSearch && matchesPromo;
-                });
-                return filtered.sort((a, b) => (a.promoYear || 0) - (b.promoYear || 0));
-            }, [alumniWithPromotions, searchTerm, selectedPromotion]);
-
+    const filtered = alumniWithPromotions.filter(item => {
+        const fullName = `${item.utilisateur.prenom} ${item.utilisateur.nom}`.toLowerCase();
+        const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || 
+                           item.utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesPromo = selectedPromotion === 'All' || item.promoYear === selectedPromotion;
+        const matchesProfessor = !showOnlyProfessors || item.utilisateur.role === 'professeur';
+        return matchesSearch && matchesPromo && matchesProfessor;
+    });
+    return filtered.sort((a, b) => (a.promoYear || 0) - (b.promoYear || 0));
+}, [alumniWithPromotions, searchTerm, selectedPromotion, showOnlyProfessors]);
             const globalStats = useMemo(() => ({
                 totalAlumni: alumni.length,
                 totalWorks: alumni.reduce((acc, curr) => acc + (curr.statistiques_globales?.total_memoires_lies || 0), 0),
                 totalPromotions: promotionsList.length - 1,
                 totalDownloads: alumni.reduce((acc, curr) => acc + (curr.statistiques_globales?.total_telechargements || 0), 0)
             }), [alumni, promotionsList]);
+            const profsCount = useMemo(() =>
+  alumniWithPromotions.filter(a => a.utilisateur.role === 'professeur').length,
+  [alumniWithPromotions]
+);
 // APRÈS le render, brancher les écouteurs
 useEffect(() => {
   if (!selectedAlumnus) return;
@@ -370,46 +375,74 @@ useEffect(() => {
                         </section>
 
                         <!-- Enhanced Filter Section -->
-                        <section id="promo-grid" className="sticky top-[70px] md:top-[90px] z-[900] bg-white/95 backdrop-blur-2xl border-b border-slate-100 py-6 md:py-8 px-4 shadow-xl shadow-slate-200/20">
-                            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-6 md:gap-8">
-                                <div className="flex-1 w-full max-w-lg relative group">
-                                    <i className="fa-solid fa-search absolute left-7 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#ffb606] transition-colors"></i>
-                                    <input 
-                                        type="text" 
-                                        placeholder="Chercher un lauréat..."
-                                        className="w-full pl-16 pr-8 py-4 md:py-5 bg-slate-50 border-none rounded-3xl focus:bg-white focus:ring-4 focus:ring-[#ffb606]/10 transition-all font-bold text-slate-700 text-base shadow-inner"
-                                        value=${searchTerm}
-                                        onChange=${(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
-                                
-                                <div className="flex-1 w-full relative">
-                                    <div className="flex items-center gap-3 md:gap-4">
-                                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest shrink-0 hidden sm:block">Filtre Chrono :</span>
-                                        <div className="relative flex-1 overflow-hidden">
-                                            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 lg:hidden pointer-events-none"></div>
-                                            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 lg:hidden pointer-events-none"></div>
-                                            
-                                            <div 
-                                                ref=${promoScrollRef}
-                                                className="flex items-center gap-2 overflow-x-auto pb-4 pt-1 no-scrollbar scroll-smooth snap-x promo-scroll-container lg:mask-none"
-                                            >
-                                                ${promotionsList.map(year => html`
-                                                    <button 
-                                                        key=${year}
-                                                        onClick=${() => setSelectedPromotion(year)}
-                                                        className=${`promo-pill px-6 md:px-8 py-3.5 md:py-4 rounded-2xl text-[10px] md:text-[11px] font-black uppercase tracking-widest transition-all shrink-0 border snap-center active:scale-95 ${selectedPromotion === year ? 'active border-[#ffb606]' : 'bg-white text-slate-400 border-slate-100 hover:border-[#ffb606] hover:text-[#ffb606]'}`}
-                                                    >
-                                                        ${year === 'All' ? 'Toutes Promos' : `Promotion ${year}`}
-                                                    </button>
-                                                `)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
+                        <section id="promo-grid" class="sticky top-[70px] md:top-[90px] z-40 w-full px-4 md:px-8 py-6 bg-white/60 backdrop-blur-2xl border-b border-white/70 shadow-lg shadow-slate-900/5">
+  <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-6">
 
+    <!-- Barre de recherche flottante -->
+    <div class="relative group w-full lg:w-96">
+      <i class="fa-solid fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#ffb606] transition-colors"></i>
+      <input
+        type="text"
+        placeholder="Rechercher un lauréat..."
+        value=${searchTerm}
+        onInput=${e => setSearchTerm(e.target.value)}
+        class="w-full pl-14 pr-6 py-4 bg-white/80 border border-white/60 rounded-3xl
+               text-slate-800 font-semibold placeholder-slate-400
+               focus:bg-white focus:border-[#ffb606] focus:ring-4 focus:ring-yellow-400/30
+               shadow-md shadow-slate-200/50 transition-all"
+      />
+    </div>
+
+    <!-- Bouton Professeurs (avec compteur) -->
+    <button
+      onClick=${() => setShowOnlyProfessors(p => !p)}
+      class=${`flex items-center gap-3 px-5 py-3 rounded-3xl border-2 font-bold text-xs uppercase tracking-widest
+                transition-all active:scale-95
+                ${showOnlyProfessors
+                  ? 'bg-[#ffb606] text-white border-[#ffb606] shadow-yellow-200 shadow-xl'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-[#ffb606] hover:text-[#ffb606]'}`}
+    >
+      <i class="fa-solid fa-chalkboard-user"></i>
+      <span>Enseignants</span>
+      <span class="grid place-items-center min-w-[22px] h-[22px] px-1.5 text-[10px] rounded-full
+                 ${showOnlyProfessors ? 'bg-white text-[#ffb606]' : 'bg-slate-100 text-slate-600'}">
+        ${profsCount}
+      </span>
+    </button>
+
+    <!-- Ligne des promotions (désactivée si professeurs actif) -->
+    <div class="relative flex-1 w-full">
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:block text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          Promotions
+        </span>
+        <span class="flex-1 h-px bg-slate-200"></span>
+        ${showOnlyProfessors && html`
+          <span class="text-[10px] font-bold text-slate-400">Filtre promotion désactivé</span>
+        `}
+      </div>
+
+      <div
+        class=${`mt-4 flex gap-3 overflow-x-auto pb-3 no-scrollbar scroll-smooth
+                 ${showOnlyProfessors ? 'opacity-40 pointer-events-none' : ''}`}
+      >
+        ${promotionsList.map(year => html`
+          <button
+            onClick=${() => !showOnlyProfessors && setSelectedPromotion(year)}
+            className=${`shrink-0 px-6 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest
+                         border transition-all
+                         ${selectedPromotion === year
+                           ? 'bg-[#ffb606] text-white border-[#ffb606] shadow'
+                           : 'bg-white text-slate-400 border-slate-200 hover:border-[#ffb606] hover:text-[#ffb606]'}`}
+          >
+            ${year === 'All' ? 'Toutes' : year}
+          </button>
+        `)}
+      </div>
+    </div>
+
+  </div>
+</section>
                         <!-- Alumni Grid -->
                         <main className="py-24 px-4 bg-white min-h-screen">
                             <div className="max-w-7xl mx-auto">
@@ -420,9 +453,12 @@ useEffect(() => {
                                     </div>
                                 ` : html`
                                     <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-4">
-                                        <h3 className="text-slate-300 font-black uppercase tracking-[0.6em] text-[12px]">
-                                            Archives des Diplômés <span className="text-[#ffb606]">(${filteredAlumni.length})</span>
-                                        </h3>
+                     <h3 class="text-slate-300 font-black uppercase tracking-[0.6em] text-xs">
+  Archives des Diplômés
+  <span class="text-[#ffb606]">
+    (${filteredAlumni.length}${showOnlyProfessors ? ' Professeurs' : ''})
+  </span>
+</h3>
                                         <div className="h-px bg-slate-100 flex-1 mx-10 hidden md:block opacity-50"></div>
                                         <span className="text-slate-400 font-bold text-[11px] uppercase tracking-widest bg-slate-50 px-6 py-2 rounded-full">Ordre chronologique ascendant</span>
                                     </div>
