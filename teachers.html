@@ -204,6 +204,7 @@ async function likeMemoire(memoireId) {
             const [carouselIndex, setCarouselIndex] = useState(0);
             const [isAutoPlaying, setIsAutoPlaying] = useState(true);
             const [showOnlyProfessors, setShowOnlyProfessors] = useState(false);
+           
             
             const promoScrollRef = useRef(null);
 
@@ -264,7 +265,7 @@ async function likeMemoire(memoireId) {
         const matchesSearch = fullName.includes(searchTerm.toLowerCase()) || 
                            item.utilisateur.email.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesPromo = selectedPromotion === 'All' || item.promoYear === selectedPromotion;
-        const matchesProfessor = !showOnlyProfessors || item.utilisateur.role === 'professeur';
+       const matchesProfessor = showOnlyProfessors ? item.utilisateur.role === 'professeur' : item.utilisateur.role !== 'professeur';
         return matchesSearch && matchesPromo && matchesProfessor;
     });
     return filtered.sort((a, b) => (a.promoYear || 0) - (b.promoYear || 0));
