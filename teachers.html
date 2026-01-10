@@ -268,7 +268,11 @@ async function likeMemoire(memoireId) {
        const matchesProfessor = showOnlyProfessors ? item.utilisateur.role === 'professeur' : item.utilisateur.role !== 'professeur';
         return matchesSearch && matchesPromo && matchesProfessor;
     });
-    return filtered.sort((a, b) => (a.promoYear || 0) - (b.promoYear || 0));
+    return filtered.sort((a, b) => {
+  const nomA = a.utilisateur.nom.toLowerCase();
+  const nomB = b.utilisateur.nom.toLowerCase();
+  return nomA.localeCompare(nomB);
+});
 }, [alumniWithPromotions, searchTerm, selectedPromotion, showOnlyProfessors]);
             const globalStats = useMemo(() => ({
                 totalAlumni: alumni.length,
