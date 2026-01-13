@@ -528,5 +528,16 @@
         <!-- Application Logic -->
         <script src="script.js" defer></script>
 </body>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle  = document.getElementById('mobile-filter-toggle');
+  const content = document.getElementById('filters-content');
+  const chevron = document.getElementById('filter-chevron');
 
+  toggle?.addEventListener('click', () => {
+    const isOpen = content.classList.toggle('hidden');   // inverse l’état
+    chevron.classList.toggle('rotate-180', !isOpen);   // anime la flèche
+  });
+});
+</script>
 </html>
