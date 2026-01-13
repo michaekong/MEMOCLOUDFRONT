@@ -27,7 +27,18 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
-
+<style>
+    @keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 0 0 rgba(255, 182, 6, 0.4);
+    }
+    50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 0 20px 10px rgba(255, 182, 6, 0);
+    }
+}
+</style>
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {

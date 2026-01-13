@@ -22,7 +22,8 @@ let filters = {
     university: '',
     hasResume: false,
     isPopular: false,
-    isCommented: false
+    isCommented: false,
+    memoire_id: null 
 };
 
 // --- Elements ---
@@ -38,7 +39,82 @@ function getHeaders() {
     if (TOKEN) h['Authorization'] = `Bearer ${TOKEN}`;
     return h;
 }
+// ----------  Fonctions pour l'URL partagée  ----------
+// ----------  Fonctions pour l'URL partagée  ----------
+async function applyFiltersFromURL() {
+    const p = new URLSearchParams(window.location.search);
+    const hash = window.location.hash;
 
+    // 1️⃣  Récupération de l'ID unique (query OU hash)
+    let targetId = p.get('memoire_id');
+    if (!targetId && hash && hash.startsWith('#memoire-')) {
+        const idFromHash = parseInt(hash.replace('#memoire-', ''), 10);
+        if (!isNaN(idFromHash)) targetId = idFromHash;
+    }
+    if (targetId) filters.memoire_id = parseInt(targetId, 10);
+
+    // 2️⃣  Attente que les <select> soient remplis
+    await waitForFilters();
+
+    // 3️⃣  Remplissage des contrôles visuels
+    if (p.has('year'))       document.getElementById('filter-year').value       = p.get('year');
+    if (p.has('domain'))     document.getElementById('filter-domain').value     = p.get('domain');
+    if (p.has('university')) document.getElementById('filter-university').value = p.get('university');
+    if (p.has('rating'))     document.getElementById('filter-rating').value     = p.get('rating');
+    if (p.has('sort'))       document.getElementById('filter-sort').value       = p.get('sort');
+
+    document.getElementById('filter-resume').checked   = p.get('resume')   === 'true';
+    document.getElementById('filter-popular').checked  = p.get('popular')  === 'true';
+    document.getElementById('filter-commented').checked= p.get('commented')=== 'true';
+
+    // 4️⃣  Mise à jour de l'objet filters (sans écraser memoire_id)
+    filters = {
+        search:  document.getElementById('filter-search').value,
+        year:    document.getElementById('filter-year').value,
+        domain:  document.getElementById('filter-domain').value,
+        university: document.getElementById('filter-university').value,
+        rating:  document.getElementById('filter-rating').value,
+        sort:    document.getElementById('filter-sort').value,
+        hasResume:  document.getElementById('filter-resume').checked,
+        isPopular:  document.getElementById('filter-popular').checked,
+        isCommented:document.getElementById('filter-commented').checked,
+        memoire_id: filters.memoire_id   // ⬅️ on conserve l'ID unique
+    };
+
+    // 5️⃣  Chargement des mémoires + scroll éventuel
+    await fetchMemoires(true);
+}
+
+function scrollToMemoireIfNeeded() {
+    const hash = window.location.hash;
+    if (!hash.startsWith('#memoire-')) return;
+    setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 800);
+}
+
+// Helper pour attendre que les listes soient chargées
+function waitForFilters() {
+    return new Promise(resolve => {
+        const checkInterval = setInterval(() => {
+            const yearSelect = document.getElementById('filter-year');
+            const domainSelect = document.getElementById('filter-domain');
+            
+            if (yearSelect && yearSelect.options.length > 1 && 
+                domainSelect && domainSelect.options.length > 1) {
+                clearInterval(checkInterval);
+                resolve();
+            }
+        }, 100);
+        
+        // Timeout au cas où
+        setTimeout(() => {
+            clearInterval(checkInterval);
+            resolve();
+        }, 3000);
+    });
+}
 // ----------  Récupération user connecté (version DEBUG)  ----------
 async function loadCurrentUser() {
     if (!TOKEN) {
@@ -84,15 +160,26 @@ async function loadCurrentUser() {
 }
 
 // ----------  Init  ----------
+
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadCurrentUser();          // 1. charge / met à jour TOKEN & CURRENT_USER_*
+    await loadCurrentUser();
     initIcons();
     initSlideshow();
-    await loadInitialData();          // 2. dépend de TOKEN & CURRENT_USER_*
+
+    // 1. DOM prêt → on remplit les listes
+    await loadFiltersData();
+
+    // 2. On applique LES FILTRES DE L'URL en premier
+    await applyFiltersFromURL(); // ← contient déjà fetchMemoires(true)
+
+    // 3. On branche les listeners (après le premier rendu)
     setupListeners();
+
+    // 4. Plus besoin de scroll séparé, c’est géré dans fetchMemoires
+    // scrollToMemoireIfNeeded(); → SUPPRIMEZ cette ligne
+
     document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-    // 3. boutons auth (utilise TOKEN à jour)
     const setupAuthBtn = (id) => {
         const btn = document.getElementById(id);
         if (!btn) return;
@@ -136,8 +223,7 @@ function getFullUrl(path) {
 async function loadInitialData() {
     await Promise.all([
         loadStats(),
-        loadFiltersData(),
-        fetchMemoires(true)
+    
     ]);
 }
 
@@ -146,7 +232,7 @@ async function loadInitialData() {
 ---------------------------------------------------------- */
 let FULL_LIST   = [];
 let CACHE_BUILD = false;
-
+let scrollPending = null;
 /* ----------------------------------------------------------
    2.  FETCH + FILTRAGE (client, ultra-rapide)
 ---------------------------------------------------------- */
@@ -156,6 +242,7 @@ async function fetchMemoires(reset = false) {
         memoiresData = [];
         grid.innerHTML = '';
         emptyState.classList.add('hidden');
+        scrollPending = window.location.hash; // ← ajoutez ceci
     }
     loader.classList.remove('hidden');
     paginationContainer.classList.add('hidden');
@@ -243,7 +330,7 @@ async function fetchMemoires(reset = false) {
     if (filters.hasResume)   filtered = filtered.filter(m => m.resume && m.resume.length > 50);
     if (filters.isPopular)   filtered = filtered.filter(m => m.nb_telechargements >= 10);
     if (filters.isCommented) filtered = filtered.filter(m => m.nb_commentaires >= 5);
-
+if (filters.memoire_id)  filtered = filtered.filter(m => m.id === filters.memoire_id);
     /* ---- pagination client ---- */
     const start = (currentPage - 1) * 12;
     const end   = start + 12;
@@ -318,7 +405,108 @@ function animateValue(obj, start, end, duration) {
     };
     window.requestAnimationFrame(step);
 }
+// Fonction pour partager un mémoire avec les filtres correspondants
+async function shareMemoire(event, memoireId) {
+    if (event) event.stopPropagation();
+    
+    // Trouver le mémoire dans la liste
+    const memoire = memoiresData.find(m => m.id === memoireId);
+    if (!memoire) {
+        showToast("Mémoire non trouvé", "error");
+        return;
+    }
 
+    // Construire les paramètres de filtre basés sur le mémoire
+    const params = new URLSearchParams();
+    
+    // Ajouter les filtres correspondant au mémoire
+    if (memoire.annee) params.set('year', memoire.annee);
+    if (memoire.domaines_list && memoire.domaines_list.length > 0) {
+        params.set('domain', memoire.domaines_list[0]); // Premier domaine
+    }
+    
+    // Déterminer l'université
+    const isENSTP = !memoire.universites_list || 
+                   memoire.universites_list.length === 0 ||
+                   memoire.universites_list.some(u => 
+                       u.toLowerCase().includes('ecole des travaux')
+                   );
+    params.set('university', isENSTP ? 'ENSTP' : 'Autre');
+    
+    // Ajouter la note si elle est bonne
+    if (memoire.note_moyenne >= 4) {
+        params.set('rating', '4');
+    }
+    
+    // Ajouter d'autres filtres pertinents
+    if (memoire.resume && memoire.resume.length > 50) {
+        params.set('resume', 'true');
+    }
+    if (memoire.nb_telechargements >= 10) {
+        params.set('popular', 'true');
+    }
+    if (memoire.nb_commentaires >= 5) {
+        params.set('commented', 'true');
+    }
+    params.set('memoire_id', memoireId);
+    // Toujours trier par pertinence (plus récent en premier)
+    params.set('sort', '-created_at');
+    
+    // Construire l'URL complète
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = `${baseUrl}?${params.toString()}#memoire-${memoireId}`;
+    
+    // Copier dans le presse-papiers
+    try {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast("Lien copié ! Partagez-le pour voir ce mémoire avec les bons filtres.", "success");
+    } catch (err) {
+        // Fallback pour les navigateurs qui ne supportent pas clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = shareUrl;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast("Lien copié ! Partagez-le pour voir ce mémoire avec les bons filtres.", "success");
+    }
+}
+
+// Fonction helper pour afficher les notifications
+function showToast(message, type = 'info') {
+    // Créer l'élément toast
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-6 right-6 z-[9999] px-6 py-4 rounded-xl shadow-lg transition-all duration-300 transform translate-x-0`;
+    
+    // Couleurs selon le type
+    const colors = {
+        success: 'bg-green-500 text-white',
+        error: 'bg-red-500 text-white',
+        info: 'bg-blue-500 text-white'
+    };
+    
+    toast.className += ` ${colors[type] || colors.info}`;
+    toast.innerHTML = `
+        <div class="flex items-center gap-3">
+            <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="w-5 h-5"></i>
+            <span class="font-medium">${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    initIcons();
+    
+    // Auto-remove après 4 secondes
+    setTimeout(() => {
+        toast.style.transform = 'translateX(400px)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 4000);
+}
 async function loadFiltersData() {
     const yearSelect = document.getElementById('filter-year');
     try {
@@ -400,6 +588,9 @@ function createCardHTML(m) {
                          <button onclick="openChat(event, ${m.id})" class="p-1.5 rounded-md text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"><i data-lucide="message-square" class="w-3.5 h-3.5"></i></button>
                          <button onclick="downloadMemoire(event, ${m.id}, '${m.pdf_url}')" class="p-1.5 rounded-md text-gray-400 hover:text-brand-orange hover:bg-orange-50 transition-colors"><i data-lucide="download" class="w-3.5 h-3.5"></i></button>
                          
+<button onclick="shareMemoire(event, ${m.id})" class="p-1.5 rounded-md text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-colors" title="Partager">
+    <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+</button>
                          <!-- Notation au survol -->
                          <div class="relative group/rate ml-1">
                             <button class="p-1.5 rounded-md text-gray-400 hover:text-yellow-500 hover:bg-yellow-50"><i data-lucide="star" class="w-3.5 h-3.5"></i></button>
@@ -475,10 +666,15 @@ function createCardHTML(m) {
                         <i data-lucide="message-square" class="w-5 h-5"></i>
                         ${m.nb_commentaires > 0 ? `<span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold border-2 border-white">${m.nb_commentaires}</span>` : ''}
                     </button>
+                    
                  </div>
                  <div class="flex gap-2 flex-1 justify-end">
                     <button onclick="downloadMemoire(event, ${m.id}, '${m.pdf_url}')" class="h-11 w-11 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 hover:bg-brand-orange hover:text-brand-black transition-all hover:shadow-lg border border-gray-200 hover:border-brand-orange"><i data-lucide="download" class="w-5 h-5"></i></button>
+<button onclick="shareMemoire(event, ${m.id})" class="h-11 w-11 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 hover:bg-blue-50 hover:text-blue-500 transition-all border border-gray-200 hover:border-blue-200" title="Partager ce mémoire">
+    <i data-lucide="share-2" class="w-5 h-5"></i>
+</button>
                     <button class="h-11 px-6 rounded-full bg-brand-black text-white font-bold text-xs uppercase tracking-wide hover:bg-gray-800 transition-all shadow-md flex items-center gap-2 group/btn">Détails <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i></button>
+                    
                  </div>
             </div>
         </div>
@@ -644,12 +840,24 @@ function openDetail(id) {
     </div>
 
     <!-- BOUTON TÉLÉCHARGER (sticky en bas) -->
-    <div class="sticky bottom-0 p-4 md:p-6 border-t border-gray-100 bg-white/95 backdrop-blur-md flex flex-col md:flex-row gap-4">
-      <button onclick="downloadMemoire(event, ${m.id}, '${m.pdf_url}')" class="flex-1 py-4 bg-brand-black hover:bg-brand-orange hover:text-brand-black text-white font-title font-bold rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 text-sm uppercase tracking-widest group">
-        <div class="p-1.5 bg-white/20 rounded-full group-hover:bg-brand-black/20 transition-colors"><i data-lucide="download" class="w-5 h-5"></i></div>
-        Télécharger le PDF
-      </button>
+    <!-- BOUTON PARTAGER (sticky, juste au-dessus du télécharger) -->
+<div class="sticky bottom-0 p-4 md:p-6 border-t border-gray-100 bg-white/95 backdrop-blur-md flex flex-col md:flex-row gap-4">
+  <button onclick="shareMemoire(event, ${m.id})"
+          class="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white font-title font-bold rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 text-sm uppercase tracking-widest group">
+    <div class="p-1.5 bg-white/20 rounded-full group-hover:bg-blue-800/20 transition-colors">
+      <i data-lucide="share-2" class="w-5 h-5"></i>
     </div>
+    Partager ce mémoire
+  </button>
+
+  <button onclick="downloadMemoire(event, ${m.id}, '${m.pdf_url}')"
+          class="flex-1 py-4 bg-brand-black hover:bg-brand-orange hover:text-brand-black text-white font-title font-bold rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 text-sm uppercase tracking-widest group">
+    <div class="p-1.5 bg-white/20 rounded-full group-hover:bg-brand-black/20 transition-colors">
+      <i data-lucide="download" class="w-5 h-5"></i>
+    </div>
+    Télécharger le PDF
+  </button>
+</div>
   </div>
 </div>`;
     
@@ -950,3 +1158,6 @@ async function handleAction(type) {
         }
     } catch(e) { contentEl.innerHTML = 'Erreur'; }
 }
+window.applyFiltersFromURL = applyFiltersFromURL;
+window.scrollToMemoireIfNeeded = scrollToMemoireIfNeeded;
+window.waitForFilters = waitForFilters;
