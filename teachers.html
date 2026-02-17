@@ -400,7 +400,21 @@ useEffect(() => {
 
     <!-- Bouton Professeurs (avec compteur) -->
    
-
+   <button
+      onClick=${() => setShowOnlyProfessors(p => !p)}
+      class=${`flex items-center gap-3 px-5 py-3 rounded-3xl border-2 font-bold text-xs uppercase tracking-widest
+                transition-all active:scale-95
+                ${showOnlyProfessors
+                  ? 'bg-[#ffb606] text-white border-[#ffb606] shadow-yellow-200 shadow-xl'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-[#ffb606] hover:text-[#ffb606]'}`}
+    >
+      <i class="fa-solid fa-chalkboard-user"></i>
+      <span>Enseignants</span>
+      <span class="grid place-items-center min-w-[22px] h-[22px] px-1.5 text-[10px] rounded-full
+                 ${showOnlyProfessors ? 'bg-white text-[#ffb606]' : 'bg-slate-100 text-slate-600'}">
+        ${profsCount}
+      </span>
+    </button>
     <!-- Ligne des promotions (désactivée si professeurs actif) -->
     <div class="relative flex-1 w-full">
       <div class="flex items-center gap-4">
