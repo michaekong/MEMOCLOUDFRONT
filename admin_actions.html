@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal d'Audit - Mémoires</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                yellow: '#ffb606',
+                dark: '#3a3a3a',
+                light: '#f5f7fa',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body { background-color: #f5f7fa; font-family: 'Segoe UI', sans-serif; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        .animate-slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+
+        .severity-critical { border-left: 4px solid #dc2626; }
+        .severity-high { border-left: 4px solid #ea580c; }
+        .severity-medium { border-left: 4px solid #f59e0b; }
+        .severity-low { border-left: 4px solid #3b82f6; }
+
+        .badge-critical { background: #fee2e2; color: #dc2626; }
+        .badge-high { background: #ffedd5; color: #ea580c; }
+        .badge-medium { background: #fef3c7; color: #f59e0b; }
+        .badge-low { background: #dbeafe; color: #3b82f6; }
+
+        .tab-button { position: relative; padding-bottom: 0.5rem; }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #ffb606;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-brand-dark text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-brand-yellow flex items-center justify-center text-brand-dark font-bold text-xl">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1 class="text-xl font-bold">Journal<span class="text-brand-yellow">d'Audit</span></h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="userName" class="text-sm text-gray-300"></span>
+                <button onclick="app.logout()" class="text-gray-400 hover:text-white transition-colors">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-600">
+                <div class="flex items-center justify-between mb-2">
+                    <i class="fas fa-exclamation-triangle text-3xl text-red-600"></i>
+                    <span id="criticalLogs" class="text-3xl font-bold text-brand-dark">0</span>
+                </div>
+                <p class="text-gray-600 font-medium">Actions Critiques</p>
+                <p class="text-xs text-gray-400 mt-1">Alertes email envoyées</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500">
+                <div class="flex items-center justify-between mb-2">
+                    <i class="fas fa-clipboard-list text-3xl text-orange-500"></i>
+                    <span id="totalLogs" class="text-3xl font-bold text-brand-dark">0</span>
+                </div>
+                <p class="text-gray-600 font-medium">Total Logs</p>
+                <p class="text-xs text-gray-400 mt-1">Toutes actions confondues</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-2">
+                    <i class="fas fa-calendar-day text-3xl text-blue-500"></i>
+                    <span id="todayLogs" class="text-3xl font-bold text-brand-dark">0</span>
+                </div>
+                <p class="text-gray-600 font-medium">Aujourd'hui</p>
+                <p class="text-xs text-gray-400 mt-1">Actions du jour</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between mb-2">
+                    <i class="fas fa-users text-3xl text-purple-500"></i>
+                    <span id="activeUsers" class="text-3xl font-bold text-brand-dark">0</span>
+                </div>
+                <p class="text-gray-600 font-medium">Utilisateurs Actifs</p>
+                <p class="text-xs text-gray-400 mt-1">Ce mois-ci</p>
+            </div>
+        </div>
+
+        <!-- Filters & Search -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6 animate-fade-in">
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Search -->
+                <div class="relative flex-1 group">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-yellow transition-colors"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher par email, description, cible..." 
+                           class="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:bg-white focus:border-brand-yellow/50 focus:ring-0 transition-all outline-none"
+                           onkeyup="app.handleSearch()">
+                </div>
+                
+                <!-- Filters -->
+                <div class="flex gap-2 overflow-x-auto">
+                    <select id="severityFilter" onchange="app.applyFilters()" class="px-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:border-brand-yellow/50 focus:ring-0 outline-none cursor-pointer min-w-[140px]">
+                        <option value="">Toutes sévérités</option>
+                        <option value="CRITICAL">Critique</option>
+                        <option value="HIGH">Élevée</option>
+                        <option value="MEDIUM">Moyenne</option>
+                        <option value="LOW">Faible</option>
+                    </select>
+                    
+                    <select id="actionFilter" onchange="app.applyFilters()" class="px-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:border-brand-yellow/50 focus:ring-0 outline-none cursor-pointer min-w-[160px]">
+                        <option value="">Toutes actions</option>
+                    </select>
+                    
+                    <input type="date" id="dateFrom" onchange="app.applyFilters()" class="px-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:border-brand-yellow/50 focus:ring-0 outline-none">
+                    <input type="date" id="dateTo" onchange="app.applyFilters()" class="px-4 py-3 bg-gray-50 border-2 border-transparent rounded-lg focus:border-brand-yellow/50 focus:ring-0 outline-none">
+                    
+                    <button onclick="app.resetFilters()" class="px-4 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors" title="Réinitialiser">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    
+                    <button onclick="app.exportCSV()" class="px-4 py-3 bg-brand-yellow text-brand-dark font-bold rounded-lg hover:bg-yellow-500 transition-colors" title="Export CSV">
+                        <i class="fas fa-download mr-2"></i>CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6 animate-fade-in">
+            <div class="flex overflow-x-auto gap-4 text-sm font-bold">
+                <button onclick="app.switchTab('timeline')" class="tab-button active whitespace-nowrap px-4 py-2 text-brand-dark" data-tab="timeline">
+                    <i class="fas fa-stream mr-2"></i>Timeline
+                </button>
+                <button onclick="app.switchTab('table')" class="tab-button whitespace-nowrap px-4 py-2 text-gray-600 hover:text-brand-dark transition-colors" data-tab="table">
+                    <i class="fas fa-table mr-2"></i>Tableau
+                </button>
+                <button onclick="app.switchTab('stats')" class="tab-button whitespace-nowrap px-4 py-2 text-gray-600 hover:text-brand-dark transition-colors" data-tab="stats">
+                    <i class="fas fa-chart-pie mr-2"></i>Statistiques
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div id="tabContent" class="animate-fade-in"></div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="mt-6 flex justify-center gap-2 hidden">
+            <button onclick="app.changePage(-1)" id="prevPage" class="px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-50 disabled:opacity-50">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span id="pageInfo" class="px-4 py-2 bg-white rounded-lg shadow font-bold text-brand-dark">Page 1</span>
+            <button onclick="app.changePage(1)" id="nextPage" class="px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-50 disabled:opacity-50">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-slide-up">
+            <div class="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50 rounded-t-xl">
+                <h3 class="text-xl font-bold text-brand-dark flex items-center gap-2">
+                    <i id="modalIcon" class="fas fa-info-circle text-brand-yellow"></i>
+                    <span id="detailModalTitle">Détails du Log</span>
+                </h3>
+                <button onclick="app.closeDetailModal()" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="detailModalContent" class="p-6"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg text-white font-medium transform translate-y-20 opacity-0 transition-all duration-300 z-[60]"></div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api';
+        const UNIV_SLUG = 'ecole-des-travaux';
+        const TOKEN = localStorage.getItem('authToken');
+
+        const app = {
+            currentTab: 'timeline',
+            currentPage: 1,
+            pageSize: 50,
+            totalPages: 1,
+            logs: [],
+            filteredLogs: [],
+            stats: null,
+            actionChoices: [],
+
+            async init() {
+                if (!TOKEN) {
+                    document.body.innerHTML = '<div class="p-10 text-center text-red-500">Session expirée. Veuillez vous reconnecter.</div>';
+                    return;
+                }
+
+                try {
+                    await this.loadCurrentUser();
+                    await this.loadActionChoices();
+                    await this.loadStats();
+                    await this.loadLogs();
+                    this.updateStatsCards();
+                    this.renderTab('timeline');
+                } catch (e) {
+                    console.error(e);
+                    this.showToast('Erreur de chargement', 'error');
+                }
+            },
+
+            async loadCurrentUser() {
+                const res = await fetch(`${API_URL}/auth/me/`, {
+                    headers: { 'Authorization': `Bearer ${TOKEN}` }
+                });
+                const user = await res.json();
+                document.getElementById('userName').textContent = user.full_name || user.email;
+            },
+
+            async loadActionChoices() {
+                const res = await fetch(`${API_URL}/auth/${UNIV_SLUG}/audit-logs/actions/`, {
+                    headers: { 'Authorization': `Bearer ${TOKEN}` }
+                });
+                const data = await res.json();
+                this.actionChoices = data.actions || [];
+                
+                // Populate action filter
+                const select = document.getElementById('actionFilter');
+                this.actionChoices.forEach(action => {
+                    const option = document.createElement('option');
+                    option.value = action.value;
+                    option.textContent = action.label;
+                    select.appendChild(option);
+                });
+            },
+
+            async loadStats() {
+                const res = await fetch(`${API_URL}/auth/${UNIV_SLUG}/audit-logs/stats/`, {
+                    headers: { 'Authorization': `Bearer ${TOKEN}` }
+                });
+                this.stats = await res.json();
+            },
+
+            async loadLogs() {
+                const params = new URLSearchParams({
+                    page: this.currentPage,
+                    page_size: this.pageSize,
+                    ordering: '-created_at'
+                });
+
+                // Apply filters
+                const severity = document.getElementById('severityFilter').value;
+                const action = document.getElementById('actionFilter').value;
+                const dateFrom = document.getElementById('dateFrom').value;
+                const dateTo = document.getElementById('dateTo').value;
+
+                if (severity) params.append('severity', severity);
+                if (action) params.append('action', action);
+                if (dateFrom) params.append('created_at_after', dateFrom);
+                if (dateTo) params.append('created_at_before', dateTo);
+
+                const res = await fetch(`${API_URL}/auth/${UNIV_SLUG}/audit-logs/?${params}`, {
+                    headers: { 'Authorization': `Bearer ${TOKEN}` }
+                });
+                
+                const data = await res.json();
+                this.logs = data.results || data;
+                this.filteredLogs = [...this.logs];
+                
+                // Handle pagination
+                if (data.count) {
+                    this.totalPages = Math.ceil(data.count / this.pageSize);
+                    document.getElementById('pagination').classList.remove('hidden');
+                    this.updatePagination();
+                }
+            },
+
+            updateStatsCards() {
+                if (!this.stats) return;
+                
+                document.getElementById('criticalLogs').textContent = this.stats.critical_logs || 0;
+                document.getElementById('totalLogs').textContent = this.stats.total_logs || 0;
+                document.getElementById('todayLogs').textContent = this.stats.today_logs || 0;
+                document.getElementById('activeUsers').textContent = (this.stats.top_active_users || []).length;
+            },
+
+            updatePagination() {
+                document.getElementById('pageInfo').textContent = `Page ${this.currentPage} / ${this.totalPages}`;
+                document.getElementById('prevPage').disabled = this.currentPage <= 1;
+                document.getElementById('nextPage').disabled = this.currentPage >= this.totalPages;
+            },
+
+            async changePage(direction) {
+                const newPage = this.currentPage + direction;
+                if (newPage < 1 || newPage > this.totalPages) return;
+                
+                this.currentPage = newPage;
+                await this.loadLogs();
+                this.renderTab(this.currentTab);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            switchTab(tabName) {
+                this.currentTab = tabName;
+                
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    if (btn.dataset.tab === tabName) {
+                        btn.classList.add('active', 'text-brand-dark');
+                        btn.classList.remove('text-gray-600');
+                    } else {
+                        btn.classList.remove('active', 'text-brand-dark');
+                        btn.classList.add('text-gray-600');
+                    }
+                });
+
+                this.renderTab(tabName);
+            },
+
+            renderTab(tabName) {
+                const container = document.getElementById('tabContent');
+                
+                switch(tabName) {
+                    case 'timeline':
+                        this.renderTimeline(container);
+                        break;
+                    case 'table':
+                        this.renderTable(container);
+                        break;
+                    case 'stats':
+                        this.renderStats(container);
+                        break;
+                }
+            },
+
+            renderTimeline(container) {
+                if (this.filteredLogs.length === 0) {
+                    container.innerHTML = '<div class="text-center py-12 text-gray-400"><i class="fas fa-inbox text-5xl mb-4"></i><p>Aucun log trouvé</p></div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="relative space-y-4">
+                        <div class="timeline-line"></div>
+                        ${this.filteredLogs.map(log => this.createTimelineItem(log)).join('')}
+                    </div>
+                `;
+            },
+
+            createTimelineItem(log) {
+                const date = new Date(log.created_at);
+                const dateStr = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+                const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                const severityClass = `severity-${log.severity.toLowerCase()}`;
+                const badgeClass = `badge-${log.severity.toLowerCase()}`;
+                
+                const icons = {
+                    'MEMOIRE_CREATE': 'fa-file-alt',
+                    'MEMOIRE_UPDATE': 'fa-edit',
+                    'MEMOIRE_DELETE': 'fa-trash',
+                    'MEMOIRE_DELETE_TOTAL': 'fa-fire',
+                    'COMMENT_CREATE': 'fa-comment',
+                    'COMMENT_MODERATE': 'fa-shield-alt',
+                    'COMMENT_DELETE': 'fa-comment-slash',
+                    'USER_ROLE_UPDATE': 'fa-user-cog',
+                    'LOGIN': 'fa-sign-in-alt',
+                    'LOGIN_FAILED': 'fa-exclamation-circle',
+                    'PASSWORD_RESET': 'fa-key'
+                };
+                
+                const icon = icons[log.action] || 'fa-circle';
+
+                return `
+                    <div class="relative pl-16 py-2 group cursor-pointer" onclick="app.viewDetail(${log.id})">
+                        <!-- Date badge -->
+                        <div class="absolute left-0 top-2 w-12 text-right">
+                            <div class="text-xs font-bold text-gray-500">${dateStr}</div>
+                            <div class="text-xs text-gray-400">${timeStr}</div>
+                        </div>
+                        
+                        <!-- Icon -->
+                        <div class="absolute left-[42px] top-2 w-5 h-5 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center z-10 group-hover:border-brand-yellow transition-colors">
+                            <div class="w-2 h-2 rounded-full ${log.severity === 'CRITICAL' ? 'bg-red-500' : log.severity === 'HIGH' ? 'bg-orange-500' : 'bg-gray-400'}"></div>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="bg-white rounded-lg shadow-sm p-4 ${severityClass} hover:shadow-md transition-all">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="px-2 py-0.5 rounded text-xs font-bold ${badgeClass}">${log.get_severity_display || log.severity}</span>
+                                        <span class="text-xs text-gray-500 font-mono">${log.action}</span>
+                                    </div>
+                                    <h4 class="font-bold text-brand-dark mb-1 flex items-center gap-2">
+                                        <i class="fas ${icon} text-brand-yellow"></i>
+                                        ${log.get_action_display || log.action}
+                                    </h4>
+                                    <p class="text-sm text-gray-600 mb-2">${log.description || 'Aucune description'}</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-500">
+                                        <span><i class="fas fa-user mr-1"></i>${log.user_email || 'Système'}</span>
+                                        <span><i class="fas fa-bullseye mr-1"></i>${log.target_type}: ${log.target_repr || log.target_id || 'N/A'}</span>
+                                        ${log.ip_address ? `<span><i class="fas fa-network-wired mr-1"></i>${log.ip_address}</span>` : ''}
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-300 group-hover:text-brand-yellow transition-colors"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderTable(container) {
+                if (this.filteredLogs.length === 0) {
+                    container.innerHTML = '<div class="text-center py-12 text-gray-400"><i class="fas fa-inbox text-5xl mb-4"></i><p>Aucun log trouvé</p></div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-bold border-b border-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-3">Date</th>
+                                        <th class="px-4 py-3">Sévérité</th>
+                                        <th class="px-4 py-3">Action</th>
+                                        <th class="px-4 py-3">Utilisateur</th>
+                                        <th class="px-4 py-3">Cible</th>
+                                        <th class="px-4 py-3">Description</th>
+                                        <th class="px-4 py-3 text-right">Détails</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    ${this.filteredLogs.map(log => {
+                                        const date = new Date(log.created_at).toLocaleString('fr-FR');
+                                        const badgeClass = `badge-${log.severity.toLowerCase()}`;
+                                        
+                                        return `
+                                        <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="app.viewDetail(${log.id})">
+                                            <td class="px-4 py-3 text-sm text-gray-600 font-mono whitespace-nowrap">${date}</td>
+                                            <td class="px-4 py-3">
+                                                <span class="px-2 py-1 rounded text-xs font-bold ${badgeClass}">${log.get_severity_display || log.severity}</span>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm font-medium text-brand-dark">${log.get_action_display || log.action}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-600">${log.user_email || 'Système'}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-600 max-w-xs truncate" title="${log.target_repr || ''}">${log.target_type}: ${log.target_id || 'N/A'}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-600 max-w-md truncate">${log.description || '-'}</td>
+                                            <td class="px-4 py-3 text-right">
+                                                <button class="text-brand-yellow hover:text-yellow-600">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderStats(container) {
+                if (!this.stats) {
+                    container.innerHTML = '<div class="text-center py-12">Chargement...</div>';
+                    return;
+                }
+
+                const { actions_distribution, severity_distribution, top_active_users, daily_evolution } = this.stats;
+
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Distribution par action -->
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="font-bold text-brand-dark mb-4 flex items-center gap-2">
+                                <i class="fas fa-chart-bar text-brand-yellow"></i> Actions les plus fréquentes
+                            </h3>
+                            <div class="space-y-3">
+                                ${(actions_distribution || []).slice(0, 10).map(item => {
+                                    const percent = this.stats.total_logs ? (item.count / this.stats.total_logs * 100).toFixed(1) : 0;
+                                    return `
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-32 text-xs text-gray-600 truncate" title="${item.action}">${item.action}</div>
+                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                                            <div class="bg-brand-yellow h-2 rounded-full" style="width: ${percent}%"></div>
+                                        </div>
+                                        <div class="w-12 text-right text-xs font-bold">${item.count}</div>
+                                    </div>`;
+                                }).join('') || '<p class="text-gray-400">Aucune donnée</p>'}
+                            </div>
+                        </div>
+
+                        <!-- Distribution par sévérité -->
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="font-bold text-brand-dark mb-4 flex items-center gap-2">
+                                <i class="fas fa-exclamation-circle text-brand-yellow"></i> Répartition par sévérité
+                            </h3>
+                            <div class="space-y-3">
+                                ${(severity_distribution || []).map(item => {
+                                    const colors = {
+                                        'CRITICAL': 'bg-red-500',
+                                        'HIGH': 'bg-orange-500',
+                                        'MEDIUM': 'bg-yellow-500',
+                                        'LOW': 'bg-blue-500'
+                                    };
+                                    const percent = this.stats.total_logs ? (item.count / this.stats.total_logs * 100).toFixed(1) : 0;
+                                    return `
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-24 text-xs text-gray-600">${item.severity}</div>
+                                        <div class="flex-1 bg-gray-100 rounded-full h-2">
+                                            <div class="${colors[item.severity] || 'bg-gray-400'} h-2 rounded-full" style="width: ${percent}%"></div>
+                                        </div>
+                                        <div class="w-12 text-right text-xs font-bold">${item.count}</div>
+                                    </div>`;
+                                }).join('') || '<p class="text-gray-400">Aucune donnée</p>'}
+                            </div>
+                        </div>
+
+                        <!-- Top utilisateurs -->
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="font-bold text-brand-dark mb-4 flex items-center gap-2">
+                                <i class="fas fa-users text-brand-yellow"></i> Utilisateurs les plus actifs (30j)
+                            </h3>
+                            <div class="space-y-3">
+                                ${(top_active_users || []).slice(0, 10).map((user, idx) => `
+                                    <div class="flex items-center gap-3 p-2 rounded-lg ${idx < 3 ? 'bg-yellow-50' : 'hover:bg-gray-50'}">
+                                        <div class="w-8 h-8 rounded-full bg-brand-yellow text-brand-dark flex items-center justify-center font-bold text-sm">
+                                            ${idx + 1}
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="font-medium text-sm text-brand-dark">${user.user_email}</div>
+                                            <div class="text-xs text-gray-500">${user.user_role || 'Rôle inconnu'}</div>
+                                        </div>
+                                        <div class="font-bold text-brand-yellow">${user.count}</div>
+                                    </div>
+                                `).join('') || '<p class="text-gray-400">Aucune donnée</p>'}
+                            </div>
+                        </div>
+
+                        <!-- Évolution quotidienne -->
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="font-bold text-brand-dark mb-4 flex items-center gap-2">
+                                <i class="fas fa-chart-line text-brand-yellow"></i> Activité des 30 derniers jours
+                            </h3>
+                            <div class="h-48 flex items-end gap-1">
+                                ${(daily_evolution || []).map(day => {
+                                    const maxCount = Math.max(...(daily_evolution || []).map(d => d.count), 1);
+                                    const height = (day.count / maxCount * 100).toFixed(0);
+                                    return `
+                                    <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                                        <div class="w-full bg-brand-yellow/20 rounded-t hover:bg-brand-yellow transition-all relative" style="height: ${height}%">
+                                            <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-brand-dark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                                                ${day.count} logs
+                                            </div>
+                                        </div>
+                                        <div class="text-[10px] text-gray-400 -rotate-45 origin-top-left translate-y-2">${new Date(day.date).getDate()}/${new Date(day.date).getMonth()+1}</div>
+                                    </div>`;
+                                }).join('') || '<p class="text-gray-400 w-full text-center">Aucune donnée</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            handleSearch() {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                
+                this.filteredLogs = this.logs.filter(log => 
+                    (log.user_email || '').toLowerCase().includes(query) ||
+                    (log.description || '').toLowerCase().includes(query) ||
+                    (log.target_repr || '').toLowerCase().includes(query) ||
+                    (log.target_type || '').toLowerCase().includes(query) ||
+                    (log.action || '').toLowerCase().includes(query)
+                );
+                
+                this.renderTab(this.currentTab);
+            },
+
+            async applyFilters() {
+                this.currentPage = 1;
+                await this.loadLogs();
+                this.handleSearch(); // Re-apply text search if any
+            },
+
+            resetFilters() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('severityFilter').value = '';
+                document.getElementById('actionFilter').value = '';
+                document.getElementById('dateFrom').value = '';
+                document.getElementById('dateTo').value = '';
+                this.applyFilters();
+            },
+
+            async exportCSV() {
+                try {
+                    const params = new URLSearchParams();
+                    const severity = document.getElementById('severityFilter').value;
+                    const action = document.getElementById('actionFilter').value;
+                    const dateFrom = document.getElementById('dateFrom').value;
+                    const dateTo = document.getElementById('dateTo').value;
+                    
+                    if (severity) params.append('severity', severity);
+                    if (action) params.append('action', action);
+                    if (dateFrom) params.append('created_at_after', dateFrom);
+                    if (dateTo) params.append('created_at_before', dateTo);
+
+                    const res = await fetch(`${API_URL}/auth/${UNIV_SLUG}/audit-logs/export/csv/?${params}`, {
+                        headers: { 'Authorization': `Bearer ${TOKEN}` }
+                    });
+                    
+                    if (!res.ok) throw new Error('Erreur export');
+                    
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `audit_logs_${UNIV_SLUG}_${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    this.showToast('Export CSV téléchargé', 'success');
+                } catch (e) {
+                    this.showToast('Erreur lors de l\'export', 'error');
+                }
+            },
+
+            viewDetail(id) {
+                const log = this.logs.find(l => l.id === id);
+                if (!log) return;
+
+                const icons = {
+                    'CRITICAL': 'fa-exclamation-triangle text-red-600',
+                    'HIGH': 'fa-exclamation-circle text-orange-500',
+                    'MEDIUM': 'fa-info-circle text-yellow-500',
+                    'LOW': 'fa-info text-blue-500'
+                };
+
+                document.getElementById('modalIcon').className = `fas ${icons[log.severity] || icons.MEDIUM}`;
+                document.getElementById('detailModalTitle').textContent = log.get_action_display || log.action;
+
+                const date = new Date(log.created_at).toLocaleString('fr-FR');
+
+                document.getElementById('detailModalContent').innerHTML = `
+                    <div class="space-y-6">
+                        <!-- Header info -->
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-gray-500 mb-1">Date</div>
+                                <div class="font-mono font-bold text-brand-dark">${date}</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-gray-500 mb-1">Sévérité</div>
+                                <span class="px-2 py-1 rounded text-xs font-bold badge-${log.severity.toLowerCase()}">${log.get_severity_display || log.severity}</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-gray-500 mb-1">Utilisateur</div>
+                                <div class="font-bold text-brand-dark">${log.user_email || 'Système'}</div>
+                                <div class="text-xs text-gray-500">${log.user_role || 'N/A'}</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-gray-500 mb-1">IP Address</div>
+                                <div class="font-mono text-brand-dark">${log.ip_address || 'N/A'}</div>
+                            </div>
+                        </div>
+
+                        <!-- Target -->
+                        <div class="border-l-4 border-brand-yellow pl-4">
+                            <div class="text-sm text-gray-500 mb-1">Cible</div>
+                            <div class="font-bold text-brand-dark">${log.target_type || 'N/A'}</div>
+                            <div class="text-sm text-gray-600">ID: ${log.target_id || 'N/A'}</div>
+                            <div class="text-sm text-gray-600 mt-1">${log.target_repr || ''}</div>
+                        </div>
+
+                        <!-- Description -->
+                        ${log.description ? `
+                        <div>
+                            <div class="text-sm text-gray-500 mb-2">Description</div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-gray-700">${log.description}</div>
+                        </div>
+                        ` : ''}
+
+                        <!-- Previous Data -->
+                        ${log.previous_data ? `
+                        <div>
+                            <div class="text-sm text-gray-500 mb-2 flex items-center gap-2">
+                                <i class="fas fa-history"></i> Données avant modification
+                            </div>
+                            <pre class="bg-gray-900 text-green-400 p-4 rounded-lg text-xs overflow-x-auto"><code>${JSON.stringify(log.previous_data, null, 2)}</code></pre>
+                        </div>
+                        ` : ''}
+
+                        <!-- New Data -->
+                        ${log.new_data ? `
+                        <div>
+                            <div class="text-sm text-gray-500 mb-2 flex items-center gap-2">
+                                <i class="fas fa-file-alt"></i> Données après modification
+                            </div>
+                            <pre class="bg-gray-900 text-blue-400 p-4 rounded-lg text-xs overflow-x-auto"><code>${JSON.stringify(log.new_data, null, 2)}</code></pre>
+                        </div>
+                        ` : ''}
+
+                        <!-- Request info -->
+                        <div class="text-xs text-gray-400 border-t pt-4">
+                            <div class="flex gap-4">
+                                <span><i class="fas fa-globe mr-1"></i>${log.request_path || 'N/A'}</span>
+                                <span><i class="fas fa-terminal mr-1"></i>${log.request_method || 'N/A'}</span>
+                            </div>
+                            ${log.user_agent ? `<div class="mt-2 truncate" title="${log.user_agent}">${log.user_agent}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('detailModal').classList.remove('hidden');
+                document.getElementById('detailModal').classList.add('flex');
+            },
+
+            closeDetailModal() {
+                document.getElementById('detailModal').classList.add('hidden');
+                document.getElementById('detailModal').classList.remove('flex');
+            },
+
+            showToast(msg, type = 'info') {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg text-white font-medium transform transition-all duration-300 z-[60] ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`;
+                
+                setTimeout(() => toast.classList.remove('translate-y-20', 'opacity-0'), 10);
+                setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+            },
+
+            logout() {
+                localStorage.removeItem('authToken');
+                window.location.href = '/login.html';
+            }
+        };
+
+        // Close modal on outside click
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('detailModal')) {
+                app.closeDetailModal();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
