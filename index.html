@@ -38,6 +38,64 @@
         box-shadow: 0 0 20px 10px rgba(255, 182, 6, 0);
     }
 }
+/* Hiérarchie des z-index */
+.header {
+    z-index: 100; /* Navbar au-dessus de tout */
+}
+
+.sidebar-desktop,
+.sidebar-mobile {
+    z-index: 40; /* Sidebar en dessous */
+}
+
+/* L'infobulle dans la sidebar collapsed */
+.sidebar-collapsed .group:hover .sidebar-text {
+    z-index: 45; /* Infobulle au-dessus de la sidebar mais en dessous de la navbar */
+    /* ... styles existants ... */
+}
+
+/* Modals et overlays */
+#modal-detail,
+#modal-chat,
+#modal-generic,
+#auth-prompt {
+    z-index: 200; /* Modals au-dessus de tout */
+}
+<style>
+    /* Correction pour les icônes sociales dans la navbar */
+    .header_social {
+        position: relative;
+        z-index: 101; /* Au-dessus de la navbar */
+    }
+    
+    .header_social_link {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .header_social_link:hover {
+        background: #ffb606;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+    }
+    
+    .header_social_link i {
+        font-size: 14px;
+    }
+    
+    /* Assurer que le hamburger est aussi visible */
+    .hamburger_container {
+        position: relative;
+        z-index: 101;
+    }
+</style>
 </style>
     <!-- Tailwind Config -->
     <script>
@@ -103,12 +161,7 @@
                 <span>(237) 222 23 09 44 / (237) 222 22 18 16</span>
             </div>
             <div class="d-flex align-items-center ml-auto" style="gap: 18px;">
-                <div class="header_social d-flex flex-row align-items-center" style="gap: 8px;">
-                    <a href="#" class="header_social_link"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="header_social_link"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="header_social_link"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="header_social_link"><i class="fab fa-twitter"></i></a>
-                </div>
+               
                 <div class="hamburger_container">
                     <i class="fas fa-bars trans_200"></i>
                 </div>
